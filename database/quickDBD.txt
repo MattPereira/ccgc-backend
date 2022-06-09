@@ -1,0 +1,125 @@
+users
+-
+username VARCHAR(30) PK
+email TEXT
+password TEXT
+first_name TEXT
+last_name TEXT
+bio TEXT
+is_admin BOOLEAN
+
+rounds
+-
+id SERIAL PK
+tournament_id INTEGER FK >- tournament.id
+username VARCHAR(30) FK >- users.username
+course_handle TEXT FK >- courses.handle
+strokes1
+strokes2
+strokes3
+strokes4
+strokes5
+strokes6
+strokes7
+strokes8
+strokes9
+strokes10
+strokes11
+strokes12
+strokes13
+strokes14
+strokes15
+strokes16
+strokes17
+strokes18
+putts1
+putts2
+putts3
+putts4
+putts5
+putts6
+putts7
+putts8
+putts9
+putts10
+putts11
+putts12
+putts13
+putts14
+putts15
+putts16
+putts17
+putts18
+
+
+
+tournament
+-
+id SERIAL PK
+date DATE
+course_name TEXT
+location TEXT
+
+
+
+
+courses
+-
+handle TEXT PK
+name TEXT 
+rating INTEGER
+slope INTEGER
+par1 INTEGER
+par2 INTEGER
+par3 INTEGER
+par4 INTEGER
+par5 INTEGER
+par6 INTEGER
+par7 INTEGER
+par8 INTEGER
+par9 INTEGER
+par10 INTEGER
+par11 INTEGER
+par12 INTEGER
+par13 INTEGER
+par14 INTEGER
+par15 INTEGER
+par16 INTEGER
+par17 INTEGER
+par18 INTEGER
+handicap1 INTEGER
+handicap2 INTEGER
+handicap3 INTEGER
+handicap4 INTEGER
+handicap5 INTEGER
+handicap6 INTEGER
+handicap7 INTEGER
+handicap8 INTEGER
+handicap9 INTEGER
+handicap10 INTEGER
+handicap11 INTEGER
+handicap12 INTEGER
+handicap13 INTEGER
+handicap14 INTEGER
+handicap15 INTEGER
+handicap16 INTEGER
+handicap17 INTEGER
+handicap18 INTEGER
+
+# pars
+# -
+# course_handle TEXT PK FK >- courses.handle
+# hole1 INTEGER
+# hole2 INTEGER
+# hole3 INTEGER
+# hole4 INTEGER
+# hole5 INTEGER
+
+# handicaps
+# -
+# course_handle TEXT PK FK >- courses.handle
+# hole1 INTEGER
+# hole2 INTEGER
+# hole3 INTEGER
+# hole4 INTEGER
+# hole5 INTEGER

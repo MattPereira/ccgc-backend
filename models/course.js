@@ -194,133 +194,180 @@ class Course {
     return course;
   }
 
-  /** Update course data with `data`.
+  /** Update course, pars, and, handicaps data with `data`.
+   *
+   * More specifically, dynamically update the course, pars,
+   * and handicaps tables depending on which are present in `data`
+   *
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
    * Data can include: {name, rating, slope, pars, handicaps}
+   *  where pars could be any of {hole1, hole2, ..., hole18}
+   *  and handicaps could be any of {hole1, hole2, ..., hole18}
    *
-   * Returns {handle, name, rating, slope}
+   * Returns {handle, name, rating, slope, pars, handicaps}
    *
    * Throws NotFoundError if not found.
    */
 
+  /////////////// COULD PROBABLY BE REFACTORED TO BE MORE DRY //////////////////////
   static async update(handle, data) {
-    const { pars, handicaps, ...basic } = data;
+    //Throw bad request error if data is empty
+    if (Object.keys(data).length === 0) throw new BadRequestError("No data");
 
-    const { setCols, values } = sqlForPartialUpdate(data, {});
+    //destructure and rename and spread object properties from data lol
+    const { pars: parsData, handicaps: handicapsData, ...basicData } = data;
 
-    const handleVarIdx = "$" + (values.length + 1);
+    // update the pars table if data.pars is provided
+    if (parsData) {
+      const { setCols, values } = sqlForPartialUpdate(parsData, {});
 
-    const querySql = `UPDATE courses 
-                      SET ${setCols} 
-                      WHERE handle = ${handleVarIdx} 
-                      RETURNING handle, 
-                                name, 
-                                rating, 
-                                slope`;
-    const result = await db.query(querySql, [...values, handle]);
-    const course = result.rows[0];
+      const handleVarIdx = "$" + (values.length + 1);
 
-    if (!course) throw new NotFoundError(`No course: ${handle}`);
-
-    return course;
-  }
-
-  /** Update pars data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: {hole1, hole2, hole3, ...}
-   *
-   * Returns {course_handle, hole1, hole2, hole3, ...}
-   *
-   * Throws NotFoundError if not found.
-   */
-
-  static async updatePars(handle, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {});
-
-    const handleVarIdx = "$" + (values.length + 1);
-
-    const querySql = `UPDATE pars 
+      const querySql = `UPDATE pars 
                         SET ${setCols} 
                         WHERE course_handle = ${handleVarIdx} 
-                        RETURNING course_handle, 
-                                  hole1, 
-                                  hole2,
-                                  hole3,
-                                  hole4,
-                                  hole5,
-                                  hole6,
-                                  hole7,
-                                  hole8,
-                                  hole9,
-                                  hole10,
-                                  hole11,
-                                  hole12,
-                                  hole13,
-                                  hole14,
-                                  hole15,
-                                  hole16,
-                                  hole17,
-                                  hole18`;
-    const result = await db.query(querySql, [...values, handle]);
-    const pars = result.rows[0];
+                        RETURNING *`;
+      const result = await db.query(querySql, [...values, handle]);
+      const pars = result.rows[0];
 
-    if (!pars) throw new NotFoundError(`No course handle: ${handle}`);
+      if (!pars) throw new NotFoundError(`No course handle: ${handle}`);
+    }
 
-    return pars;
+    // update the handicaps table if data.handicaps is provided
+    if (handicapsData) {
+      const { setCols, values } = sqlForPartialUpdate(handicapsData, {});
+
+      const handleVarIdx = "$" + (values.length + 1);
+
+      const querySql = `UPDATE handicaps 
+                        SET ${setCols} 
+                        WHERE course_handle = ${handleVarIdx} 
+                        RETURNING *`;
+      const result = await db.query(querySql, [...values, handle]);
+      const handicaps = result.rows[0];
+
+      if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
+    }
+
+    // update the basic course data if data.basicData is provided
+    if (Object.keys(basicData).length > 0) {
+      const { setCols, values } = sqlForPartialUpdate(basicData, {});
+
+      const handleVarIdx = "$" + (values.length + 1);
+
+      const querySql = `UPDATE courses 
+                        SET ${setCols} 
+                        WHERE handle = ${handleVarIdx} 
+                        RETURNING handle, 
+                                  name, 
+                                  rating, 
+                                  slope`;
+      const result = await db.query(querySql, [...values, handle]);
+      const course = result.rows[0];
+
+      if (!course) throw new NotFoundError(`No course: ${handle}`);
+    }
+
+    //call the get method to return the updated course data
+    return Course.get(handle);
   }
 
-  /** Update handicaps data with `data`.
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: {hole1, hole2, hole3, ...}
-   *
-   * Returns {course_handle, hole1, hole2, hole3, ...}
-   *
-   * Throws NotFoundError if not found.
-   */
+  // /** Update pars data with `data`.
+  //  *
+  //  * This is a "partial update" --- it's fine if data doesn't contain all the
+  //  * fields; this only changes provided ones.
+  //  *
+  //  * Data can include: {hole1, hole2, hole3, ...}
+  //  *
+  //  * Returns {course_handle, hole1, hole2, hole3, ...}
+  //  *
+  //  * Throws NotFoundError if not found.
+  //  */
 
-  static async updateHandicaps(handle, data) {
-    const { setCols, values } = sqlForPartialUpdate(data, {});
+  // static async updatePars(handle, data) {
+  //   const { setCols, values } = sqlForPartialUpdate(data, {});
 
-    const handleVarIdx = "$" + (values.length + 1);
+  //   const handleVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE handicaps 
-                          SET ${setCols} 
-                          WHERE course_handle = ${handleVarIdx} 
-                          RETURNING course_handle, 
-                                    hole1, 
-                                    hole2,
-                                    hole3,
-                                    hole4,
-                                    hole5,
-                                    hole6,
-                                    hole7,
-                                    hole8,
-                                    hole9,
-                                    hole10,
-                                    hole11,
-                                    hole12,
-                                    hole13,
-                                    hole14,
-                                    hole15,
-                                    hole16,
-                                    hole17,
-                                    hole18`;
-    const result = await db.query(querySql, [...values, handle]);
-    const handicaps = result.rows[0];
+  //   const querySql = `UPDATE pars
+  //                       SET ${setCols}
+  //                       WHERE course_handle = ${handleVarIdx}
+  //                       RETURNING course_handle,
+  //                                 hole1,
+  //                                 hole2,
+  //                                 hole3,
+  //                                 hole4,
+  //                                 hole5,
+  //                                 hole6,
+  //                                 hole7,
+  //                                 hole8,
+  //                                 hole9,
+  //                                 hole10,
+  //                                 hole11,
+  //                                 hole12,
+  //                                 hole13,
+  //                                 hole14,
+  //                                 hole15,
+  //                                 hole16,
+  //                                 hole17,
+  //                                 hole18`;
+  //   const result = await db.query(querySql, [...values, handle]);
+  //   const pars = result.rows[0];
 
-    if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
+  //   if (!pars) throw new NotFoundError(`No course handle: ${handle}`);
 
-    return handicaps;
-  }
+  //   return pars;
+  // }
+
+  // /** Update handicaps data with `data`.
+  //  *
+  //  * This is a "partial update" --- it's fine if data doesn't contain all the
+  //  * fields; this only changes provided ones.
+  //  *
+  //  * Data can include: {hole1, hole2, hole3, ...}
+  //  *
+  //  * Returns {course_handle, hole1, hole2, hole3, ...}
+  //  *
+  //  * Throws NotFoundError if not found.
+  //  */
+
+  // static async updateHandicaps(handle, data) {
+  //   const { setCols, values } = sqlForPartialUpdate(data, {});
+
+  //   const handleVarIdx = "$" + (values.length + 1);
+
+  //   const querySql = `UPDATE handicaps
+  //                         SET ${setCols}
+  //                         WHERE course_handle = ${handleVarIdx}
+  //                         RETURNING course_handle,
+  //                                   hole1,
+  //                                   hole2,
+  //                                   hole3,
+  //                                   hole4,
+  //                                   hole5,
+  //                                   hole6,
+  //                                   hole7,
+  //                                   hole8,
+  //                                   hole9,
+  //                                   hole10,
+  //                                   hole11,
+  //                                   hole12,
+  //                                   hole13,
+  //                                   hole14,
+  //                                   hole15,
+  //                                   hole16,
+  //                                   hole17,
+  //                                   hole18`;
+  //   const result = await db.query(querySql, [...values, handle]);
+  //   const handicaps = result.rows[0];
+
+  //   if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
+
+  //   return handicaps;
+  // }
 
   /** Delete given course from database; returns undefined.
    *

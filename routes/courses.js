@@ -1,6 +1,11 @@
 "use strict";
 
-/** Routes for courses. */
+/** Routes for courses:
+ * create a course,
+ * get all courses,
+ * get a specific course,
+ * update a specific course,
+ * delete a specific course */
 
 const jsonschema = require("jsonschema");
 const express = require("express");
@@ -66,6 +71,8 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[handle]  =>  { course }
  *
+ *  Returns data about a specific course by handle.
+ *
  *  Course is { handle, name, rating, slope, pars, handicaps }
  *  where pars is {hole1, hole2, ..., hole18}
  *  and handicaps is {hole1, hole2, ..., hole18}
@@ -84,11 +91,11 @@ router.get("/:handle", async function (req, res, next) {
 
 /** PATCH /[handle] { fld1, fld2, ... } => { course }
  *
- * Patches course data.
+ * Patches course data (including pars and handicaps) by handle.
  *
- * fields can be: { name, rating, slope }
+ * fields can be: { name, rating, slope, pars, handicaps }
  *
- * Returns { handle, name, rating, slope }
+ * Returns { handle, name, rating, slope, pars, handicaps }
  *
  * Authorization: admin (TEMPORARILY TURNED OFF FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!)
  */
@@ -101,22 +108,7 @@ router.patch("/:handle", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    if (req.body.pars) {
-      const pars = await Course.updatePars(req.params.handle, req.body.pars);
-      delete req.body.pars;
-    }
-    if (req.body.handicaps) {
-      const handicaps = await Course.updateHandicaps(
-        req.params.handle,
-        req.body.handicaps
-      );
-      delete req.body.handicaps;
-    }
-
     const course = await Course.update(req.params.handle, req.body);
-
-    course.pars = pars;
-    course.handicaps = handicaps;
 
     return res.json({ course });
   } catch (err) {
@@ -125,6 +117,8 @@ router.patch("/:handle", async function (req, res, next) {
 });
 
 /** DELETE /[handle]  =>  { deleted: handle }
+ *
+ * Deletes a course by handle.
  *
  * Authorization: admin (TEMPORARILY TURNED OFF FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!)
  */

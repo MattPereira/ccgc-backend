@@ -279,14 +279,63 @@ describe("update", function () {
     name: "Updated Name",
     rating: 99.9,
     slope: 123,
+    pars: {
+      hole1: 3,
+    },
+    handicaps: {
+      hole1: 2,
+      hole2: 3,
+      hole3: 1,
+    },
   };
 
   test("works", async function () {
     let course = await Course.update("roddy-ranch", updateData);
     expect(course).toEqual({
       handle: "roddy-ranch",
-      ...updateData,
+      name: "Updated Name",
       rating: "99.9",
+      slope: 123,
+      pars: {
+        hole1: 3,
+        hole2: 4,
+        hole3: 4,
+        hole4: 4,
+        hole5: 4,
+        hole6: 4,
+        hole7: 4,
+        hole8: 4,
+        hole9: 4,
+        hole10: 4,
+        hole11: 4,
+        hole12: 4,
+        hole13: 4,
+        hole14: 4,
+        hole15: 4,
+        hole16: 4,
+        hole17: 4,
+        hole18: 4,
+      },
+      handicaps: {
+        hole1: 2,
+        hole2: 3,
+        hole3: 1,
+        hole4: 4,
+        hole5: 5,
+        hole6: 6,
+        hole7: 7,
+        hole8: 8,
+        hole9: 9,
+        hole10: 10,
+        hole11: 11,
+        hole12: 12,
+        hole13: 13,
+        hole14: 14,
+        hole15: 15,
+        hole16: 16,
+        hole17: 17,
+        hole18: 18,
+      },
     });
 
     //check database for updated course
@@ -324,172 +373,172 @@ describe("update", function () {
   });
 });
 
-/************************************** updatePars */
+// /************************************** updatePars */
 
-describe("updatePars", function () {
-  const updateData = {
-    hole3: 3,
-    hole7: 3,
-    hole18: 5,
-  };
+// describe("updatePars", function () {
+//   const updateData = {
+//     hole3: 3,
+//     hole7: 3,
+//     hole18: 5,
+//   };
 
-  test("works", async function () {
-    let pars = await Course.updatePars("roddy-ranch", updateData);
-    expect(pars).toEqual({
-      course_handle: "roddy-ranch",
-      hole1: 4,
-      hole2: 4,
-      hole3: 3,
-      hole4: 4,
-      hole5: 4,
-      hole6: 4,
-      hole7: 3,
-      hole8: 4,
-      hole9: 4,
-      hole10: 4,
-      hole11: 4,
-      hole12: 4,
-      hole13: 4,
-      hole14: 4,
-      hole15: 4,
-      hole16: 4,
-      hole17: 4,
-      hole18: 5,
-    });
+//   test("works", async function () {
+//     let pars = await Course.updatePars("roddy-ranch", updateData);
+//     expect(pars).toEqual({
+//       course_handle: "roddy-ranch",
+//       hole1: 4,
+//       hole2: 4,
+//       hole3: 3,
+//       hole4: 4,
+//       hole5: 4,
+//       hole6: 4,
+//       hole7: 3,
+//       hole8: 4,
+//       hole9: 4,
+//       hole10: 4,
+//       hole11: 4,
+//       hole12: 4,
+//       hole13: 4,
+//       hole14: 4,
+//       hole15: 4,
+//       hole16: 4,
+//       hole17: 4,
+//       hole18: 5,
+//     });
 
-    //check database for updated pars
-    const result = await db.query(
-      `SELECT *
-           FROM pars
-           WHERE course_handle = 'roddy-ranch'`
-    );
-    expect(result.rows).toEqual([
-      {
-        course_handle: "roddy-ranch",
-        hole1: 4,
-        hole2: 4,
-        hole3: 3,
-        hole4: 4,
-        hole5: 4,
-        hole6: 4,
-        hole7: 3,
-        hole8: 4,
-        hole9: 4,
-        hole10: 4,
-        hole11: 4,
-        hole12: 4,
-        hole13: 4,
-        hole14: 4,
-        hole15: 4,
-        hole16: 4,
-        hole17: 4,
-        hole18: 5,
-      },
-    ]);
-  });
+//     //check database for updated pars
+//     const result = await db.query(
+//       `SELECT *
+//            FROM pars
+//            WHERE course_handle = 'roddy-ranch'`
+//     );
+//     expect(result.rows).toEqual([
+//       {
+//         course_handle: "roddy-ranch",
+//         hole1: 4,
+//         hole2: 4,
+//         hole3: 3,
+//         hole4: 4,
+//         hole5: 4,
+//         hole6: 4,
+//         hole7: 3,
+//         hole8: 4,
+//         hole9: 4,
+//         hole10: 4,
+//         hole11: 4,
+//         hole12: 4,
+//         hole13: 4,
+//         hole14: 4,
+//         hole15: 4,
+//         hole16: 4,
+//         hole17: 4,
+//         hole18: 5,
+//       },
+//     ]);
+//   });
 
-  test("not found if no such course handle", async function () {
-    try {
-      await Course.updatePars("not-a-course", updateData);
-      fail();
-    } catch (err) {
-      expect(err instanceof NotFoundError).toBeTruthy();
-    }
-  });
+//   test("not found if no such course handle", async function () {
+//     try {
+//       await Course.updatePars("not-a-course", updateData);
+//       fail();
+//     } catch (err) {
+//       expect(err instanceof NotFoundError).toBeTruthy();
+//     }
+//   });
 
-  test("bad request with no data", async function () {
-    try {
-      await Course.updatePars("roddy-ranch", {});
-      fail();
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-  });
-});
+//   test("bad request with no data", async function () {
+//     try {
+//       await Course.updatePars("roddy-ranch", {});
+//       fail();
+//     } catch (err) {
+//       expect(err instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
+// });
 
-/************************************** updatePars */
+// /************************************** updatePars */
 
-describe("updateHandicaps", function () {
-  const updateData = {
-    hole1: 3,
-    hole2: 4,
-    hole3: 1,
-    hole4: 2,
-  };
+// describe("updateHandicaps", function () {
+//   const updateData = {
+//     hole1: 3,
+//     hole2: 4,
+//     hole3: 1,
+//     hole4: 2,
+//   };
 
-  test("works", async function () {
-    let handicaps = await Course.updateHandicaps("roddy-ranch", updateData);
-    expect(handicaps).toEqual({
-      course_handle: "roddy-ranch",
-      hole1: 3,
-      hole2: 4,
-      hole3: 1,
-      hole4: 2,
-      hole5: 5,
-      hole6: 6,
-      hole7: 7,
-      hole8: 8,
-      hole9: 9,
-      hole10: 10,
-      hole11: 11,
-      hole12: 12,
-      hole13: 13,
-      hole14: 14,
-      hole15: 15,
-      hole16: 16,
-      hole17: 17,
-      hole18: 18,
-    });
+//   test("works", async function () {
+//     let handicaps = await Course.updateHandicaps("roddy-ranch", updateData);
+//     expect(handicaps).toEqual({
+//       course_handle: "roddy-ranch",
+//       hole1: 3,
+//       hole2: 4,
+//       hole3: 1,
+//       hole4: 2,
+//       hole5: 5,
+//       hole6: 6,
+//       hole7: 7,
+//       hole8: 8,
+//       hole9: 9,
+//       hole10: 10,
+//       hole11: 11,
+//       hole12: 12,
+//       hole13: 13,
+//       hole14: 14,
+//       hole15: 15,
+//       hole16: 16,
+//       hole17: 17,
+//       hole18: 18,
+//     });
 
-    //check database for updated handicaps
-    const result = await db.query(
-      `SELECT *
-           FROM handicaps
-           WHERE course_handle = 'roddy-ranch'`
-    );
-    expect(result.rows).toEqual([
-      {
-        course_handle: "roddy-ranch",
-        hole1: 3,
-        hole2: 4,
-        hole3: 1,
-        hole4: 2,
-        hole5: 5,
-        hole6: 6,
-        hole7: 7,
-        hole8: 8,
-        hole9: 9,
-        hole10: 10,
-        hole11: 11,
-        hole12: 12,
-        hole13: 13,
-        hole14: 14,
-        hole15: 15,
-        hole16: 16,
-        hole17: 17,
-        hole18: 18,
-      },
-    ]);
-  });
+//     //check database for updated handicaps
+//     const result = await db.query(
+//       `SELECT *
+//            FROM handicaps
+//            WHERE course_handle = 'roddy-ranch'`
+//     );
+//     expect(result.rows).toEqual([
+//       {
+//         course_handle: "roddy-ranch",
+//         hole1: 3,
+//         hole2: 4,
+//         hole3: 1,
+//         hole4: 2,
+//         hole5: 5,
+//         hole6: 6,
+//         hole7: 7,
+//         hole8: 8,
+//         hole9: 9,
+//         hole10: 10,
+//         hole11: 11,
+//         hole12: 12,
+//         hole13: 13,
+//         hole14: 14,
+//         hole15: 15,
+//         hole16: 16,
+//         hole17: 17,
+//         hole18: 18,
+//       },
+//     ]);
+//   });
 
-  test("not found if no such course handle", async function () {
-    try {
-      await Course.updatePars("not-a-course", updateData);
-      fail();
-    } catch (err) {
-      expect(err instanceof NotFoundError).toBeTruthy();
-    }
-  });
+//   test("not found if no such course handle", async function () {
+//     try {
+//       await Course.updatePars("not-a-course", updateData);
+//       fail();
+//     } catch (err) {
+//       expect(err instanceof NotFoundError).toBeTruthy();
+//     }
+//   });
 
-  test("bad request with no data", async function () {
-    try {
-      await Course.updatePars("roddy-ranch", {});
-      fail();
-    } catch (err) {
-      expect(err instanceof BadRequestError).toBeTruthy();
-    }
-  });
-});
+//   test("bad request with no data", async function () {
+//     try {
+//       await Course.updatePars("roddy-ranch", {});
+//       fail();
+//     } catch (err) {
+//       expect(err instanceof BadRequestError).toBeTruthy();
+//     }
+//   });
+// });
 
 /************************************** remove */
 

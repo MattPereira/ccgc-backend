@@ -1,0 +1,39 @@
+{
+    "$schema": "https://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "title": "Root Schema",
+    "type": "object",
+    "default": {},
+    "required": [],
+    "properties": {
+        "name": {
+            "title": "The name Schema",
+            "type": "string",
+            "default": "",
+            "examples": [
+                "New Course Country Club"
+            ]
+        },
+        "rating": {
+            "title": "The rating Schema",
+            "type": "number",
+            "default": 0.0,
+            "examples": [
+                71.2
+            ]
+        },
+        "slope": {
+            "title": "The slope Schema",
+            "type": "integer",
+            "default": 0,
+            "examples": [
+                122
+            ]
+        }
+    },
+    "examples": [{
+        "name": "New Course Country Club",
+        "rating": 71.2,
+        "slope": 122
+    }]
+}

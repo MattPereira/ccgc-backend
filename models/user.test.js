@@ -170,9 +170,9 @@ describe("get", function () {
 
 describe("update", function () {
   const updateData = {
-    firstName: "NewF",
-    lastName: "NewF",
-    email: "new@email.com",
+    firstName: "NewFirst",
+    lastName: "NewLast",
+    email: "new@gmail.com",
     bio: "new bio",
     isAdmin: true,
   };

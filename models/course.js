@@ -202,17 +202,29 @@ class Course {
    *
    * Data can include: {name, rating, slope}
    *
-   * Returns {handle, name, description, numEmployees, logoUrl}
+   * Returns {handle, name, rating, slope}
    *
    * Throws NotFoundError if not found.
    */
 
   static async update(handle, data) {
-    //TODO HERE WE NEED TO FIGURE OUT UPDATING THE PARS AND HANDICAPS
-    ///AAAAHHHH SO HARD///////
-    //////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    //////////////////////////////////////////////////
+    const { setCols, values } = sqlForPartialUpdate(data, {});
+
+    const handleVarIdx = "$" + (values.length + 1);
+
+    const querySql = `UPDATE courses 
+                      SET ${setCols} 
+                      WHERE handle = ${handleVarIdx} 
+                      RETURNING handle, 
+                                name, 
+                                rating, 
+                                slope`;
+    const result = await db.query(querySql, [...values, handle]);
+    const course = result.rows[0];
+
+    if (!course) throw new NotFoundError(`No course: ${handle}`);
+
+    return course;
   }
 
   /** Delete given course from database; returns undefined.

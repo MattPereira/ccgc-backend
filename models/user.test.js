@@ -60,7 +60,7 @@ describe("register", function () {
     firstName: "Test",
     lastName: "Tester",
     email: "test@test.com",
-    bio: "I am a test user",
+    bio: "Enthusiastic member of the Contra Costa Golf Club",
     isAdmin: false,
   };
 

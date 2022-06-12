@@ -58,14 +58,7 @@ class User {
    * Throws BadRequestError on duplicates.
    **/
 
-  static async register({
-    email,
-    password,
-    firstName,
-    lastName,
-    bio,
-    isAdmin,
-  }) {
+  static async register({ email, password, firstName, lastName, isAdmin }) {
     // Set username to be lowercase firstName-lastName
     const username = `${firstName}-${lastName}`.toLowerCase();
 
@@ -89,11 +82,10 @@ class User {
             password,
             first_name,
             last_name,
-            bio,
             is_admin)
-           VALUES ($1, $2, $3, $4, $5, $6, $7)
+           VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING username, email, first_name AS "firstName", last_name AS "lastName", bio, is_admin AS "isAdmin"`,
-      [username, email, hashedPassword, firstName, lastName, bio, isAdmin]
+      [username, email, hashedPassword, firstName, lastName, isAdmin]
     );
 
     const user = result.rows[0];

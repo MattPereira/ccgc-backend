@@ -29,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",
     "pg": "^8.7.3",
+    "react-jwt": "^1.1.6",
     "supertest": "^6.2.3"
   }
 }

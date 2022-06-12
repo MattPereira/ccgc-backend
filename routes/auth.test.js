@@ -66,12 +66,10 @@ describe("POST /auth/token", function () {
 describe("POST /auth/register", function () {
   test("works for anon", async function () {
     const resp = await request(app).post("/auth/register").send({
-      username: "new",
       firstName: "first",
       lastName: "last",
       password: "password",
       email: "new@gmail.com",
-      bio: "I am a new user",
     });
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({

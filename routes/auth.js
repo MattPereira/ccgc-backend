@@ -53,6 +53,7 @@ router.post("/register", async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
+    //default newly registered users to be non-admin
     const newUser = await User.register({ ...req.body, isAdmin: false });
     const token = createToken(newUser);
     return res.status(201).json({ token });

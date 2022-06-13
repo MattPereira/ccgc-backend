@@ -59,7 +59,7 @@ class User {
    **/
 
   static async register({ email, password, firstName, lastName, isAdmin }) {
-    // Set username to be lowercase firstName-lastName
+    // Set username to be lowercase firstName-lastName to use for primary key
     const username = `${firstName}-${lastName}`.toLowerCase();
 
     const duplicateCheck = await db.query(
@@ -140,14 +140,14 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
 
-    const userRoundsRes = await db.query(
-      `SELECT *
-           FROM rounds
-           WHERE username = $1`,
-      [username]
-    );
+    // const userRoundsRes = await db.query(
+    //   `SELECT *
+    //        FROM rounds
+    //        WHERE username = $1`,
+    //   [username]
+    // );
 
-    user.rounds = userRoundsRes.rows;
+    // user.rounds = userRoundsRes.rows;
     return user;
   }
 

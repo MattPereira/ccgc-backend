@@ -111,17 +111,13 @@ router.patch(
  * Authorization required: admin or same-user-as-:username
  **/
 
-router.delete(
-  "/:username",
-  ensureCorrectUserOrAdmin,
-  async function (req, res, next) {
-    try {
-      await User.remove(req.params.username);
-      return res.json({ deleted: req.params.username });
-    } catch (err) {
-      return next(err);
-    }
+router.delete("/:username", ensureAdmin, async function (req, res, next) {
+  try {
+    await User.remove(req.params.username);
+    return res.json({ deleted: req.params.username });
+  } catch (err) {
+    return next(err);
   }
-);
+});
 
 module.exports = router;

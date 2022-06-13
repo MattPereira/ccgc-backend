@@ -29,11 +29,11 @@ const router = new express.Router();
  *
  * Returns { handle, name, rating, slope, pars, handicaps }
  *
- * Authorization required: admin (TEMPORARILY TURNED OFF FOR TESTING!!!!!!!!!!!!!!!!!)
+ * Authorization required: admin
  *
  */
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, courseNewSchema);
     if (!validator.valid) {
@@ -97,10 +97,10 @@ router.get("/:handle", async function (req, res, next) {
  *
  * Returns { handle, name, rating, slope, pars, handicaps }
  *
- * Authorization: admin (TEMPORARILY TURNED OFF FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!)
+ * Authorization: admin
  */
 
-router.patch("/:handle", async function (req, res, next) {
+router.patch("/:handle", ensureAdmin, async function (req, res, next) {
   try {
     const validator = jsonschema.validate(req.body, courseUpdateSchema);
     if (!validator.valid) {
@@ -120,10 +120,10 @@ router.patch("/:handle", async function (req, res, next) {
  *
  * Deletes a course by handle.
  *
- * Authorization: admin (TEMPORARILY TURNED OFF FOR TESTING!!!!!!!!!!!!!!!!!!!!!!!)
+ * Authorization: admin
  */
 
-router.delete("/:handle", async function (req, res, next) {
+router.delete("/:handle", ensureAdmin, async function (req, res, next) {
   try {
     await Course.remove(req.params.handle);
     return res.json({ deleted: req.params.handle });

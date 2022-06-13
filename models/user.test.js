@@ -151,7 +151,6 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@gmail.com",
       bio: "u1 bio",
-      rounds: [],
       isAdmin: false,
     });
   });

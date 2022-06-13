@@ -21,7 +21,7 @@ afterAll(commonAfterAll);
 describe("POST /auth/token", function () {
   test("works", async function () {
     const resp = await request(app).post("/auth/token").send({
-      email: "user1@gmail.com",
+      email: "happy@gmail.com",
       password: "password1",
     });
     expect(resp.body).toEqual({

@@ -13,18 +13,20 @@ class Round {
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    *
-   * Returns { tournament_date, username, strokes, putts }
+   * Returns { tournamentDate, username, strokes, putts }
    *
    * Throws BadRequestError if round already in database.
    * */
 
-  static async create({ tournament_date, username, strokes, putts }) {
+  //////////////// NEEDS SO MUCH WORK TO CREATE A ROUND ////////////////
+
+  static async create({ tournamentDate, username, strokes, putts }) {
     //BLOCKS USER FROM INPUTTING MORE THAN ONE ROUND PER TOURNAMENT DATE
     const duplicateCheck = await db.query(
       `SELECT tournament_date, username
            FROM rounds
            WHERE tournament_date = $1 AND username = $2`,
-      [tournament_date, username]
+      [tournamentDate, username]
     );
 
     if (duplicateCheck.rows[0])
@@ -32,13 +34,21 @@ class Round {
         `Members are only allowed to submit one round per tournament!`
       );
 
-    // Insert into rounds table first and grabe the round_id
+    // TODO:
+    // 1. sum the strokes and putts objects to get total_strokes and total_putts
+    // 2. compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating)
+    // 3. compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2 score_differentials (includes the current round scoring_differential)
+    // 4. compute the course_handicap : (player_index * (course_slope)) / 113
+    // 5. compute the net_strokes : (total_strokes - course_handicap)
+    // 6. insert everything into the database
+
+    // Insert into rounds table first and grab the round_id
     const roundRes = await db.query(
       `INSERT INTO rounds
            (tournament_date, username)
            VALUES ($1, $2)
            RETURNING id, tournament_date, username`,
-      [tournament_date, username]
+      [tournamentDate, username]
     );
 
     const roundId = roundRes.rows[0].id;
@@ -78,24 +88,24 @@ class Round {
         RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
       [
         roundId,
-        handicaps.hole1,
-        handicaps.hole2,
-        handicaps.hole3,
-        handicaps.hole4,
-        handicaps.hole5,
-        handicaps.hole6,
-        handicaps.hole7,
-        handicaps.hole8,
-        handicaps.hole9,
-        handicaps.hole10,
-        handicaps.hole11,
-        handicaps.hole12,
-        handicaps.hole13,
-        handicaps.hole14,
-        handicaps.hole15,
-        handicaps.hole16,
-        handicaps.hole17,
-        handicaps.hole18,
+        putts.hole1,
+        putts.hole2,
+        putts.hole3,
+        putts.hole4,
+        putts.hole5,
+        putts.hole6,
+        putts.hole7,
+        putts.hole8,
+        putts.hole9,
+        putts.hole10,
+        putts.hole11,
+        putts.hole12,
+        putts.hole13,
+        putts.hole14,
+        putts.hole15,
+        putts.hole16,
+        putts.hole17,
+        putts.hole18,
       ]
     );
 
@@ -117,7 +127,7 @@ class Round {
 
   static async findAll(tournamentDate) {
     const roundsRes = await db.query(
-      `SELECT id, tournament_date, username
+      `SELECT id, tournament_date, username, total_strokes, putts, net_strokes, total_putts, player_index, score_differential, course_handicap
                    FROM rounds
                    WHERE tournament_date = $1`,
       [tournamentDate]
@@ -171,7 +181,7 @@ class Round {
 
   static async get(id) {
     const roundRes = await db.query(
-      `SELECT id, tournament_date, username
+      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
                    FROM rounds
              WHERE id = $1`,
       [id]

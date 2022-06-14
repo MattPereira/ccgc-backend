@@ -16,7 +16,7 @@ class Tournament {
    * Throws BadRequestError if tournament already in database.
    * */
 
-  static async create({ date, course_handle, season_end_year }) {
+  static async create({ date, courseHandle, seasonEndYear }) {
     // ADD VALIDATION FOR DATE TO MAKE SURE IT LOOKS LIKE "2022-05-15" !!!!!
     // OR DOES THAT BELONG IN SCHEMAS FOLDER?
 
@@ -34,7 +34,7 @@ class Tournament {
       `INSERT INTO tournaments
            (date, course_handle, season_end_year)
            VALUES ($1, $2, $3)
-           RETURNING date, course_handle, season_end_year`,
+           RETURNING date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"`,
       [date, course_handle, season_end_year]
     );
 
@@ -52,11 +52,11 @@ class Tournament {
 
   static async findAll() {
     const tournamentsRes = await db.query(
-      `SELECT date, name AS "courseName", season_end_year 
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", season_end_year AS "seasonEndYear"
                  FROM tournaments
                  JOIN courses 
                  ON tournaments.course_handle = courses.handle
-                 ORDER BY date`
+                 ORDER BY date DESC`
     );
 
     const tournaments = tournamentsRes.rows;
@@ -74,7 +74,7 @@ class Tournament {
 
   static async get(date) {
     const tournamentRes = await db.query(
-      `SELECT date, course_handle, season_end_year
+      `SELECT date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"
                  FROM tournaments
            WHERE date = $1`,
       [date]

@@ -70,7 +70,14 @@ create TABLE rounds (
     id SERIAL PRIMARY KEY,
     tournament_date DATE NOT NULL REFERENCES tournaments(date) ON DELETE CASCADE,
     username VARCHAR(30) NOT NULL 
-      REFERENCES users(username)
+      REFERENCES users(username),
+    -----  ALL CALCULATIONS BELOW THIS LINE -----
+    total_strokes INTEGER NOT NULL,
+    net_strokes INTEGER NOT NULL,
+    total_putts INTEGER NOT NULL,
+    player_index DECIMAL NOT NULL,
+    score_differential DECIMAL NOT NULL,
+    course_handicap INTEGER NOT NULL
 );
 
 

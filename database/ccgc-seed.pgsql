@@ -19,8 +19,8 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
        ('mike-p', 'mike@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Mike', 'P', FALSE),
        ('bruce', 'bruce@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bruce', 'Undefined', FALSE),
        ('charlie', 'charlie@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Charlie', 'Undefined', FALSE),
-       ('patrick', 'patrick@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Patrick', 'Undefined', FALSE)
-
+       ('patrick', 'patrick@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Patrick', 'Undefined', FALSE),
+       ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Undefined', FALSE)
        ;
 
 
@@ -250,4 +250,56 @@ VALUES (27, 2,2,3,1,1,3,3,2,1,3,2,2,2,3,2,1,3,1),
        (38, 2,2,3,3,2,3,3,2,3,3,2,2,2,2,2,2,3,3),
        (39, 2,1,4,2,1,2,1,1,2,3,3,3,1,2,2,2,2,1),
        (40, 2,2,1,1,2,2,2,1,2,2,3,3,1,2,3,2,2,2)
+       ;
+
+
+-------------------------------------------------------
+-----------------------------------------------------
+
+-----------------------------------------------------
+------------------------------------------------------
+------------------ START 2021-12-19 CYPRESS LAKES ------------------------------------
+
+INSERT INTO rounds (id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
+---------2021-12-19 CYPRESS LAKES-------------------------------------------------------
+VALUES (41, '2021-12-19', 'dave-pereira', 94,81,35,13.1,21.9,15),
+       (42, '2021-12-19', 'dave-wallace', 114,84,38,29.7,39.8,33),
+       (43, '2021-12-19', 'steve-etingoff', 89,70,31,19.1,17.4,21),
+       (44, '2021-12-19', 'dean-rogers', 94,75,33,18.8,21.0,21),
+       (45, '2021-12-19', 'randy-felix', 106,91,36,14.6,30.9,16),
+       (46, '2021-12-19', 'dennis-flannery', 88,74,29,14.5,16.5,16),
+       (47, '2021-12-19', 'brian-moore', 102,54,35,48.2,29.1,54),
+       (48, '2021-12-19', 'mike-p', 95,77,34,18.1,22.8,20),
+       (49, '2021-12-19', 'bruce', 94,80,34,14.3,21.0,16),
+       (50, '2021-12-19', 'bill', 94,80,34,14.3,21.0,16)
+       ;
+
+
+INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2021-12-19 CYPRESS LAKES-------------------------------------------------------
+VALUES (41, 7,5,5,6,5,4,5,4,6,6,6,4,6,3,5,5,5,7),
+       (42, 7,9,5,5,8,6,7,4,9,6,4,6,9,4,5,6,8,6),
+       (43, 7,4,5,4,6,4,4,4,6,8,4,5,5,4,5,4,5,5),
+       (44, 5,7,4,5,6,5,5,3,6,6,3,5,6,4,6,4,6,8),
+       (45, 7,6,4,6,9,5,6,5,7,7,4,6,5,3,6,7,7,6),
+       (46, 5,5,3,4,6,6,3,4,5,7,3,5,6,5,5,5,6,5),
+       (47, 5,5,4,7,7,6,7,4,5,6,4,6,5,5,6,8,7,5),
+       (48, 5,5,6,5,6,4,6,5,5,6,3,5,7,3,5,6,7,6),
+       (49, 6,4,5,4,6,4,5,4,6,6,4,6,6,4,4,6,8,6),
+       (50, 5,5,3,5,6,4,5,3,6,7,3,6,5,4,5,6,6,5)
+       ;
+
+
+INSERT INTO putts (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2021-12-19 CYPRESS LAKES-------------------------------------------------------
+VALUES (41, 1,2,3,2,1,2,1,1,4,2,2,2,3,2,1,1,2,3),
+       (42, 2,1,3,1,3,1,3,2,3,2,2,2,3,2,2,2,3,1),
+       (43, 2,2,1,0,1,2,1,2,3,2,2,2,2,2,2,2,1,2),
+       (44, 1,2,2,2,1,2,1,2,2,2,1,2,2,3,2,1,2,3),
+       (45, 1,3,2,1,2,2,2,2,2,3,3,2,1,1,2,2,2,3),
+       (46, 2,2,0,2,1,2,2,2,2,1,2,1,1,2,3,1,2,1),
+       (47, 2,3,2,0,3,2,2,2,2,1,2,2,1,3,2,3,2,1),
+       (48, 1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2),
+       (49, 2,1,2,1,2,2,2,1,2,2,3,2,2,2,1,2,3,2),
+       (50, 1,2,1,1,1,1,2,1,2,2,2,2,2,2,1,2,1,1)
        ;

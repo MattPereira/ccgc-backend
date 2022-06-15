@@ -64,23 +64,110 @@ class Tournament {
     return tournaments;
   }
 
-  /** Given a tournament date, return data about that tournament.
+  /** Given a tournament date, return all the strokes data about that tournament
+   *  ordered by netStrokes ascending so that lowest score displays first.
    *
-   * Returns { date, course_handle, season_end_year }
-   *
-   *
+   * Returns { date, courseHandle, seasonEndYear, rounds }
+   *  where rounds is [{ username, strokes, totalStrokes, netStrokes, playerIndex, scoreDifferential, courseHandicap }, ...]
+   *  where strokes is {hole1, hole2, ...}
    * Throws NotFoundError if not found.
    **/
 
-  static async get(date) {
+  static async getStrokes(date) {
     const tournamentRes = await db.query(
-      `SELECT date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"
-                 FROM tournaments
+      `SELECT date, name AS "courseName", season_end_year AS "seasonEndYear"
+                 FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
            WHERE date = $1`,
       [date]
     );
 
     const tournament = tournamentRes.rows[0];
+
+    if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
+
+    const roundsRes = await db.query(
+      `SELECT id, username, total_strokes AS "totalStrokes", net_strokes AS "netStrokes", total_putts AS "totalPutts", player_index AS "playerIndex", score_differential AS "scoreDifferential", course_handicap AS "courseHandicap"
+          FROM rounds
+          WHERE tournament_date = $1
+          ORDER BY net_strokes ASC`,
+      [date]
+    );
+
+    const strokesRes = await db.query(
+      `SELECT round_id AS "roundId",
+                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+                FROM strokes`
+    );
+
+    const rounds = roundsRes.rows;
+    const strokes = strokesRes.rows;
+
+    // associate strokes with each round based on roundId
+    rounds.map((r) => {
+      strokes.map((s) => {
+        if (s.roundId === r.id) {
+          delete s.roundId;
+          r.strokes = s;
+        }
+      });
+    });
+
+    tournament.rounds = rounds;
+
+    return tournament;
+  }
+
+  /** Given a tournament date, return all the putts data about that tournament.
+   *
+   * Returns { date, course_handle, season_end_year, rounds }
+   *  where rounds is [{ username, putts, total_putts }, ...]
+   *  where putts is {hole1, hole2, ...}
+   *
+   * Throws NotFoundError if not found.
+   **/
+
+  static async getPutts(date) {
+    const tournamentRes = await db.query(
+      `SELECT date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"
+                   FROM tournaments
+             WHERE date = $1`,
+      [date]
+    );
+
+    const tournament = tournamentRes.rows[0];
+
+    if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
+
+    const roundsRes = await db.query(
+      `SELECT id, username, total_putts AS "totalPutts"
+            FROM rounds
+            WHERE tournament_date = $1
+            ORDER BY total_putts ASC`,
+      [date]
+    );
+
+    const puttsRes = await db.query(
+      `SELECT round_id AS "roundId",
+                  hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+                  hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+                  FROM putts`
+    );
+
+    const rounds = roundsRes.rows;
+    const putts = puttsRes.rows;
+
+    // associate putts with each round based on roundId
+    rounds.map((r) => {
+      putts.map((p) => {
+        if (p.roundId === r.id) {
+          delete p.roundId;
+          r.putts = p;
+        }
+      });
+    });
+
+    tournament.rounds = rounds;
 
     return tournament;
   }

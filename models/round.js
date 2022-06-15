@@ -117,7 +117,7 @@ class Round {
     return round;
   }
 
-  /** Find all rounds for a tournament using tournament_date.
+  /** Find all rounds in database.
    *
    *
    * Returns [{ tournament_date, username, strokes, putts }, ...]
@@ -125,12 +125,11 @@ class Round {
    *  and putts is {hole1, hole2, hole3, ...}
    * */
 
-  static async findAll(tournamentDate) {
+  static async findAll() {
     const roundsRes = await db.query(
-      `SELECT id, tournament_date, username, total_strokes, putts, net_strokes, total_putts, player_index, score_differential, course_handicap
+      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
                    FROM rounds
-                   WHERE tournament_date = $1`,
-      [tournamentDate]
+                   ORDER BY net_strokes ASC`
     );
 
     const strokesRes = await db.query(

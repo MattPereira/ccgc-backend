@@ -59,23 +59,23 @@ hole18 INTEGER
 rounds
 -
 id SERIAL PK
-tournament_id INTEGER FK >- tournament.id
+tournament_date DATE FK >- tournaments.date
 username VARCHAR(30) FK >- users.username
+total_strokes INTEGER
+net_strokes INTEGER
+total_putts INTEGER
+player_index DECIMAL
+score_differential DECIMAL
+course_handicap INTEGER
 # course_handle TEXT FK >- courses.handle
 
 
 
-tournament
+tournaments
 -
-id SERIAL PK
-season_end_year INTEGER 
-date DATE
+date DATE PK
 course_handle TEXT FK >- courses.handle
-location TEXT
-
-
-
-
+season_end_year INTEGER 
 
 
 
@@ -83,7 +83,7 @@ courses
 -
 handle TEXT PK
 name TEXT 
-rating INTEGER
+rating DECIMAL
 slope INTEGER
 
 
@@ -131,3 +131,4 @@ hole15 INTEGER
 hole16 INTEGER
 hole17 INTEGER
 hole18 INTEGER
+

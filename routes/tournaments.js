@@ -69,17 +69,27 @@ router.get("/", async function (req, res, next) {
  *
  *  Returns data about a specific tournament by date.
  *
- *  Course is { handle, name, rating, slope, pars, handicaps }
- *  where pars is {hole1, hole2, ..., hole18}
- *  and handicaps is {hole1, hole2, ..., hole18}
+ *  strokesLeaderboard orders rounds by net_strokes ascending
+ *
+ *  strokesLeaderboard is { date, course_handle, season_end_year, rounds }
+ *  where rounds is [{ username, strokes, total_strokes, net_strokes, player_index, score_differential, course_handicap }, ...]
+ *  where strokes is {hole1, hole2, ...}
+ *
+ * puttsLeaderboard orders rounds by total_putts ascending
+ *
+ * puttsLeaderboard is { date, courseHandle, seasonEndYear, rounds}
+ *
+ *
+ *
  *
  * Authorization required: none
  */
 
 router.get("/:date", async function (req, res, next) {
   try {
-    const tournament = await Tournament.get(req.params.date);
-    return res.json({ tournament });
+    const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
+    const puttsLeaderboard = await Tournament.getPutts(req.params.date);
+    return res.json({ tournament: { strokesLeaderboard, puttsLeaderboard } });
   } catch (err) {
     return next(err);
   }
@@ -104,9 +114,9 @@ router.patch("/:date", ensureAdmin, async function (req, res, next) {
       throw new BadRequestError(errs);
     }
 
-    const course = await Course.update(req.params.handle, req.body);
+    const tournament = await Tournament.update(req.params.handle, req.body);
 
-    return res.json({ course });
+    return res.json({ tournament });
   } catch (err) {
     return next(err);
   }

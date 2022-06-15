@@ -17,10 +17,10 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
        ('randy-felix', 'RPFelix@att.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Randy', 'Felix', FALSE),
        ('jerry-guevara', 'jguevara_1956@yahoo.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Jerry', 'Guevara', FALSE),
        ('mike-p', 'mike@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Mike', 'P', FALSE),
-       ('bruce', 'bruce@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bruce', 'Undefined', FALSE),
-       ('charlie', 'charlie@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Charlie', 'Undefined', FALSE),
-       ('patrick', 'patrick@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Patrick', 'Undefined', FALSE),
-       ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Undefined', FALSE)
+       ('bruce', 'bruce@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bruce', 'Foobar', FALSE),
+       ('charlie', 'charlie@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Charlie', 'Foobar', FALSE),
+       ('patrick', 'patrick@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Patrick', 'Foobar', FALSE),
+       ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Foobar', FALSE)
        ;
 
 
@@ -32,7 +32,7 @@ VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125),
        ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127),
        ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120),
        ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131),
-       ('blue-rock-east', 'Blue Rock Springs (East)', 68.4, 121),
+       ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121),
        ('wolf-run', 'Wolf Run Golf Club', 67.3, 122);
 
 

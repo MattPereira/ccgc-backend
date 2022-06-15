@@ -180,9 +180,16 @@ class Round {
 
   static async get(id) {
     const roundRes = await db.query(
-      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
-                   FROM rounds
-             WHERE id = $1`,
+      `SELECT id, tournament_date AS "tournamentDate",
+                  username, 
+                  total_strokes AS "totalStrokes", 
+                  net_strokes AS "netStrokes", 
+                  total_putts AS "totalPutts", 
+                  player_index AS "playerIndex", 
+                  score_differential AS "scoreDifferential", 
+                  course_handicap AS "courseHandicap"
+            FROM rounds
+            WHERE id = $1`,
       [id]
     );
 

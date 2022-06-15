@@ -113,12 +113,12 @@ class User {
     return result.rows;
   }
 
-  /** Given a username, return data about user.
+  /** Given a username, return data about user including all rounds played.
    *
-   * //////////TODO: ADD IN USERS ROUNDS HERE?/////////
-   *
-   * Returns { username, first_name, last_name, is_admin}
-   *   where rounds is { ... ? }
+   * Returns { username, first_name, last_name, is_admin, rounds}
+   *   where rounds is [{ id, tournamentDate, strokes, putts, totalStrokes, netStrokes, totalPutts }]
+   *   where strokes is { hole1, hole2, ..., hole18 }
+   *   where putts is { hole1, hole2, ..., hole18 }
    *
    * Throws NotFoundError if user not found.
    **/
@@ -140,14 +140,58 @@ class User {
 
     if (!user) throw new NotFoundError(`No user: ${username}`);
 
-    // const userRoundsRes = await db.query(
-    //   `SELECT *
-    //        FROM rounds
-    //        WHERE username = $1`,
-    //   [username]
-    // );
+    const userRoundsRes = await db.query(
+      `SELECT id, 
+              tournament_date AS "tournamentDate",
+              name AS "courseName",
+              total_strokes AS "totalStrokes",
+              course_handicap AS "courseHandicap",
+              net_strokes AS "netStrokes",
+              total_putts AS "totalPutts"
+           FROM rounds
+           JOIN tournaments ON rounds.tournament_date = tournaments.date
+           JOIN courses ON tournaments.course_handle = courses.handle
+           WHERE username = $1
+           ORDER BY tournament_date DESC`,
+      [username]
+    );
 
-    // user.rounds = userRoundsRes.rows;
+    user.rounds = userRoundsRes.rows;
+
+    //map an array of roundIds to efficiently query strokes and putts
+    const roundsIds = user.rounds.map((r) => r.id);
+
+    const strokesRes = await db.query(
+      `SELECT *
+          FROM strokes
+          WHERE round_id IN (${roundsIds.join(", ")})`
+    );
+
+    const puttsRes = await db.query(
+      `SELECT *
+          FROM putts
+          WHERE round_id IN (${roundsIds.join(", ")})`
+    );
+
+    const strokes = strokesRes.rows;
+    const putts = puttsRes.rows;
+
+    //map strokes and putts data to user.rounds
+    user.rounds.map((r) => {
+      strokes.map((s) => {
+        if (s.round_id === r.id) {
+          delete s.round_id;
+          r.strokes = s;
+        }
+      });
+      putts.map((p) => {
+        if (p.round_id === r.id) {
+          delete p.round_id;
+          r.putts = p;
+        }
+      });
+    });
+
     return user;
   }
 

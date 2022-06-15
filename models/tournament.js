@@ -86,8 +86,9 @@ class Tournament {
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
     const roundsRes = await db.query(
-      `SELECT id, username, total_strokes AS "totalStrokes", net_strokes AS "netStrokes", total_putts AS "totalPutts", player_index AS "playerIndex", score_differential AS "scoreDifferential", course_handicap AS "courseHandicap"
-          FROM rounds
+      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_strokes AS "totalStrokes", net_strokes AS "netStrokes", total_putts AS "totalPutts", player_index AS "playerIndex", score_differential AS "scoreDifferential", course_handicap AS "courseHandicap"
+          FROM rounds 
+          JOIN users ON rounds.username = users.username
           WHERE tournament_date = $1
           ORDER BY net_strokes ASC`,
       [date]
@@ -140,8 +141,9 @@ class Tournament {
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
     const roundsRes = await db.query(
-      `SELECT id, username, total_putts AS "totalPutts"
+      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_putts AS "totalPutts"
             FROM rounds
+            JOIN users ON rounds.username = users.username
             WHERE tournament_date = $1
             ORDER BY total_putts ASC`,
       [date]

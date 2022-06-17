@@ -34,7 +34,8 @@ create TABLE pars (
     hole15 INTEGER NOT NULL,
     hole16 INTEGER NOT NULL,
     hole17 INTEGER NOT NULL,
-    hole18 INTEGER NOT NULL
+    hole18 INTEGER NOT NULL,
+    total INTEGER NOT NULL
 );
 
 create TABLE handicaps (

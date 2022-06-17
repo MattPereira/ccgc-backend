@@ -20,7 +20,10 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
        ('bruce', 'bruce@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bruce', 'Foobar', FALSE),
        ('charlie', 'charlie@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Charlie', 'Foobar', FALSE),
        ('patrick', 'patrick@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Patrick', 'Foobar', FALSE),
-       ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Foobar', FALSE)
+       ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Foobar', FALSE),
+       ('fritz', 'fritz@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Fritz', 'Foobar', FALSE),
+       ('dan', 'dan@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Dan', 'Foobar', FALSE)
+
        ;
 
 
@@ -36,15 +39,15 @@ VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125),
        ('wolf-run', 'Wolf Run Golf Club', 67.3, 122);
 
 
-INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-VALUES ('paradise-valley', 5,4,3,5,4,4,4,3,4,5,4,3,4,4,3,5,4,4),
-       ('wild-horse', 4,4,4,3,5,3,5,4,4,4,4,3,5,3,4,4,5,4),
-       ('lone-tree', 4,3,4,5,4,4,4,3,4,3,3,5,4,3,4,5,5,4),
-       ('franklin-canyon', 5,3,4,3,4,3,5,4,5,4,3,4,5,4,4,4,3,5),
-       ('cypress-lakes', 5,4,3,4,5,4,4,3,4,5,3,4,4,3,4,4,5,4),
-       ('yocha-dehe', 4,5,4,3,4,5,3,4,4,5,4,4,3,4,4,3,5,4),
-       ('blue-rock-east', 4,3,4,4,5,3,5,3,4,4,3,4,4,5,4,3,4,4),
-       ('wolf-run', 4,5,4,4,3,4,3,5,4,4,4,4,4,3,5,4,3,5);
+INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
+VALUES ('paradise-valley', 5,4,3,5,4,4,4,3,4,5,4,3,4,4,3,5,4,4,72),
+       ('wild-horse', 4,4,4,3,5,3,5,4,4,4,4,3,5,3,4,4,5,4, 72),
+       ('lone-tree', 4,3,4,5,4,4,4,3,4,3,3,5,4,3,4,5,5,4, 71),
+       ('franklin-canyon', 5,3,4,3,4,3,5,4,5,4,3,4,5,4,4,4,3,5,72),
+       ('cypress-lakes', 5,4,3,4,5,4,4,3,4,5,3,4,4,3,4,4,5,4,72),
+       ('yocha-dehe', 4,5,4,3,4,5,3,4,4,5,4,4,3,4,4,3,5,4,72),
+       ('blue-rock-east', 4,3,4,4,5,3,5,3,4,4,3,4,4,5,4,3,4,4,70),
+       ('wolf-run', 4,5,4,4,3,4,3,5,4,4,4,4,4,3,5,4,3,5,72);
 
 INSERT INTO handicaps (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 VALUES ('paradise-valley', 5,7,17,9,1,3,11,15,13,4,10,18,6,14,16,8,12,2),
@@ -253,11 +256,15 @@ VALUES (27, 2,2,3,1,1,3,3,2,1,3,2,2,2,3,2,1,3,1),
        ;
 
 
--------------------------------------------------------
------------------------------------------------------
 
------------------------------------------------------
-------------------------------------------------------
+------------------2021-11-20 YOCHA DEHE------------------------------------
+
+-------------------------------------------------------
+-------------------------------------------------------
+-------------------------------------------------------
+
+
+
 ------------------ START 2021-12-19 CYPRESS LAKES ------------------------------------
 
 INSERT INTO rounds (id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
@@ -302,4 +309,58 @@ VALUES (41, 1,2,3,2,1,2,1,1,4,2,2,2,3,2,1,1,2,3),
        (48, 1,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2),
        (49, 2,1,2,1,2,2,2,1,2,2,3,2,2,2,1,2,3,2),
        (50, 1,2,1,1,1,1,2,1,2,2,2,2,2,2,1,2,1,1)
+       ;
+
+
+
+-- ---------------------- 2022-01-09 PARADISE VALLEY START-----------------------------
+
+INSERT INTO rounds (id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
+---------2022-01-09 PARADISE VALLEY-------------------------------------------------------
+VALUES (51, '2022-01-09','tom-moore', 88,76.1,34,11.9,15.9,13),
+       (52, '2022-01-09','dave-pereira', 97,78.6,38,18.4,23.1,20),
+       (53, '2022-01-09','carrol-strickland', 94,82.8,29,11.2,18.6,12),
+       (54, '2022-01-09','jose-argenal', 105,81.9,34,23.1,31.3,25),
+       (55, '2022-01-09','dave-wallace', 100,64,37,36.0,26.8,40),
+       (56, '2022-01-09','dean-rogers', 92,73.2,28,18.8,16.8,21),
+       (57, '2022-01-09','dennis-flannery', 92,77,37,15.0,19.5,16),
+       (58, '2022-01-09','patrick', 92,77.2,38,14.8,19.5,16),
+       (59, '2022-01-09','brian-moore', 108,76.8,39,31.2,34.1,34),
+       (60, '2022-01-09','bruce', 107,92.7,35,14.3,30.4,16),
+       (61, '2022-01-09','fritz', 93,77.8,32,15.2,20.4,17),
+       (62, '2022-01-09','dan', 98,76,36,22.0,24.1,24)
+       ;
+
+
+INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2022-01-09 PARADISE VALLEY-------------------------------------------------------
+VALUES (51, 6,4,4,6,6,5,4,5,4,5,4,2,7,6,4,5,5,6),
+       (52, 8,5,4,5,5,5,6,5,4,7,7,4,6,5,4,7,5,5),
+       (53, 6,6,4,5,5,4,5,3,5,7,5,4,5,5,4,5,6,10),
+       (54, 8,8,7,7,6,5,4,4,6,6,5,3,5,7,6,6,6,6),
+       (55, 7,4,4,6,6,7,7,4,5,8,6,4,7,5,5,6,5,4),
+       (56, 6,5,4,9,5,4,4,3,4,5,5,5,8,5,3,6,6,5),
+       (57, 6,5,4,6,6,4,5,3,5,5,6,6,5,5,3,7,6,5),
+       (58, 6,5,4,6,5,4,4,5,6,6,6,5,5,5,5,4,6,5),
+       (59, 6,8,6,8,5,7,7,4,4,8,6,6,6,6,4,7,5,5),
+       (60, 7,7,6,5,6,7,6,5,6,6,6,4,7,6,3,10,6,4),
+       (61, 7,7,6,6,6,5,5,2,5,6,3,4,6,5,4,5,6,5),
+       (62, 6,6,3,6,7,7,5,4,5,9,6,4,4,7,4,5,5,5)
+       ;
+
+
+INSERT INTO putts (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2022-01-09 PARADISE VALLEY-------------------------------------------------------
+VALUES (51, 1,2,2,2,2,2,2,2,1,2,1,1,2,4,3,1,1,3),
+       (52, 4,1,3,1,2,2,1,2,2,2,3,2,3,2,2,2,2,2),
+       (53, 2,2,1,1,1,1,2,1,2,3,2,2,2,1,2,1,2,1),
+       (54, 3,1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,1),
+       (55, 2,1,2,3,2,2,3,2,2,2,2,2,3,2,3,2,1,1),
+       (56, 1,0,2,3,1,1,1,1,1,2,2,3,2,2,1,1,2,2),
+       (57, 2,2,2,2,2,1,3,1,2,2,2,3,3,2,2,2,2,2),
+       (58, 2,1,3,2,3,2,2,1,4,2,2,3,2,2,3,1,1,2),
+       (59, 2,2,1,2,2,3,3,2,2,3,1,3,1,2,2,2,4,2),
+       (60, 1,3,3,1,0,1,4,1,2,2,2,2,3,1,2,4,2,1),
+       (61, 3,1,3,2,1,2,2,1,1,3,1,2,2,1,2,1,2,2),
+       (62, 2,2,2,3,1,2,3,2,2,3,2,2,1,3,2,1,1,2)
        ;

@@ -10,7 +10,7 @@ class Course {
   /** Create a course (from data), update db, return new course data.
    *
    * data should be { handle, name, rating, slope, pars, handicaps }
-   *  where pars is {hole1, hole2, hole3, ...}
+   *  where pars is {hole1, hole2, hole3, ..., total}
    *  and handicaps is {hole1, hole2, hole3, ...}
    *
    * Returns { handle, name, rating, slope, pars, handicaps }
@@ -37,10 +37,13 @@ class Course {
       [handle, name, rating, slope]
     );
 
+    //sum the pars object values to get the total
+    const total = Object.values(pars).reduce((a, b) => a + b, 0);
+
     const parsResult = await db.query(
       `INSERT INTO pars
-        (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20)
         RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
       [
         handle,
@@ -62,6 +65,7 @@ class Course {
         pars.hole16,
         pars.hole17,
         pars.hole18,
+        total,
       ]
     );
 
@@ -119,7 +123,7 @@ class Course {
     const parsResult = await db.query(
       `SELECT course_handle AS "courseHandle", 
               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, 
-              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18 
+              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total 
               FROM pars`
     );
 
@@ -153,7 +157,8 @@ class Course {
     return courses;
   }
 
-  /** Given a course handle, return data about that course.
+  /** Given a course handle, return data about that course
+   * including all the rounds played at the particular course.
    *
    * Returns { handle, name, rating, slope, pars, handicaps }
    *   where pars is { hole1, hole2, hole3... }
@@ -175,7 +180,7 @@ class Course {
     if (!course) throw new NotFoundError(`No course: ${handle}`);
 
     const parsRes = await db.query(
-      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
            FROM pars
            WHERE course_handle = $1`,
       [handle]

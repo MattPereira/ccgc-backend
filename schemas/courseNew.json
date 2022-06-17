@@ -451,7 +451,8 @@
             "hole15": 4,
             "hole16": 3,
             "hole17": 4,
-            "hole18": 3
+            "hole18": 3,
+            "total" : 72
         },
         "handicaps": {
             "hole1": 1,

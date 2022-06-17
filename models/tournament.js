@@ -75,13 +75,23 @@ class Tournament {
 
   static async getStrokes(date) {
     const tournamentRes = await db.query(
-      `SELECT date, name AS "courseName", season_end_year AS "seasonEndYear"
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", season_end_year AS "seasonEndYear"
                  FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
            WHERE date = $1`,
       [date]
     );
 
     const tournament = tournamentRes.rows[0];
+
+    // Add pars to tournament
+    const parsRes = await db.query(
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
+              FROM pars
+              WHERE course_handle='${tournament.courseHandle}'`
+    );
+
+    tournament.pars = parsRes.rows[0];
 
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
@@ -93,26 +103,34 @@ class Tournament {
           ORDER BY net_strokes ASC`,
       [date]
     );
+    const rounds = roundsRes.rows;
 
-    const strokesRes = await db.query(
-      `SELECT round_id AS "roundId",
+    if (rounds.length > 0) {
+      //map an array of roundIds to more efficiently query the strokes table
+      const roundsIds = rounds.map((r) => r.id);
+
+      console.log(roundsIds);
+
+      const strokesRes = await db.query(
+        `SELECT round_id AS "roundId",
                 hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
                 hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                FROM strokes`
-    );
+                FROM strokes
+                WHERE round_id IN (${roundsIds.join(",")})`
+      );
 
-    const rounds = roundsRes.rows;
-    const strokes = strokesRes.rows;
+      const strokes = strokesRes.rows;
 
-    // associate strokes with each round based on roundId
-    rounds.map((r) => {
-      strokes.map((s) => {
-        if (s.roundId === r.id) {
-          delete s.roundId;
-          r.strokes = s;
-        }
+      // associate strokes with each round based on roundId
+      rounds.map((r) => {
+        strokes.map((s) => {
+          if (s.roundId === r.id) {
+            delete s.roundId;
+            r.strokes = s;
+          }
+        });
       });
-    });
+    }
 
     tournament.rounds = rounds;
 

@@ -116,7 +116,8 @@ class User {
   /** Given a username, return data about user including all rounds played.
    *
    * Returns { username, first_name, last_name, is_admin, rounds}
-   *   where rounds is [{ id, tournamentDate, strokes, putts, totalStrokes, netStrokes, totalPutts }]
+   *   where rounds is [{ id, tournamentDate, pars, strokes, putts,  totalStrokes, netStrokes, totalPutts }]
+   *   where pars is { hole1, hole2, ..., hole18 }
    *   where strokes is { hole1, hole2, ..., hole18 }
    *   where putts is { hole1, hole2, ..., hole18 }
    *
@@ -143,6 +144,7 @@ class User {
     const userRoundsRes = await db.query(
       `SELECT id, 
               tournament_date AS "tournamentDate",
+              course_handle AS "courseHandle",
               name AS "courseName",
               total_strokes AS "totalStrokes",
               course_handicap AS "courseHandicap",
@@ -158,8 +160,9 @@ class User {
 
     user.rounds = userRoundsRes.rows;
 
-    //map an array of roundIds to efficiently query strokes and putts
+    //map an array of roundIds and courseHandles to efficiently query strokes and putts and pars
     const roundsIds = user.rounds.map((r) => r.id);
+    const courseHandles = user.rounds.map((r) => `'${r.courseHandle}'`);
 
     const strokesRes = await db.query(
       `SELECT *
@@ -172,9 +175,15 @@ class User {
           FROM putts
           WHERE round_id IN (${roundsIds.join(", ")})`
     );
+    const parsRes = await db.query(
+      `SELECT *
+          FROM pars
+          WHERE course_handle IN (${courseHandles.join(", ")})`
+    );
 
     const strokes = strokesRes.rows;
     const putts = puttsRes.rows;
+    const pars = parsRes.rows;
 
     //map strokes and putts data to user.rounds
     user.rounds.map((r) => {
@@ -188,6 +197,12 @@ class User {
         if (p.round_id === r.id) {
           delete p.round_id;
           r.putts = p;
+        }
+      });
+      pars.map((p) => {
+        if (p.course_handle === r.courseHandle) {
+          delete p.course_handle;
+          r.pars = p;
         }
       });
     });

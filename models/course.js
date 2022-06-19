@@ -18,7 +18,15 @@ class Course {
    * Throws BadRequestError if course already in database.
    * */
 
-  static async create({ handle, name, rating, slope, pars, handicaps }) {
+  static async create({
+    handle,
+    name,
+    rating,
+    slope,
+    imgUrl,
+    pars,
+    handicaps,
+  }) {
     const duplicateCheck = await db.query(
       `SELECT handle
            FROM courses
@@ -31,10 +39,10 @@ class Course {
 
     const courseResult = await db.query(
       `INSERT INTO courses
-           (handle, name, rating, slope)
-           VALUES ($1, $2, $3, $4)
-           RETURNING handle, name, rating, slope`,
-      [handle, name, rating, slope]
+           (handle, name, rating, slope, img_url)
+           VALUES ($1, $2, $3, $4, $5)
+           RETURNING handle, name, rating, slope, img_url`,
+      [handle, name, rating, slope, imgUrl]
     );
 
     //sum the pars object values to get the total
@@ -115,7 +123,7 @@ class Course {
 
   static async findAll() {
     const coursesResult = await db.query(
-      `SELECT handle, name, rating, slope
+      `SELECT handle, name, rating, slope, img_url AS "imgUrl"
                  FROM courses
                  ORDER BY handle`
     );
@@ -169,7 +177,7 @@ class Course {
 
   static async get(handle) {
     const courseRes = await db.query(
-      `SELECT handle, name, rating, slope
+      `SELECT handle, name, rating, slope, img_url AS "imgUrl"
                  FROM courses
            WHERE handle = $1`,
       [handle]

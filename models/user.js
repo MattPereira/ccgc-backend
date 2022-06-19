@@ -158,6 +158,11 @@ class User {
       [username]
     );
 
+    //handles a user that has not played any rounds yet
+    if (userRoundsRes.rows.length === 0) {
+      return user;
+    }
+
     user.rounds = userRoundsRes.rows;
 
     //map an array of roundIds and courseHandles to efficiently query strokes and putts and pars

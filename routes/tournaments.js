@@ -85,6 +85,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: none
  */
 
+///////// THIS GARBAGE NEEDS WORK!!!!!!!! ///////////////
 router.get("/:date", async function (req, res, next) {
   try {
     const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
@@ -108,11 +109,11 @@ router.get("/:date", async function (req, res, next) {
 
 router.patch("/:date", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, tournamentUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+    // const validator = jsonschema.validate(req.body, tournamentUpdateSchema);
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((e) => e.stack);
+    //   throw new BadRequestError(errs);
+    // }
 
     const tournament = await Tournament.update(req.params.handle, req.body);
 
@@ -122,17 +123,17 @@ router.patch("/:date", ensureAdmin, async function (req, res, next) {
   }
 });
 
-/** DELETE /[handle]  =>  { deleted: handle }
+/** DELETE /[date]  =>  { deleted: date }
  *
- * Deletes a course by handle.
+ * Deletes a tournament by date.
  *
  * Authorization: admin
  */
 
-router.delete("/:handle", ensureAdmin, async function (req, res, next) {
+router.delete("/:date", ensureAdmin, async function (req, res, next) {
   try {
-    await Course.remove(req.params.handle);
-    return res.json({ deleted: req.params.handle });
+    await Tournament.remove(req.params.date);
+    return res.json({ deleted: req.params.date });
   } catch (err) {
     return next(err);
   }

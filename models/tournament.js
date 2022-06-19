@@ -9,16 +9,15 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Tournament {
   /** Create a tournament (from data), update db, return new tournament data.
    *
-   * data should be { date, course_handle, season_end_year }
+   * data should be { date, courseHandle, tourYears }
    *
-   * Returns { date, course_handle, season_end_year }
+   * Returns { date, courseHandle, tourYears }
    *
    * Throws BadRequestError if tournament already in database.
    * */
 
-  static async create({ date, courseHandle, seasonEndYear }) {
-    // ADD VALIDATION FOR DATE TO MAKE SURE IT LOOKS LIKE "2022-05-15" !!!!!
-    // OR DOES THAT BELONG IN SCHEMAS FOLDER?
+  static async create({ date, courseHandle, tourYears }) {
+    //dont need to validate date because magic of input type date does that
 
     const duplicateCheck = await db.query(
       `SELECT date
@@ -32,10 +31,10 @@ class Tournament {
 
     const tournamentRes = await db.query(
       `INSERT INTO tournaments
-           (date, course_handle, season_end_year)
+           (date, course_handle, tour_years)
            VALUES ($1, $2, $3)
-           RETURNING date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"`,
-      [date, course_handle, season_end_year]
+           RETURNING date, course_handle AS "courseHandle", tour_years AS "tourYears"`,
+      [date, courseHandle, tourYears]
     );
 
     const tournament = tournamentRes.rows[0];
@@ -46,13 +45,13 @@ class Tournament {
   /** Find all tournaments
    *
    *
-   * Returns [{  date, courseName, season_end_year }, ...]
+   * Returns [{  date, courseName, tourYears }, ...]
 
    * */
 
   static async findAll() {
     const tournamentsRes = await db.query(
-      `SELECT date, course_handle AS "courseHandle", name AS "courseName", season_end_year AS "seasonEndYear"
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", img_url AS "imgUrl", tour_years AS "tourYears"
                  FROM tournaments
                  JOIN courses 
                  ON tournaments.course_handle = courses.handle
@@ -67,7 +66,7 @@ class Tournament {
   /** Given a tournament date, return all the strokes data about that tournament
    *  ordered by netStrokes ascending so that lowest score displays first.
    *
-   * Returns { date, courseHandle, seasonEndYear, rounds }
+   * Returns { date, courseHandle, tourYears, rounds }
    *  where rounds is [{ username, strokes, totalStrokes, netStrokes, playerIndex, scoreDifferential, courseHandicap }, ...]
    *  where strokes is {hole1, hole2, ...}
    * Throws NotFoundError if not found.
@@ -75,7 +74,7 @@ class Tournament {
 
   static async getStrokes(date) {
     const tournamentRes = await db.query(
-      `SELECT date, course_handle AS "courseHandle", name AS "courseName", season_end_year AS "seasonEndYear"
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", tour_years AS "tourYears"
                  FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
            WHERE date = $1`,
       [date]
@@ -139,7 +138,7 @@ class Tournament {
 
   /** Given a tournament date, return all the putts data about that tournament.
    *
-   * Returns { date, course_handle, season_end_year, rounds }
+   * Returns { date, courseHandle, tourYears, rounds }
    *  where rounds is [{ username, putts, total_putts }, ...]
    *  where putts is {hole1, hole2, ...}
    *
@@ -148,7 +147,7 @@ class Tournament {
 
   static async getPutts(date) {
     const tournamentRes = await db.query(
-      `SELECT date, course_handle AS "courseHandle", season_end_year AS "seasonEndYear"
+      `SELECT date, course_handle AS "courseHandle", tour_years AS "tourYears"
                    FROM tournaments
              WHERE date = $1`,
       [date]
@@ -208,7 +207,7 @@ class Tournament {
   static async update(date, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       courseHandle: "course_handle",
-      seasonEndYear: "season_end_year",
+      tourYears: "tour_years",
     });
 
     const dateVarIdx = "$" + (values.length + 1);
@@ -218,7 +217,7 @@ class Tournament {
                         WHERE date = ${dateVarIdx} 
                         RETURNING date,
                                    course_handle AS "courseHandle,
-                                   season_end_year AS "seasonEndYear"`;
+                                   tour_years AS "tourYears"`;
     const result = await db.query(querySql, [...values, date]);
     const tournament = result.rows[0];
 

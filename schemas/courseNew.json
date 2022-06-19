@@ -45,6 +45,14 @@
                 122
             ]
         },
+        "imgUrl": {
+            "title": "The imgUrl Schema",
+            "type": "string",
+            "default": "",
+            "examples": [
+                "https://www.lonetreegolfcourse.com/images/slideshows/banner_1.jpg"
+            ]
+        },
         "pars": {
             "title": "The pars Schema",
             "type": "object",

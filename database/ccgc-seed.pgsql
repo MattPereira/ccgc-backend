@@ -23,20 +23,19 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
        ('bill', 'bill@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Bill', 'Foobar', FALSE),
        ('fritz', 'fritz@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Fritz', 'Foobar', FALSE),
        ('dan', 'dan@gmail.com', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q', 'Dan', 'Foobar', FALSE)
-
        ;
 
 
 ----------------------- COURSES TABLES -------------------------------------
-INSERT INTO courses (handle, name, rating, slope)
-VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125),
-       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120),
-       ('lone-tree', 'Lone Tree Golf Course', 69.1, 121),
-       ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127),
-       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120),
-       ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131),
-       ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121),
-       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122);
+INSERT INTO courses (handle, name, rating, slope, img_url)
+VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125, 'https://www.fairfieldgolf.com/wp-content/uploads/2020/09/News-Post-Featured-Image-Paradise-Valley.jpg'),
+       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120, 'https://golfwildhorse.com/wp-content/uploads/2015/07/WH-Image-1.jpg'),
+       ('lone-tree', 'Lone Tree Golf Course', 69.1, 121, 'https://www.lonetreegolfcourse.com/images/slideshows/banner_1.jpg'),
+       ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127, 'https://www.franklincanyongolf.com/images/home_gallery/3.jpg'),
+       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, 'http://www.cypresslakesgc.com/golf/proto/cypresslakesgc/images/slideshow/slide1.jpg'),
+       ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131, 'https://www.yochadehegolfclub.com/golf/proto/yochadehegolfclub/images/gallery/course/Yocha-Dehe18_DJI_0498-.jpg'),
+       ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121, 'https://www.bluerockspringsgolf.com/golf/proto/bluerockspringsgolf/images/gallery/course/Hole%2018%20East.jpg'),
+       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, 'http://www.wolfrungolfclub.com/golf/proto/wolfrungolfclub/images/gallery/course/Wolf%20Run%20Golf%20Club%20-%20slider.png');
 
 
 INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
@@ -62,16 +61,16 @@ VALUES ('paradise-valley', 5,7,17,9,1,3,11,15,13,4,10,18,6,14,16,8,12,2),
 ----------------------------TOURNAMENTS TABLE----------------------------------------------------
 
 
-INSERT INTO tournaments (date, course_handle, season_end_year)
-VALUES ('2022-05-15', 'paradise-valley', 2022),
-       ('2022-04-10', 'wild-horse', 2022),
-       ('2022-03-20', 'lone-tree', 2022),
-       ('2022-02-20', 'franklin-canyon', 2022),
-       ('2022-01-09', 'paradise-valley', 2022),
-       ('2021-12-19', 'cypress-lakes', 2022),
-       ('2021-11-20', 'yocha-dehe', 2022),
-       ('2021-10-09', 'blue-rock-east', 2022),
-       ('2021-09-12', 'wolf-run', 2022);
+INSERT INTO tournaments (date, course_handle, tour_years)
+VALUES ('2022-05-15', 'paradise-valley', '2021-22'),
+       ('2022-04-10', 'wild-horse', '2021-22'),
+       ('2022-03-20', 'lone-tree', '2021-22'),
+       ('2022-02-20', 'franklin-canyon', '2021-22'),
+       ('2022-01-09', 'paradise-valley', '2021-22'),
+       ('2021-12-19', 'cypress-lakes', '2021-22'),
+       ('2021-11-20', 'yocha-dehe', '2021-22'),
+       ('2021-10-09', 'blue-rock-east', '2021-22'),
+       ('2021-09-12', 'wolf-run', '2021-22');
 
 
 
@@ -429,9 +428,78 @@ VALUES (63, 2,4,3,1,2,2,2,2,2,2,3,2,2,2,2,3,2,2),
        ;
 
 
-------------------END 2022-01-09 PARADISE VALLEY------------------------------------
+------------------END 2022-02-20 FRANKLIN CANYON------------------------------------
 
 -------------------------------------------------------
 -------------------------------------------------------
 -------------------------------------------------------
 
+------------------ START 2022-03-20 LONE TREE ----------------------------------
+
+
+INSERT INTO rounds (id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
+---------2022-03-20 LONE TREE-------------------------------------------------------
+VALUES (74, '2022-03-20', 'tom-moore', 96,83,37,13.5,23.7,14),
+       (75, '2022-03-20', 'dave-pereira', 91,75,32,15.6,19.8,16),
+       (76, '2022-03-20', 'carrol-strickland', 92,81,31,11.2,19.8,12),
+       (77, '2022-03-20', 'jose-argenal', 100,77,39,23.1,28.5,24),
+       (78, '2022-03-20', 'dave-wallace', 102,66,33,35.9,30.4,37),
+       (79, '2022-03-20', 'steve-etingoff', 87,70,31,17.1,15.9,18),
+       (80, '2022-03-20', 'tim-corbett', 96,85,37,11.1,23.7,11),
+       (81, '2022-03-20', 'randy-felix', 96,80,34,16.4,24.6,17),
+       (82, '2022-03-20', 'dennis-flannery', 89,74,32,15.0,17.9,16),
+       (83, '2022-03-20', 'vern-taylor', 95,74,32,21.4,23.7,22),
+       (84, '2022-03-20', 'patrick', 93,78,34,14.8,20.8,15),
+       (85, '2022-03-20', 'brian-moore', 116,85,36,31.2,43.9,32),
+       (86, '2022-03-20', 'mike-p', 98,77,41,20.6,26.6,21),
+       (87, '2022-03-20', 'bruce', 102,85,33,16.9,28.5,17),
+       (88, '2022-03-20', 'charlie', 114,94,37,19.9,42.0,21)
+       ;
+
+
+INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2022-03-20 LONE TREE-------------------------------------------------------
+VALUES (74, 5,7,8,5,4,5,5,7,6,5,5,5,5,5,4,4,6,5),
+       (75, 5,5,7,5,6,6,5,7,5,4,4,4,5,4,5,5,4,5),
+       (76, 6,4,8,5,4,5,5,5,5,5,3,5,7,4,6,5,5,5),
+       (77, 6,4,6,6,6,6,6,6,5,6,4,5,6,6,6,5,5,6),
+       (78, 6,7,7,6,6,6,6,4,6,6,4,5,6,6,6,5,4,6),
+       (79, 4,4,7,4,3,5,7,5,6,4,5,5,5,5,3,7,3,5),
+       (80, 7,4,6,4,6,4,5,6,4,6,5,6,6,5,7,8,3,4),
+       (81, 6,5,7,5,4,6,6,5,4,5,5,5,6,6,5,6,4,6),
+       (82, 5,4,7,5,5,4,6,7,3,5,5,5,5,5,5,4,4,5),
+       (83, 5,5,6,4,5,4,7,6,6,5,3,6,7,5,4,6,5,6),
+       (84, 8,3,7,5,4,7,5,6,5,5,6,3,6,5,4,4,5,5),
+       (85, 6,7,9,5,4,7,6,9,9,4,7,5,6,7,7,8,5,5),
+       (86, 5,3,8,5,5,5,7,7,6,5,3,5,6,5,4,6,6,7),
+       (87, 6,5,6,5,4,6,5,7,5,6,5,9,6,5,6,5,4,7),
+       (88, 6,3,6,5,5,6,5,6,7,9,5,8,8,6,6,6,9,8)
+       ;
+
+
+INSERT INTO putts (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+---------2022-03-20 LONE TREE-------------------------------------------------------
+VALUES (74, 2,2,2,2,2,2,2,1,3,2,2,2,2,1,2,2,3,3),
+       (75, 2,3,1,2,2,2,2,2,2,2,2,1,1,1,2,1,2,2),
+       (76, 1,2,2,2,2,2,1,1,2,1,1,2,3,1,2,2,2,2),
+       (77, 2,2,2,2,3,2,3,1,2,2,2,2,3,3,3,2,2,1),
+       (78, 2,1,2,1,3,3,1,0,2,2,3,2,2,2,1,2,2,2),
+       (79, 1,2,2,2,1,2,3,2,2,1,2,2,2,1,1,3,1,1),
+       (80, 3,2,2,2,2,2,1,2,2,1,2,3,2,2,3,4,1,1),
+       (81, 2,2,3,2,2,2,2,2,1,0,2,2,2,3,2,2,1,2),
+       (82, 2,2,1,2,3,2,2,2,1,1,4,1,2,1,2,1,2,1),
+       (83, 2,2,1,1,3,1,1,3,1,1,1,3,3,2,2,1,2,2),
+       (84, 2,2,3,2,2,2,1,2,2,1,3,1,2,2,2,2,2,1),
+       (85, 2,2,2,2,2,3,2,2,2,0,2,2,2,2,2,3,3,1),
+       (86, 2,2,2,2,3,2,2,2,4,1,2,2,2,1,2,3,3,4),
+       (87, 3,2,2,1,2,1,2,2,3,1,3,1,2,1,2,2,2,1),
+       (88, 1,2,2,2,1,2,1,2,4,1,3,2,2,2,2,2,3,3)
+       ;
+
+---------------------END 2022-03-20 LONE TREE ---------------------------------------
+
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+
+------------------ START 2022-04-10 WILD HORSE ----------------------------------

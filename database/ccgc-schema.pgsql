@@ -12,7 +12,8 @@ create TABLE courses (
     handle TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     rating DECIMAL NOT NULL,
-    slope INTEGER NOT NULL
+    slope INTEGER NOT NULL,
+    img_url TEXT
 );
 
 create TABLE pars (
@@ -64,7 +65,7 @@ create TABLE handicaps (
 create TABLE tournaments (
     date DATE PRIMARY KEY,
     course_handle TEXT REFERENCES courses(handle),
-    season_end_year INTEGER NOT NULL
+    tour_years VARCHAR(7) NOT NULL
 );
 
 create TABLE rounds (

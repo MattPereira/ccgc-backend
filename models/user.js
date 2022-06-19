@@ -206,10 +206,16 @@ class User {
       });
       pars.map((p) => {
         if (p.course_handle === r.courseHandle) {
-          delete p.course_handle;
+          // delete p.course_handle;
           r.pars = p;
         }
       });
+    });
+
+    //Had to wait to delete the course handles after the above map to avoid bug with
+    //user playing more than one round at same course
+    user.rounds.map((r) => {
+      delete r.pars.course_handle;
     });
 
     return user;

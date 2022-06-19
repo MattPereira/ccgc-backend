@@ -88,9 +88,12 @@ router.get("/", async function (req, res, next) {
 ///////// THIS GARBAGE NEEDS WORK!!!!!!!! ///////////////
 router.get("/:date", async function (req, res, next) {
   try {
+    const tournament = await Tournament.get(req.params.date);
     const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
     const puttsLeaderboard = await Tournament.getPutts(req.params.date);
-    return res.json({ tournament: { strokesLeaderboard, puttsLeaderboard } });
+    return res.json({
+      tournament: { ...tournament, strokesLeaderboard, puttsLeaderboard },
+    });
   } catch (err) {
     return next(err);
   }
@@ -115,7 +118,7 @@ router.patch("/:date", ensureAdmin, async function (req, res, next) {
     //   throw new BadRequestError(errs);
     // }
 
-    const tournament = await Tournament.update(req.params.handle, req.body);
+    const tournament = await Tournament.update(req.params.date, req.body);
 
     return res.json({ tournament });
   } catch (err) {

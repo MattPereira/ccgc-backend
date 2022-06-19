@@ -63,6 +63,26 @@ class Tournament {
     return tournaments;
   }
 
+  /** Given a tournament date, return basic information about that tournament
+   *
+   * Returns { date, courseName, tourYears}
+   *
+   * Throws NotFoundError if not found.
+   **/
+
+  static async get(date) {
+    const tournamentRes = await db.query(
+      `SELECT date, name AS "courseName", tour_years AS "tourYears"
+                   FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
+             WHERE date = $1`,
+      [date]
+    );
+
+    const tournament = tournamentRes.rows[0];
+
+    return tournament;
+  }
+
   /** Given a tournament date, return all the strokes data about that tournament
    *  ordered by netStrokes ascending so that lowest score displays first.
    *
@@ -107,8 +127,6 @@ class Tournament {
     if (rounds.length > 0) {
       //map an array of roundIds to more efficiently query the strokes table
       const roundsIds = rounds.map((r) => r.id);
-
-      console.log(roundsIds);
 
       const strokesRes = await db.query(
         `SELECT round_id AS "roundId",
@@ -216,8 +234,9 @@ class Tournament {
                         SET ${setCols} 
                         WHERE date = ${dateVarIdx} 
                         RETURNING date,
-                                   course_handle AS "courseHandle,
+                                   course_handle AS "courseHandle",
                                    tour_years AS "tourYears"`;
+
     const result = await db.query(querySql, [...values, date]);
     const tournament = result.rows[0];
 

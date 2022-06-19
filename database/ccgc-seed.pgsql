@@ -29,13 +29,13 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
 ----------------------- COURSES TABLES -------------------------------------
 INSERT INTO courses (handle, name, rating, slope, img_url)
 VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125, 'https://www.fairfieldgolf.com/wp-content/uploads/2020/09/News-Post-Featured-Image-Paradise-Valley.jpg'),
-       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120, 'https://golfwildhorse.com/wp-content/uploads/2015/07/WH-Image-1.jpg'),
+       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120, '/course-photos/wild_horse.jpg'),
        ('lone-tree', 'Lone Tree Golf Course', 69.1, 121, 'https://www.lonetreegolfcourse.com/images/slideshows/banner_1.jpg'),
        ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127, 'https://www.franklincanyongolf.com/images/home_gallery/3.jpg'),
-       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, 'http://www.cypresslakesgc.com/golf/proto/cypresslakesgc/images/slideshow/slide1.jpg'),
+       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, '/course-photos/cypress_lakes.jpg'),
        ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131, 'https://www.yochadehegolfclub.com/golf/proto/yochadehegolfclub/images/gallery/course/Yocha-Dehe18_DJI_0498-.jpg'),
        ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121, 'https://www.bluerockspringsgolf.com/golf/proto/bluerockspringsgolf/images/gallery/course/Hole%2018%20East.jpg'),
-       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, 'http://www.wolfrungolfclub.com/golf/proto/wolfrungolfclub/images/gallery/course/Wolf%20Run%20Golf%20Club%20-%20slider.png');
+       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, '/course-photos/wolf_run.png');
 
 
 INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)

@@ -21,7 +21,7 @@ class Round {
   //////////////// NEEDS SO MUCH WORK TO CREATE A ROUND ////////////////
 
   static async create({ tournamentDate, username, strokes, putts }) {
-    //BLOCKS USER FROM INPUTTING MORE THAN ONE ROUND PER TOURNAMENT DATE
+    //block a user from inputing more than one round per tournament date
     const duplicateCheck = await db.query(
       `SELECT tournament_date, username
            FROM rounds
@@ -34,22 +34,85 @@ class Round {
         `Members are only allowed to submit one round per tournament!`
       );
 
-    // TODO:
-    // 1. sum the strokes and putts objects to get total_strokes and total_putts
-    // 2. compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating)
-    // 3. compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2 score_differentials (includes the current round scoring_differential)
-    // 4. compute the course_handicap : (player_index * (course_slope)) / 113
-    // 5. compute the net_strokes : (total_strokes - course_handicap)
-    // 6. insert everything into the database
+    /**  Sum the strokes and putts objects to get total_strokes and total_putts */
+    const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);
+    const totalPutts = Object.values(putts).reduce((a, b) => a + b, 0);
+    console.log("TOTAL STROKES", totalStrokes);
+    console.log("TOTAL PUTTS", totalPutts);
+
+    /** Compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating) */
+
+    const courseRes = await db.query(
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", rating AS "courseRating", slope AS "courseSlope"
+        FROM tournaments 
+        JOIN courses ON tournaments.course_handle = courses.handle
+        WHERE date = $1`,
+      [tournamentDate]
+    );
+
+    const { courseRating, courseSlope } = courseRes.rows[0];
+
+    const scoreDifferential = (
+      (113 / courseSlope) *
+      (totalStrokes - courseRating)
+    ).toFixed(1);
+    console.log("SCORE DIFFERENTIAL", scoreDifferential);
+
+    /** Compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2
+     *  score_differentials (includes the current round scoring_differential) */
+    const roundsRes = await db.query(
+      `SELECT tournament_date AS "tournamentDate",
+              score_differential AS "scoreDifferential" 
+              FROM rounds 
+              WHERE username=$1 
+              ORDER BY tournament_date DESC LIMIT 4`,
+      [username]
+    );
+
+    // make array of scoreDifferentials
+    const scoreDiffs = roundsRes.rows.map((r) => +r.scoreDifferential);
+    console.log("SCORE DIFFS", scoreDiffs);
+    //sort from lowest to highest and slice to get the two lowest
+    const lowestDiffs = scoreDiffs.sort((a, b) => a - b).slice(0, 2);
+    console.log("LOWEST DIFFS", lowestDiffs);
+
+    const playerIndex = (
+      lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
+    ).toFixed(1);
+    console.log("PLAYER INDEX", playerIndex);
+
+    /** Compute the course_handicap
+     * (player_index * (course_slope)) / 113
+     *
+     */
+    const courseHandicap = Math.round((playerIndex * courseSlope) / 113);
+    console.log("COURSE HANDICAP", courseHandicap);
+
+    /** Compute the net_strokes :
+     * (total_strokes - course_handicap)
+     */
+
+    const netStrokes = totalStrokes - courseHandicap;
+    console.log("NET STROKES", netStrokes);
 
     // Insert into rounds table first and grab the round_id
     const roundRes = await db.query(
       `INSERT INTO rounds
-           (tournament_date, username)
-           VALUES ($1, $2)
-           RETURNING id, tournament_date, username`,
-      [tournamentDate, username]
+           (tournament_date, username, total_strokes, total_putts, score_differential, player_index, course_handicap, net_strokes)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+           RETURNING id, tournament_date, username, total_strokes AS "totalStrokes", total_putts AS "totalPutts" `,
+      [
+        tournamentDate,
+        username,
+        totalStrokes,
+        totalPutts,
+        scoreDifferential,
+        playerIndex,
+        courseHandicap,
+        netStrokes,
+      ]
     );
+    console.log("ROUND ID", roundRes.rows[0].id);
 
     const roundId = roundRes.rows[0].id;
 

@@ -148,6 +148,7 @@ class User {
               name AS "courseName",
               total_strokes AS "totalStrokes",
               course_handicap AS "courseHandicap",
+              player_index AS "playerIndex",
               net_strokes AS "netStrokes",
               total_putts AS "totalPutts"
            FROM rounds

@@ -83,6 +83,7 @@ create TABLE rounds (
 );
 
 
+
 create TABLE strokes (
     round_id INTEGER NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
     hole1 INTEGER NOT NULL,

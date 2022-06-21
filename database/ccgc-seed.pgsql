@@ -596,3 +596,7 @@ VALUES (98, 2,2,2,2,1,1,2,3,2,2,3,2,1,2,3,2,1,3),
 
 
 ------------------ END 2022-05-15 PARADISE VALLEY ----------------------------------
+
+
+-- handle pre-seeding with real data by moving starting serial pk value of rounds.id  to 107---
+ALTER SEQUENCE rounds_id_seq RESTART WITH 107;

@@ -85,7 +85,7 @@ router.get("/", async function (req, res, next) {
  * Authorization required: none
  */
 
-///////// THIS GARBAGE NEEDS WORK!!!!!!!! ///////////////
+///////// THIS GARBAGE STILL NEEDS WORK!!!!!!!! ///////////////
 router.get("/:date", async function (req, res, next) {
   try {
     const tournament = await Tournament.get(req.params.date);

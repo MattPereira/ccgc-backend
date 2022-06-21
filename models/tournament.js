@@ -72,7 +72,7 @@ class Tournament {
 
   static async get(date) {
     const tournamentRes = await db.query(
-      `SELECT date, name AS "courseName", tour_years AS "tourYears"
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", tour_years AS "tourYears"
                    FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
              WHERE date = $1`,
       [date]

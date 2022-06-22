@@ -18,8 +18,6 @@ class Round {
    * Throws BadRequestError if round already in database.
    * */
 
-  //////////////// NEEDS SO MUCH WORK TO CREATE A ROUND ////////////////
-
   static async create({ tournamentDate, username, strokes, putts }) {
     //block a user from inputing more than one round per tournament date
     const duplicateCheck = await db.query(
@@ -52,7 +50,7 @@ class Round {
 
     const { courseRating, courseSlope } = courseRes.rows[0];
 
-    const scoreDifferential = (
+    const scoreDifferential = +(
       (113 / courseSlope) *
       (totalStrokes - courseRating)
     ).toFixed(1);
@@ -69,11 +67,14 @@ class Round {
       [username]
     );
 
-    // make array of scoreDifferentials
-    const scoreDiffs = roundsRes.rows.map((r) => +r.scoreDifferential);
-    console.log("SCORE DIFFS", scoreDiffs);
+    // make array of last 4 scoreDifferentials ['18.3', '22.1', '19.5', '24.4']
+    const scoreDiffsArr = roundsRes.rows.map((r) => +r.scoreDifferential);
+    //push current round scoreDifferential onto scoreDiffsArr
+    scoreDiffsArr.push(scoreDifferential);
+    console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
+
     //sort from lowest to highest and slice to get the two lowest
-    const lowestDiffs = scoreDiffs.sort((a, b) => a - b).slice(0, 2);
+    const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
     console.log("LOWEST DIFFS", lowestDiffs);
 
     const playerIndex = (
@@ -250,8 +251,11 @@ class Round {
                   total_putts AS "totalPutts", 
                   player_index AS "playerIndex", 
                   score_differential AS "scoreDifferential", 
-                  course_handicap AS "courseHandicap"
-            FROM rounds
+                  course_handicap AS "courseHandicap",
+                  courses.name AS "courseName"
+            FROM rounds 
+            JOIN tournaments ON tournaments.date=rounds.tournament_date
+            JOIN courses ON tournaments.course_handle=courses.handle
             WHERE id = $1`,
       [id]
     );
@@ -280,10 +284,9 @@ class Round {
     return round;
   }
 
-  /** Update a round's strokes and putts `data`.
-   *
-   * More specifically, dynamically update the stokes and putts
-   * for a round depending on which holes are present in `data`
+  /** Update a round's strokes and putts `data`
+   *  which will also trigger a re-calculation of
+   *  total_strokes, total_puts, player_index, score_differential, and course_handicap
    *
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the
@@ -298,11 +301,114 @@ class Round {
    * Throws NotFoundError if not found.
    */
 
-  static async update(id, data) {
+  static async update(id, { strokes, putts }) {
     //Throw bad request error if data is empty
-    if (Object.keys(data).length === 0) throw new BadRequestError("No data");
+    if (Object.keys(strokes).length === 0 || Object.keys(putts).length === 0)
+      throw new BadRequestError("No data");
 
-    const { strokes, putts } = data;
+    // is this even necessary?!?
+    // const strokesRes = await db.query(
+    //   `UPDATE strokes
+    //     SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$17, hole17=$17, hole18=$18
+    //     WHERE round_id=$19`,
+    //     []
+    // );
+
+    /**  Sum the strokes and putts objects to get the new total_strokes and total_putts */
+    const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);
+    const totalPutts = Object.values(putts).reduce((a, b) => a + b, 0);
+    console.log("TOTAL STROKES", totalStrokes);
+    console.log("TOTAL PUTTS", totalPutts);
+
+    /** Compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating) */
+
+    //Query db to grab courseRating and courseSlope
+    const courseRes = await db.query(
+      `SELECT rating AS "courseRating", slope AS "courseSlope"
+        FROM rounds 
+        JOIN tournaments ON tournaments.date = rounds.tournament_date
+        JOIN courses ON tournaments.course_handle = courses.handle
+        WHERE rounds.id = $1`,
+      [id]
+    );
+
+    const { courseRating, courseSlope } = courseRes.rows[0];
+
+    const scoreDifferential = +(
+      (113 / courseSlope) *
+      (totalStrokes - courseRating)
+    ).toFixed(1);
+    console.log("SCORE DIFFERENTIAL", scoreDifferential);
+
+    /** Compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2
+     *  score_differentials (includes the current round scoring_differential) */
+    //find the username using the roundId
+    const usernameRes = await db.query(
+      `SELECT username
+        FROM rounds
+        WHERE id=$1`,
+      [id]
+    );
+
+    const username = usernameRes.rows[0].username;
+
+    // ORDER BY ASC very important because we are using .pop on scoreDiffsArr
+    const roundsRes = await db.query(
+      `SELECT tournament_date AS "tournamentDate",
+                  score_differential AS "scoreDifferential" 
+                  FROM rounds 
+                  WHERE username=$1 
+                  ORDER BY tournament_date ASC LIMIT 4`,
+      [username]
+    );
+
+    // make array of last 4 scoreDifferentials ['18.3', '22.1', '19.5', '24.4']
+    const scoreDiffsArr = roundsRes.rows.map((r) => +r.scoreDifferential);
+    // Since this is updating round data, pop off the last scoreDiff which is now invalid
+    scoreDiffsArr.pop();
+    //push current round scoreDifferential onto scoreDiffsArr
+    scoreDiffsArr.push(scoreDifferential);
+    console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
+
+    //sort from lowest to highest and slice to get the two lowest
+    const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
+    console.log("LOWEST DIFFS", lowestDiffs);
+
+    const playerIndex = (
+      lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
+    ).toFixed(1);
+    console.log("PLAYER INDEX", playerIndex);
+
+    /** Compute the course_handicap
+     * (player_index * (course_slope)) / 113
+     *
+     */
+    const courseHandicap = Math.round((playerIndex * courseSlope) / 113);
+    console.log("COURSE HANDICAP", courseHandicap);
+
+    /** Compute the net_strokes :
+     * (total_strokes - course_handicap)
+     */
+
+    const netStrokes = totalStrokes - courseHandicap;
+    console.log("NET STROKES", netStrokes);
+
+    // Update all computed data into rounds table
+    const roundRes = await db.query(
+      `UPDATE rounds
+               SET total_strokes=$1, total_putts=$2, score_differential=$3, player_index=$4, course_handicap=$5, net_strokes=$6
+               WHERE id=$7
+               RETURNING id, tournament_date AS "tournamentDate", username, total_strokes AS "totalStrokes", total_putts AS "totalPutts"`,
+      [
+        totalStrokes,
+        totalPutts,
+        scoreDifferential,
+        playerIndex,
+        courseHandicap,
+        netStrokes,
+        id,
+      ]
+    );
 
     // update the strokes table if data.strokes is provided
     if (strokes) {
@@ -315,7 +421,7 @@ class Round {
                           WHERE round_id = ${idVarIdx}
                           RETURNING *`;
       const result = await db.query(querySql, [...values, id]);
-      const strokes = result.rows[0];
+      // const strokes = result.rows[0];
 
       if (!strokes) throw new NotFoundError(`No round id: ${id}`);
     }
@@ -331,12 +437,12 @@ class Round {
                           WHERE round_id = ${idVarIdx}
                           RETURNING *`;
       const result = await db.query(querySql, [...values, id]);
-      const putts = result.rows[0];
+      // const putts = result.rows[0];
 
       if (!putts) throw new NotFoundError(`No course handle: ${handle}`);
     }
 
-    //call the get method to return the updated round data
+    //call the get method to return the updated round data lol
     return Round.get(id);
   }
 
@@ -346,7 +452,7 @@ class Round {
              FROM rounds
              WHERE id = $1
              RETURNING id`,
-      [handle]
+      [id]
     );
     const round = result.rows[0];
 

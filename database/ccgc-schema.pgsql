@@ -70,7 +70,7 @@ create TABLE tournaments (
 
 create TABLE rounds (
     id SERIAL PRIMARY KEY,
-    tournament_date DATE NOT NULL REFERENCES tournaments(date) ON DELETE CASCADE,
+    tournament_date DATE NOT NULL REFERENCES tournaments(date),
     username VARCHAR(30) NOT NULL 
       REFERENCES users(username),
     -----  ALL CALCULATIONS BELOW THIS LINE -----

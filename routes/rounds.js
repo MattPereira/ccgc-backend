@@ -11,7 +11,11 @@ const jsonschema = require("jsonschema");
 const express = require("express");
 
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin, ensureCorrectUserOrAdmin } = require("../middleware/auth");
+const {
+  ensureAdmin,
+  ensureCorrectUserOrAdmin,
+  ensureLoggedIn,
+} = require("../middleware/auth");
 const Round = require("../models/round");
 
 // const roundNewSchema = require("../schemas/roundNew.json");
@@ -91,7 +95,7 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
-/** PATCH /[handle] { fld1, fld2, ... } => { course }
+/** PATCH /[handle] { fld1, fld2, ... } => { round }
  *
  * Patches round data (including strokes and putts) by id.
  *
@@ -102,13 +106,13 @@ router.get("/:id", async function (req, res, next) {
  * Authorization: admin (not sure how to handle this yet)
  */
 
-router.patch("/:id", ensureAdmin, async function (req, res, next) {
+router.patch("/:id", async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, courseUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+    // const validator = jsonschema.validate(req.body, roundUpdateSchema);
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((e) => e.stack);
+    //   throw new BadRequestError(errs);
+    // }
 
     const round = await Round.update(req.params.id, req.body);
 
@@ -125,7 +129,7 @@ router.patch("/:id", ensureAdmin, async function (req, res, next) {
  * Authorization: admin (not sure how to add owner of round auth?)
  */
 
-router.delete("/:id", ensureAdmin, async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
   try {
     await Round.remove(req.params.id);
     return res.json({ deleted: req.params.id });

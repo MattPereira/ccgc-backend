@@ -75,7 +75,7 @@ tournaments
 -
 date DATE PK
 course_handle TEXT FK >- courses.handle
-season_end_year INTEGER 
+tour_years VARCHAR(7) 
 
 
 
@@ -85,6 +85,7 @@ handle TEXT PK
 name TEXT 
 rating DECIMAL
 slope INTEGER
+img_url TEXT
 
 
 pars
@@ -108,6 +109,7 @@ hole15 INTEGER
 hole16 INTEGER
 hole17 INTEGER
 hole18 INTEGER
+total INTEGER
 
 
 handicaps
@@ -132,3 +134,10 @@ hole16 INTEGER
 hole17 INTEGER
 hole18 INTEGER
 
+greenies
+-
+id SERIAL PK
+round_id INTEGER FK >- rounds.id
+hole_number INTEGER
+feet INTEGER
+inches INTEGER

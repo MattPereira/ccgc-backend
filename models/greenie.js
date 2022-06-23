@@ -4,165 +4,52 @@ const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
-/** Related functions for courses. */
+/** Related functions for greenies. */
 
-class Course {
-  /** Create a course (from data), update db, return new course data.
+class Greenie {
+  /** Create a greenie (from data), update db, return new greenie data.
    *
-   * data should be { handle, name, rating, slope, pars, handicaps }
-   *  where pars is {hole1, hole2, hole3, ..., total}
-   *  and handicaps is {hole1, hole2, hole3, ...}
+   * data should be { roundId, holeNumber, feet, inches}
    *
-   * Returns { handle, name, rating, slope, pars, handicaps }
+   * Returns { id, roundId, holeNumber, feet, inches }
    *
-   * Throws BadRequestError if course already in database.
    * */
-
-  static async create({
-    handle,
-    name,
-    rating,
-    slope,
-    imgUrl,
-    pars,
-    handicaps,
-  }) {
-    const duplicateCheck = await db.query(
-      `SELECT handle
-           FROM courses
-           WHERE handle = $1`,
-      [handle]
+  static async create({ roundId, holeNumber, feet, inches }) {
+    const greenieRes = await db.query(
+      `INSERT INTO greenies
+           (round_id, hole_number, feet, inches)
+           VALUES ($1, $2, $3, $4)
+           RETURNING roundId, holeNumber, feet, inches`,
+      [roundId, holeNumber, feet, inches]
     );
 
-    if (duplicateCheck.rows[0])
-      throw new BadRequestError(`Duplicate course: ${handle}`);
+    const greenie = greenieRes.rows[0];
 
-    const courseResult = await db.query(
-      `INSERT INTO courses
-           (handle, name, rating, slope, img_url)
-           VALUES ($1, $2, $3, $4, $5)
-           RETURNING handle, name, rating, slope, img_url`,
-      [handle, name, rating, slope, imgUrl]
-    );
-
-    //sum the pars object values to get the total
-    const total = Object.values(pars).reduce((a, b) => a + b, 0);
-
-    const parsResult = await db.query(
-      `INSERT INTO pars
-        (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20)
-        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
-      [
-        handle,
-        pars.hole1,
-        pars.hole2,
-        pars.hole3,
-        pars.hole4,
-        pars.hole5,
-        pars.hole6,
-        pars.hole7,
-        pars.hole8,
-        pars.hole9,
-        pars.hole10,
-        pars.hole11,
-        pars.hole12,
-        pars.hole13,
-        pars.hole14,
-        pars.hole15,
-        pars.hole16,
-        pars.hole17,
-        pars.hole18,
-        total,
-      ]
-    );
-
-    const handicapResult = await db.query(
-      `INSERT INTO handicaps
-        (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
-      [
-        handle,
-        handicaps.hole1,
-        handicaps.hole2,
-        handicaps.hole3,
-        handicaps.hole4,
-        handicaps.hole5,
-        handicaps.hole6,
-        handicaps.hole7,
-        handicaps.hole8,
-        handicaps.hole9,
-        handicaps.hole10,
-        handicaps.hole11,
-        handicaps.hole12,
-        handicaps.hole13,
-        handicaps.hole14,
-        handicaps.hole15,
-        handicaps.hole16,
-        handicaps.hole17,
-        handicaps.hole18,
-      ]
-    );
-
-    const course = courseResult.rows[0];
-
-    course.pars = parsResult.rows[0];
-    course.handicaps = handicapResult.rows[0];
-
-    return course;
+    return greenie;
   }
 
-  /** Find all courses
+  /** Find all greenies
+   * sorted by feet and inches
+   * from shortest to longest distance
+   *
+   *  STRETCH GOAL: figure out a way to optionally pass in a tournament_date
+   *   to get only the greenies for that tournament
+   *
+   * Returns [{ roundId, holeNumber, feet, inches }, ...]
    *
    *
-   * Returns [{ handle, name, rating, slope, pars, handicaps }, ...]
-   *  where pars is {hole1, hole2, hole3, ...}
-   *  and handicaps is {hole1, hole2, hole3, ...}
    * */
 
   static async findAll() {
-    const coursesResult = await db.query(
-      `SELECT handle, name, rating, slope, img_url AS "imgUrl"
-                 FROM courses
-                 ORDER BY handle`
+    const greeniesRes = await db.query(
+      `SELECT id, round_id AS "roundId", hole_number AS "holeNumber", feet, inches
+      FROM greenies
+      ORDER BY feet, inches`
     );
 
-    const parsResult = await db.query(
-      `SELECT course_handle AS "courseHandle", 
-              hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, 
-              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total 
-              FROM pars`
-    );
+    const greenies = greeniesRes.rows;
 
-    const handicapResult = await db.query(
-      `SELECT course_handle AS "courseHandle", 
-              hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, 
-              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18 
-              FROM handicaps`
-    );
-
-    const courses = coursesResult.rows;
-    const pars = parsResult.rows;
-    const handicaps = handicapResult.rows;
-
-    // associate pars and handicaps with course based on courseHandle
-    courses.map((c) => {
-      pars.map((p) => {
-        if (p.courseHandle === c.handle) {
-          delete p.courseHandle;
-          c.pars = p;
-        }
-      });
-      handicaps.map((h) => {
-        if (h.courseHandle === c.handle) {
-          delete h.courseHandle;
-          c.handicaps = h;
-        }
-      });
-    });
-
-    return courses;
+    return greenies;
   }
 
   /** Given a course handle, return data about that course
@@ -288,6 +175,11 @@ class Course {
     return Course.get(handle);
   }
 
+  /** Delete given course from database; returns undefined.
+   *
+   * Throws NotFoundError if course not found.
+   **/
+
   static async remove(handle) {
     const result = await db.query(
       `DELETE
@@ -302,4 +194,4 @@ class Course {
   }
 }
 
-module.exports = Course;
+module.exports = Greenie;

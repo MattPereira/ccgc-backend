@@ -83,6 +83,14 @@ create TABLE rounds (
 );
 
 
+create TABLE greenies (
+    id SERIAL PRIMARY KEY,
+    round_id INTEGER NOT NULL REFERENCES rounds(id),
+    hole_number INTEGER NOT NULL,
+    feet INTEGER NOT NULL,
+    inches INTEGER NOT NULL
+);
+
 
 create TABLE strokes (
     round_id INTEGER NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,

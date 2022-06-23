@@ -95,6 +95,20 @@ VALUES (1,'2021-09-12','tom-moore', 90,78,43,11.6,21.0,13),
 
 
 
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (1, 5, 43, 8),
+       (1, 7, 31, 6),
+       (1, 14, 38, 11),
+       (3, 17, 32, 0),
+       (4, 14, 35, 4),
+       (6, 5, 11, 0),
+       (6, 17, 18, 4),
+       (8, 5, 45, 10),
+       (10, 5, 28, 2),
+       (10, 14, 23, 4),
+       (10, 17, 6, 6)
+        ;
+
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2021-09-12 WOLF RUN-------------------------------------------------------
 VALUES (1,  4,5,5,7,5,6,4,5,4,5,5,5,4,5,6,5,5,5),
@@ -154,6 +168,19 @@ VALUES (15, '2021-10-09', 'dave-pereira', 94,85,35,8.8,22.0,9),
        (25, '2021-10-09', 'charlie', 89,68,37,20.7,19.2,22),
        (26, '2021-10-09', 'matt-pereira', 91,77,34,14.0,20.2,15)
        ;
+
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (16, 2, 43, 7),
+       (17, 2, 17, 0),
+       (18, 11, 14, 1),
+       (20, 2, 28, 6),
+       (21, 2, 27, 1),
+       (23, 8, 11, 2),
+       (23, 16, 16, 0),
+       (25, 2, 32, 11),
+       (25, 11, 22, 1),
+       (26, 8, 39, 0)
+        ;
 
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
@@ -216,6 +243,18 @@ VALUES (27, '2021-11-20', 'tom-moore', 92,82,37,10.5,17.4,12),
        (40, '2021-11-20', 'matt-pereira', 95,81,35,14.0,21.9,16)
        ;
 
+
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (27, 16, 79, 0),
+       (28, 7, 33, 3),
+       (28, 13, 67, 0),
+       (28, 16, 50, 0),
+       (31, 16, 15, 2),
+       (32, 13, 79, 0),
+       (33, 7, 12, 4),
+       (33, 13, 31, 9),
+       (35, 16, 18, 9)
+        ;
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2021-11-20 YOCHA DEHE-------------------------------------------------------

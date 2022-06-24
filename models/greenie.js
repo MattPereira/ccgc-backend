@@ -19,7 +19,7 @@ class Greenie {
       `INSERT INTO greenies
            (round_id, hole_number, feet, inches)
            VALUES ($1, $2, $3, $4)
-           RETURNING roundId, holeNumber, feet, inches`,
+           RETURNING round_id AS "roundId", hole_number AS "holeNumber", feet, inches`,
       [roundId, holeNumber, feet, inches]
     );
 
@@ -32,165 +32,108 @@ class Greenie {
    * sorted by feet and inches
    * from shortest to longest distance
    *
-   *  STRETCH GOAL: figure out a way to optionally pass in a tournament_date
-   *   to get only the greenies for that tournament
+   *  Optionally pass in a tournament_date
+   *   to get only the greenies for a specific tournament
    *
    * Returns [{ roundId, holeNumber, feet, inches }, ...]
    *
    *
    * */
 
-  static async findAll() {
-    const greeniesRes = await db.query(
-      `SELECT id, round_id AS "roundId", hole_number AS "holeNumber", feet, inches
-      FROM greenies
-      ORDER BY feet, inches`
-    );
+  static async findAll(date) {
+    let query = `SELECT greenies.id, 
+                  round_id AS "roundId", 
+                  first_name AS "firstName",
+                  last_name AS "lastName",
+                  tournament_date AS "tournamentDate",
+                  name AS "courseName",
+                  img_url AS "courseImg",
+                  hole_number AS "holeNumber", 
+                  feet, 
+                  inches
+              FROM greenies
+              JOIN rounds ON greenies.round_id = rounds.id
+              JOIN tournaments ON rounds.tournament_date = tournaments.date
+              JOIN courses ON tournaments.course_handle = courses.handle
+              JOIN users ON rounds.username=users.username`;
+    let queryValues = [];
 
-    const greenies = greeniesRes.rows;
+    if (date !== undefined) {
+      query += " WHERE tournament_date = $1";
+      queryValues.push(date);
+    }
 
-    return greenies;
+    query += " ORDER BY feet, inches";
+
+    const greeniesRes = await db.query(query, queryValues);
+
+    return greeniesRes.rows;
   }
 
-  /** Given a course handle, return data about that course
-   * including all the rounds played at the particular course.
+  /** Given a greenie id, return data about that particular greenie
    *
-   * Returns { handle, name, rating, slope, pars, handicaps }
-   *   where pars is { hole1, hole2, hole3... }
-   *  and handicaps is { hole1, hole2, hole3... }
+   * Returns { id, roundId, tournamentDate, courseName, holeNumber, feet, inches }
    *
    * Throws NotFoundError if not found.
    **/
 
-  static async get(handle) {
-    const courseRes = await db.query(
-      `SELECT handle, name, rating, slope, img_url AS "imgUrl"
-                 FROM courses
-           WHERE handle = $1`,
-      [handle]
+  static async get(id) {
+    const greenieRes = await db.query(
+      `SELECT greenies.id, round_id AS "roundId", tournament_date AS "tournamentDate", name AS "courseName", hole_number AS "holeNumber", feet, inches
+                 FROM greenies
+                 JOIN rounds ON greenies.round_id = rounds.id
+                 JOIN tournaments ON rounds.tournament_date = tournaments.date
+                 JOIN courses ON tournaments.course_handle = courses.handle
+                  WHERE greenies.id = $1`,
+      [id]
     );
 
-    const course = courseRes.rows[0];
+    const greenie = greenieRes.rows[0];
 
-    if (!course) throw new NotFoundError(`No course: ${handle}`);
-
-    const parsRes = await db.query(
-      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
-           FROM pars
-           WHERE course_handle = $1`,
-      [handle]
-    );
-
-    const handicapsRes = await db.query(
-      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-           FROM handicaps
-           WHERE course_handle = $1`,
-      [handle]
-    );
-
-    course.pars = parsRes.rows[0];
-    course.handicaps = handicapsRes.rows[0];
-
-    return course;
+    return greenie;
   }
 
-  /** Update course, pars, and, handicaps data with `data`.
+  /** Update a greenie with `data`.
    *
-   * More specifically, dynamically update the course, pars,
-   * and handicaps tables depending on which are present in `data`
+   * Data must include: {holeNumber, feet, inches}
    *
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: {name, rating, slope, pars, handicaps}
-   *  where pars could be any of {hole1, hole2, ..., hole18}
-   *  and handicaps could be any of {hole1, hole2, ..., hole18}
-   *
-   * Returns {handle, name, rating, slope, pars, handicaps}
+   * Returns {id, roundId, holeNumber, feet, inches}
    *
    * Throws NotFoundError if not found.
    */
 
-  /////////////// COULD PROBABLY BE REFACTORED TO BE MORE DRY //////////////////////
-  static async update(handle, data) {
-    //Throw bad request error if data is empty
-    if (Object.keys(data).length === 0) throw new BadRequestError("No data");
+  static async update(id, data) {
+    const greenieRes = await db.query(
+      `UPDATE greenies
+      SET hole_number=$1, feet=$2, inches=$3
+      WHERE id=$4
+      RETURNING id, round_id AS "roundId", hole_number AS "holeNumber", feet, inches`,
+      [data.holeNumber, data.feet, data.inches, id]
+    );
 
-    //destructure and rename and spread object properties from data lol
-    const { pars: parsData, handicaps: handicapsData, ...basicData } = data;
+    const greenie = greenieRes.rows[0];
 
-    // update the pars table if data.pars is provided
-    if (parsData) {
-      const { setCols, values } = sqlForPartialUpdate(parsData, {});
+    if (!greenie) throw new NotFoundError(`No greenie with id: ${id}`);
 
-      const handleVarIdx = "$" + (values.length + 1);
-
-      const querySql = `UPDATE pars 
-                        SET ${setCols} 
-                        WHERE course_handle = ${handleVarIdx} 
-                        RETURNING *`;
-      const result = await db.query(querySql, [...values, handle]);
-      const pars = result.rows[0];
-
-      if (!pars) throw new NotFoundError(`No course handle: ${handle}`);
-    }
-
-    // update the handicaps table if data.handicaps is provided
-    if (handicapsData) {
-      const { setCols, values } = sqlForPartialUpdate(handicapsData, {});
-
-      const handleVarIdx = "$" + (values.length + 1);
-
-      const querySql = `UPDATE handicaps 
-                        SET ${setCols} 
-                        WHERE course_handle = ${handleVarIdx} 
-                        RETURNING *`;
-      const result = await db.query(querySql, [...values, handle]);
-      const handicaps = result.rows[0];
-
-      if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
-    }
-
-    // update the basic course data if data.basicData is provided
-    if (Object.keys(basicData).length > 0) {
-      const { setCols, values } = sqlForPartialUpdate(basicData, {});
-
-      const handleVarIdx = "$" + (values.length + 1);
-
-      const querySql = `UPDATE courses 
-                        SET ${setCols} 
-                        WHERE handle = ${handleVarIdx} 
-                        RETURNING handle, 
-                                  name, 
-                                  rating, 
-                                  slope`;
-      const result = await db.query(querySql, [...values, handle]);
-      const course = result.rows[0];
-
-      if (!course) throw new NotFoundError(`No course: ${handle}`);
-    }
-
-    //call the get method to return the updated course data
-    return Course.get(handle);
+    return greenie;
   }
 
-  /** Delete given course from database; returns undefined.
+  /** Delete given greenie from the database; returns undefined.
    *
-   * Throws NotFoundError if course not found.
+   * Throws NotFoundError if greenie not found.
    **/
 
-  static async remove(handle) {
+  static async remove(id) {
     const result = await db.query(
       `DELETE
-           FROM courses
-           WHERE handle = $1
-           RETURNING handle`,
-      [handle]
+           FROM greenies
+           WHERE id = $1
+           RETURNING id`,
+      [id]
     );
-    const course = result.rows[0];
+    const greenie = result.rows[0];
 
-    if (!course) throw new NotFoundError(`No course: ${handle}`);
+    if (!greenie) throw new NotFoundError(`No greenie with id: ${id}`);
   }
 }
 

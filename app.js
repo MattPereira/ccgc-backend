@@ -13,6 +13,7 @@ const usersRoutes = require("./routes/users");
 const coursesRoutes = require("./routes/courses");
 const roundsRoutes = require("./routes/rounds");
 const tournamentsRoutes = require("./routes/tournaments");
+const greeniesRoutes = require("./routes/greenies");
 
 const morgan = require("morgan");
 
@@ -28,6 +29,7 @@ app.use("/users", usersRoutes);
 app.use("/courses", coursesRoutes);
 app.use("/rounds", roundsRoutes);
 app.use("/tournaments", tournamentsRoutes);
+app.use("/greenies", greeniesRoutes);
 
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {

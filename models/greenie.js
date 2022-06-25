@@ -79,12 +79,22 @@ class Greenie {
 
   static async get(id) {
     const greenieRes = await db.query(
-      `SELECT greenies.id, round_id AS "roundId", tournament_date AS "tournamentDate", name AS "courseName", hole_number AS "holeNumber", feet, inches
-                 FROM greenies
-                 JOIN rounds ON greenies.round_id = rounds.id
-                 JOIN tournaments ON rounds.tournament_date = tournaments.date
-                 JOIN courses ON tournaments.course_handle = courses.handle
-                  WHERE greenies.id = $1`,
+      `SELECT greenies.id, 
+              round_id AS "roundId", 
+              first_name AS "firstName",
+              last_name AS "lastName",
+              tournament_date AS "tournamentDate", 
+              name AS "courseName", 
+              hole_number AS "holeNumber", 
+              img_url AS "courseImg",
+              feet, 
+              inches
+          FROM greenies
+          JOIN rounds ON greenies.round_id = rounds.id
+          JOIN tournaments ON rounds.tournament_date = tournaments.date
+          JOIN courses ON tournaments.course_handle = courses.handle
+          JOIN users ON rounds.username=users.username
+          WHERE greenies.id = $1`,
       [id]
     );
 

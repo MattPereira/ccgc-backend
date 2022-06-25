@@ -13,6 +13,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
 const Tournament = require("../models/tournament");
+const Greenie = require("../models/greenie");
 
 // const tournamentNewSchema = require("../schemas/tournamentNew.json");
 // const tournamentUpdateSchema = require("../schemas/tournamentUpdate.json");
@@ -67,20 +68,22 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[date]  =>  { tournament }
  *
- *  Returns data about a specific tournament by date.
+ *  Returns all data about a specific tournament by date.
  *
  *  strokesLeaderboard orders rounds by net_strokes ascending
  *
  *  strokesLeaderboard is { date, course_handle, season_end_year, rounds }
  *  where rounds is [{ username, strokes, total_strokes, net_strokes, player_index, score_differential, course_handicap }, ...]
- *  where strokes is {hole1, hole2, ...}
+ *  where strokes is {hole1, hole2, ..., hole18}
  *
  * puttsLeaderboard orders rounds by total_putts ascending
  *
  * puttsLeaderboard is { date, courseHandle, seasonEndYear, rounds}
+ * *  where rounds is [{ username, firstName, lastName, totalPutts, putts }, ...]
+ *  where putts is {hole1, hole2, ..., hole18}
  *
  *
- *
+ * greenies is [{id, roundId, tournamentDate, courseName, holeNumber, feet, inches, firstName, lastName}, ...]
  *
  * Authorization required: none
  */
@@ -90,8 +93,14 @@ router.get("/:date", async function (req, res, next) {
     const tournament = await Tournament.get(req.params.date);
     const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
     const puttsLeaderboard = await Tournament.getPutts(req.params.date);
+    const greenies = await Greenie.findAll(req.params.date);
     return res.json({
-      tournament: { ...tournament, strokesLeaderboard, puttsLeaderboard },
+      tournament: {
+        ...tournament,
+        strokesLeaderboard,
+        puttsLeaderboard,
+        greenies,
+      },
     });
   } catch (err) {
     return next(err);

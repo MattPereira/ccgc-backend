@@ -245,7 +245,8 @@ VALUES (27, '2021-11-20', 'tom-moore', 92,82,37,10.5,17.4,12),
 
 
 INSERT INTO greenies(round_id, hole_number, feet, inches)
-VALUES (27, 16, 79, 0),
+VALUES (27, 7, 17, 10),
+       (27, 16, 79, 0),
        (28, 7, 33, 3),
        (28, 13, 67, 0),
        (28, 16, 50, 0),
@@ -318,6 +319,17 @@ VALUES (41, '2021-12-19', 'dave-pereira', 94,81,35,13.1,21.9,15),
        (50, '2021-12-19', 'bill', 94,80,34,14.3,21.0,16)
        ;
 
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (44, 8, 28, 7),
+       (44, 14, 35, 0),
+       (45, 11, 26, 7),
+       (47, 11, 27, 8),
+       (48, 14, 33, 2),
+       (49, 11, 42, 0),
+       (50, 11, 23, 5),
+       (50, 14, 28, 1)
+        ;
+
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2021-12-19 CYPRESS LAKES-------------------------------------------------------
@@ -373,6 +385,17 @@ VALUES (51, '2022-01-09','tom-moore', 88,76.1,34,11.9,15.9,13),
        (62, '2022-01-09','dan', 98,76,36,22.0,24.1,24)
        ;
 
+
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (51, 12, 32, 10),
+       (51, 15, 55, 0),
+       (52, 3, 54, 0),
+       (57, 15, 54, 4),
+       (58, 3, 22, 1),
+       (60, 15, 29, 6),
+       (61, 8, 16, 2),
+       (62, 3, 66, 0)
+        ;
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2022-01-09 PARADISE VALLEY-------------------------------------------------------
@@ -433,6 +456,15 @@ VALUES (63, '2022-02-20','tom-moore', 96,83,40,12.8,21.3,14),
        (72, '2022-02-20','bill', 95,87,44,8.4,19.5,9),
        (73, '2022-02-20','fritz', 98,88,40,9.8,22.2,11)
        ;
+
+
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (66, 4, 10, 7),
+       (68, 2, 9, 5),
+       (68, 11, 31, 3),
+       (69, 2, 2, 10),
+       (71, 4, 38, 5)
+        ;
 
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
@@ -496,6 +528,17 @@ VALUES (74, '2022-03-20', 'tom-moore', 96,83,37,13.5,23.7,14),
        ;
 
 
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (78, 2, 7, 3),
+       (82, 2, 39, 0),
+       (84, 11, 5, 2),
+       (86, 2, 25, 7),
+       (86, 11, 9, 10),
+       (88, 11, 50, 0)
+        ;
+
+
+
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2022-03-20 LONE TREE-------------------------------------------------------
 VALUES (74, 5,7,8,5,4,5,5,7,6,5,5,5,5,5,4,4,6,5),
@@ -557,6 +600,30 @@ VALUES (89, '2022-04-10', 'dave-pereira', 80,63,33,17.4,9.4,18.8),
        ;
 
 
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (89, 4, 43, 0),
+       (89, 14, 24, 2),
+       (90, 4, 49, 8),
+       (90, 6, 18, 7),
+       (90, 12, 28, 3),
+       (91, 12, 31, 5),
+       (91, 14, 56, 0),
+       (92, 4, 60, 0),
+       (92, 6, 7, 9),
+       (92, 14, 90, 0),
+       (93, 12, 21, 0),
+       (93, 14, 84, 0),
+       (94, 12, 23, 10),
+       (94, 14, 28, 0),
+       (95, 6, 45, 0),
+       (95, 12, 27, 10),
+       (96, 12, 26, 0),
+       (96, 14, 40, 0),
+       (97, 4, 42, 6),
+       (97, 12, 36, 9)
+        ;
+
+
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 ---------2022-04-10 WILD HORSE-------------------------------------------------------
 VALUES (89, 4,4,4,4,6,3,6,4,4,5,4,4,5,3,4,5,5,6),
@@ -604,6 +671,15 @@ VALUES (98, '2022-05-15', 'tom-moore', 87,69,36,18.4,14.9,20),
        (105, '2022-05-15', 'brian-moore', 103,72,35,31.2,29.5,34),
        (106, '2022-05-15', 'bruce', 104,89,36,15.2,28.6,17)
        ;
+
+INSERT INTO greenies(round_id, hole_number, feet, inches)
+VALUES (98, 3, 23, 5),
+        (98, 15, 66, 0),
+        (100, 3, 4, 2),
+        (103, 3, 26, 3),
+        (103, 8, 69, 0),
+        (104, 3, 18, 2)
+        ;
 
 
 INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)

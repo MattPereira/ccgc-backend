@@ -59,11 +59,14 @@ class Greenie {
     let queryValues = [];
 
     if (date !== undefined) {
+      //order by hole_number if looking at a particular tournament
       query += " WHERE tournament_date = $1";
       queryValues.push(date);
+      query += " ORDER BY hole_number, feet, inches";
+    } else {
+      //order by distance only if looking at all greenies
+      query += " ORDER BY feet, inches";
     }
-
-    query += " ORDER BY feet, inches";
 
     const greeniesRes = await db.query(query, queryValues);
 

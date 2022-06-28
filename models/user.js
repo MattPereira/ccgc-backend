@@ -116,10 +116,11 @@ class User {
   /** Given a username, return data about user including all rounds played.
    *
    * Returns { username, first_name, last_name, is_admin, rounds}
-   *   where rounds is [{ id, tournamentDate, pars, strokes, putts,  totalStrokes, netStrokes, totalPutts }]
+   *   where rounds is [{ id, tournamentDate, pars, strokes, putts, greenies, totalStrokes, netStrokes, totalPutts }]
    *   where pars is { hole1, hole2, ..., hole18 }
    *   where strokes is { hole1, hole2, ..., hole18 }
    *   where putts is { hole1, hole2, ..., hole18 }
+   *   where greenies is [{ id, roundId, tournamentDate, holeNumber, feet, inches, courseImg, courseName, firstName, lastName}, ...]
    *
    * Throws NotFoundError if user not found.
    **/
@@ -187,9 +188,29 @@ class User {
           WHERE course_handle IN (${courseHandles.join(", ")})`
     );
 
+    const greeniesRes = await db.query(
+      `SELECT greenies.id, 
+              round_id AS "roundId", 
+              first_name AS "firstName",
+              last_name AS "lastName",
+              tournament_date AS "tournamentDate", 
+              name AS "courseName", 
+              hole_number AS "holeNumber", 
+              img_url AS "courseImg",
+              feet, 
+              inches
+            FROM greenies
+            JOIN rounds ON greenies.round_id = rounds.id
+            JOIN tournaments ON rounds.tournament_date = tournaments.date
+            JOIN courses ON tournaments.course_handle = courses.handle
+            JOIN users ON rounds.username=users.username
+            WHERE round_id IN (${roundsIds.join(", ")})`
+    );
+
     const strokes = strokesRes.rows;
     const putts = puttsRes.rows;
     const pars = parsRes.rows;
+    const greenies = greeniesRes.rows;
 
     //map strokes and putts data to user.rounds
     user.rounds.map((r) => {
@@ -209,6 +230,14 @@ class User {
         if (p.course_handle === r.courseHandle) {
           // delete p.course_handle;
           r.pars = p;
+        }
+      });
+
+      //make an array to push each greenie into
+      r.greenies = [];
+      greenies.map((g) => {
+        if (g.roundId === r.id) {
+          r.greenies.push(g);
         }
       });
     });

@@ -15,6 +15,17 @@ class Greenie {
    *
    * */
   static async create({ roundId, holeNumber, feet, inches }) {
+    //block a user from inputing more than one greenie per hole for one round
+    const duplicateCheck = await db.query(
+      `SELECT round_id, hole_number
+           FROM greenies
+           WHERE round_id = $1 AND hole_number = $2`,
+      [roundId, holeNumber]
+    );
+
+    if (duplicateCheck.rows[0])
+      throw new BadRequestError(`Only allowed to submit one greenie per hole`);
+
     const greenieRes = await db.query(
       `INSERT INTO greenies
            (round_id, hole_number, feet, inches)

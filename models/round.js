@@ -29,7 +29,7 @@ class Round {
 
     if (duplicateCheck.rows[0])
       throw new BadRequestError(
-        `Members are only allowed to submit one round per tournament!`
+        `Each golfer is only allowed to submit one round per tournament!`
       );
 
     /**  Sum the strokes and putts objects to get total_strokes and total_putts */
@@ -117,6 +117,11 @@ class Round {
 
     const roundId = roundRes.rows[0].id;
 
+    // Insert the round into the points table to intiate points row for the round
+    // This points row will be updated later by the Point Model
+    await db.query(`INSERT INTO points (round_id) VALUES ($1)`, [roundId]);
+
+    //Insert all the strokes for the round
     const strokesRes = await db.query(
       `INSERT INTO strokes
         (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
@@ -145,6 +150,7 @@ class Round {
       ]
     );
 
+    //Insert all the putts for the round
     const puttsRes = await db.query(
       `INSERT INTO putts
         (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
@@ -305,14 +311,6 @@ class Round {
     //Throw bad request error if data is empty
     if (Object.keys(strokes).length === 0 || Object.keys(putts).length === 0)
       throw new BadRequestError("No data");
-
-    // is this even necessary?!?
-    // const strokesRes = await db.query(
-    //   `UPDATE strokes
-    //     SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$17, hole17=$17, hole18=$18
-    //     WHERE round_id=$19`,
-    //     []
-    // );
 
     /**  Sum the strokes and putts objects to get the new total_strokes and total_putts */
     const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);

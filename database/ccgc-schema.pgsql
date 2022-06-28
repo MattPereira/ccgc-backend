@@ -82,6 +82,17 @@ create TABLE rounds (
     course_handicap INTEGER NOT NULL
 );
 
+create TABLE points (
+    round_id INTEGER NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
+    strokes INTEGER NOT NULL DEFAULT 0,
+    putts INTEGER NOT NULL DEFAULT 0,
+    greenies INTEGER NOT NULL DEFAULT 0,
+    pars INTEGER NOT NULL DEFAULT 0,
+    birdies INTEGER NOT NULL DEFAULT 0,
+    eagles INTEGER NOT NULL DEFAULT 0,
+    participation INTEGER NOT NULL DEFAULT 5
+);
+
 
 create TABLE greenies (
     id SERIAL PRIMARY KEY,

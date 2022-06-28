@@ -93,7 +93,21 @@ VALUES (1,'2021-09-12','tom-moore', 90,78,43,11.6,21.0,13),
        (13, '2021-09-12', 'brian-moore', 128,101,43,27.3,55.3,29),
        (14, '2021-09-12', 'bruce', 100,84,39,16.2,26.6,17);
 
-
+INSERT INTO points (round_id)
+VALUES  (1),
+        (2),
+        (3),
+        (4),
+        (5),
+        (6),
+        (7),
+        (8),
+        (9),
+        (10),
+        (11),
+        (12),
+        (13),
+        (14);
 
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (1, 5, 43, 8),
@@ -169,6 +183,20 @@ VALUES (15, '2021-10-09', 'dave-pereira', 94,85,35,8.8,22.0,9),
        (26, '2021-10-09', 'matt-pereira', 91,77,34,14.0,20.2,15)
        ;
 
+INSERT INTO points (round_id)
+VALUES (15),
+       (16),
+       (17),
+       (18),
+       (19),
+       (20),
+       (21),
+       (22),
+       (23),
+       (24),
+       (25),
+       (26);
+
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (16, 2, 43, 7),
        (17, 2, 17, 0),
@@ -243,6 +271,22 @@ VALUES (27, '2021-11-20', 'tom-moore', 92,82,37,10.5,17.4,12),
        (40, '2021-11-20', 'matt-pereira', 95,81,35,14.0,21.9,16)
        ;
 
+INSERT INTO points (round_id)
+VALUES (27),
+       (28),
+       (29),
+       (30),
+       (31),
+       (32),
+       (33),
+       (34),
+       (35),
+       (36),
+       (37),
+       (38),
+       (39),
+       (40)
+       ;
 
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (27, 7, 17, 10),
@@ -319,6 +363,20 @@ VALUES (41, '2021-12-19', 'dave-pereira', 94,81,35,13.1,21.9,15),
        (50, '2021-12-19', 'bill', 94,80,34,14.3,21.0,16)
        ;
 
+INSERT INTO points (round_id)
+VALUES (41),
+       (42),
+       (43),
+       (44),
+       (45),
+       (46),
+       (47),
+       (48),
+       (49),
+       (50)
+       ;
+
+
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (44, 8, 28, 7),
        (44, 14, 35, 0),
@@ -385,6 +443,20 @@ VALUES (51, '2022-01-09','tom-moore', 88,76.1,34,11.9,15.9,13),
        (62, '2022-01-09','dan', 98,76,36,22.0,24.1,24)
        ;
 
+INSERT INTO points (round_id)
+VALUES (51),
+       (52),
+       (53),
+       (54),
+       (55),
+       (56),
+       (57),
+       (58),
+       (59),
+       (60),
+       (61),
+       (62)
+       ;
 
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (51, 12, 32, 10),
@@ -455,6 +527,20 @@ VALUES (63, '2022-02-20','tom-moore', 96,83,40,12.8,21.3,14),
        (71, '2022-02-20','bruce', 95,81,39,14.3,18.6,16),
        (72, '2022-02-20','bill', 95,87,44,8.4,19.5,9),
        (73, '2022-02-20','fritz', 98,88,40,9.8,22.2,11)
+       ;
+
+INSERT INTO points (round_id)
+VALUES (63),
+       (64),
+       (65),
+       (66),
+       (67),
+       (68),
+       (69),
+       (70),
+       (71),
+       (72),
+       (73)
        ;
 
 
@@ -528,6 +614,24 @@ VALUES (74, '2022-03-20', 'tom-moore', 96,83,37,13.5,23.7,14),
        ;
 
 
+INSERT INTO points (round_id)
+VALUES (74),
+       (75),
+       (76),
+       (77),
+       (78),
+       (79),
+       (80),
+       (81),
+       (82),
+       (83),
+       (84),
+       (85),
+       (86),
+       (87),
+       (88)
+       ;
+
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (78, 2, 7, 3),
        (82, 2, 39, 0),
@@ -600,6 +704,18 @@ VALUES (89, '2022-04-10', 'dave-pereira', 80,63,33,17.4,9.4,18.8),
        ;
 
 
+INSERT INTO points (round_id)
+VALUES (89),
+       (90),
+       (91),
+       (92),
+       (93),
+       (94),
+       (95),
+       (96),
+       (97)
+       ;
+
 INSERT INTO greenies(round_id, hole_number, feet, inches)
 VALUES (89, 4, 43, 0),
        (89, 14, 24, 2),
@@ -670,6 +786,18 @@ VALUES (98, '2022-05-15', 'tom-moore', 87,69,36,18.4,14.9,20),
        (104, '2022-05-15', 'mike-p', 96,76,39,19.9,23.1,22),
        (105, '2022-05-15', 'brian-moore', 103,72,35,31.2,29.5,34),
        (106, '2022-05-15', 'bruce', 104,89,36,15.2,28.6,17)
+       ;
+
+INSERT INTO points (round_id)
+VALUES (98),
+       (99),
+       (100),
+       (101),
+       (102),
+       (103),
+       (104),
+       (105),
+       (106)
        ;
 
 INSERT INTO greenies(round_id, hole_number, feet, inches)

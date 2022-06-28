@@ -1,6 +1,6 @@
 "use strict";
 
-/** Routes for courses:
+/** Routes for tournaments:
  * create a tournament,
  * get all tournament,
  * get a specific tournament,
@@ -90,6 +90,9 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:date", async function (req, res, next) {
   try {
+    //SHOULD I JUST DROP THIS IN HERE TO UPDATE POINTS TABLE?
+    //await Point.update(req.params.date);
+
     const tournament = await Tournament.get(req.params.date);
     const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
     const puttsLeaderboard = await Tournament.getPutts(req.params.date);

@@ -265,9 +265,12 @@ class Course {
       if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
     }
 
+    console.log("BASIC DATA", basicData);
     // update the basic course data if data.basicData is provided
     if (Object.keys(basicData).length > 0) {
-      const { setCols, values } = sqlForPartialUpdate(basicData, {});
+      const { setCols, values } = sqlForPartialUpdate(basicData, {
+        imgUrl: "img_url",
+      });
 
       const handleVarIdx = "$" + (values.length + 1);
 

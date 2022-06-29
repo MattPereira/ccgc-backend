@@ -7,8 +7,9 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for tour points.
  *
  *
- * ALL POINTS METHODS ARE SQL UPDATES (NO CREATE OR DELETE)
- * because points row for each round is created upon Round.create method
+ * ALL POINT MODEL METHODS ARE SQL UPDATES (NO CREATE OR DELETE)
+ * because points row for each round is created with the Round model
+ * .create method
  *
  * do i even need a seperate points model? or should i hang this all in one method
  * on the tournaments model?
@@ -18,9 +19,74 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
  *
  * HOW TO TRIGGER POINT GENERATION?
  *
+ * Considering loop to manually trigger for seeded data
+ * then copy db and push to heroku
+ *
+ * but after that update will only be called each time a new round is created?
+ *
  */
 
 class Point {
+  /** Find all points
+   *
+   * sum the column values and group by username
+   *
+   * */
+  static async getStandings() {
+    const standingsRes = await db.query(
+      `SELECT rounds.username,
+              first_name AS "firstName",
+              last_name AS "lastName",
+            SUM(participation) AS "participations",
+            SUM(strokes) AS "strokes", 
+            SUM(putts) AS "putts", 
+            SUM(greenies) AS "greenies", 
+            SUM(pars) AS "pars", 
+            SUM(birdies) AS "birdies", 
+            SUM(eagles) AS "eagles", 
+            SUM(aces) AS "aces",
+            (SUM(strokes) + SUM(putts) + SUM(greenies) + SUM(participation) + SUM(pars) + SUM(birdies) + SUM(eagles) + SUM(aces)) AS "total"
+          FROM points 
+          JOIN rounds ON points.round_id=rounds.id
+          JOIN users ON rounds.username=users.username
+          GROUP BY rounds.username, last_name, first_name
+          ORDER BY total DESC;`
+    );
+
+    return standingsRes.rows;
+  }
+
+  /** Find all points for a specific tournament_date
+   *
+   * sum the columns
+   *
+   *
+   *
+   * */
+  static async getByTournament(tournamentDate) {
+    const result = await db.query(
+      `SELECT first_name AS "firstName",
+              last_name AS "lastName",
+              participation,
+              strokes,
+              putts,
+              greenies,
+              pars,
+              birdies, 
+              eagles, 
+              aces,
+              (strokes + putts + greenies + participation + pars + birdies + eagles + aces) AS "total"
+            FROM points 
+            JOIN rounds ON points.round_id=rounds.id 
+            JOIN users ON rounds.username=users.username
+            WHERE tournament_date = $1
+            ORDER BY total DESC`,
+      [tournamentDate]
+    );
+
+    return result.rows;
+  }
+
   /**
    * handle updating points table by tournament_date?
    * */
@@ -102,62 +168,27 @@ class Point {
       if (g.feet < 2) total += 3;
       return { roundId: g.roundId, points: total };
     });
-
     console.log(greenieIdsAndPoints);
 
-    // for (let greenie of greenieIdsAndPoints) {
-    //   await db.query(`UPDATE points SET greenies=$1 WHERE round_id=$2`, [
-    //     greenie[1],
-    //     greenie[0],
-    //   ]);
-    // }
+    //THIS DOES NOT HANDLE DELETION OF A GREENIE TO TAKE AWAY POINTS!!!
+    //THIS DOES NOT HANDLE MULTIPLE GREENIES NEEDING TO BE SUMMED UP
+    for (let greenie of greenieIdsAndPoints) {
+      await db.query(`UPDATE points SET greenies=$1 WHERE round_id=$2`, [
+        greenie.points,
+        greenie.roundId,
+      ]);
+    }
 
+    /*********Query points table for the return statement**************/
     const pointsRes = await db.query(
-      `SELECT round_id, username, strokes, putts, tournament_date 
+      `SELECT round_id, username, participation, strokes, putts, greenies, pars, birdies, eagles 
           FROM points JOIN rounds 
           ON rounds.id=points.round_id 
           WHERE tournament_date=$1`,
       [tournamentDate]
     );
 
-    return greeniesRes.rows;
-  }
-
-  /**
-   * handle adding points to putts_position column of points table
-   * */
-  static async puttsPosition(tournamentDate) {
-    // feed in some tournament date
-    // select all the rounds for that date
-    // order by total_putts from lowest to highest
-    // look at the first 3 rows and map the round ids into an array
-    // insert into points that round id and however many points the finishing position should get?
-  }
-
-  /**
-   * handle adding points to participation column of points table
-   * */
-  static async participation(tournamentDate) {
-    // feed in some tournament date
-    // select all the rounds for that date
-    // look at all the rows and map the round ids into an array
-    // insert into points table that round id and 5 points for participation
-    // OR JUST DEFAULT THE PARTICIPATION COLUMN TO 5???
-  }
-
-  /**
-   * handle adding points to greenies column of points table
-   * */
-  static async greenies(tournamentDate) {
-    // feed in some tournament date
-    // select all the rounds for that date joined with the greenies table?
-    const result = await db.query(
-      `SELECT id FROM rounds 
-      JOIN greenies ON rounds.id=greenies.id WHERE tournament_date='2021-09-12'`
-    );
-
-    //go through each row that is returned
-    //and calculate how many greenie points each round_id should receive?
+    return pointsRes.rows;
   }
 }
 

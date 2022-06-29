@@ -204,7 +204,8 @@ class User {
             JOIN tournaments ON rounds.tournament_date = tournaments.date
             JOIN courses ON tournaments.course_handle = courses.handle
             JOIN users ON rounds.username=users.username
-            WHERE round_id IN (${roundsIds.join(", ")})`
+            WHERE round_id IN (${roundsIds.join(", ")})
+            ORDER BY hole_number`
     );
 
     const strokes = strokesRes.rows;

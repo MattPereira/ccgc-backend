@@ -90,6 +90,7 @@ create TABLE points (
     pars INTEGER NOT NULL DEFAULT 0,
     birdies INTEGER NOT NULL DEFAULT 0,
     eagles INTEGER NOT NULL DEFAULT 0,
+    aces INTEGER NOT NULL DEFAULT 0,
     participation INTEGER NOT NULL DEFAULT 5
 );
 

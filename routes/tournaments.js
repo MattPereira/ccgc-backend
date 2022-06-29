@@ -14,6 +14,7 @@ const { BadRequestError } = require("../expressError");
 const { ensureAdmin } = require("../middleware/auth");
 const Tournament = require("../models/tournament");
 const Greenie = require("../models/greenie");
+const Point = require("../models/point");
 
 // const tournamentNewSchema = require("../schemas/tournamentNew.json");
 // const tournamentUpdateSchema = require("../schemas/tournamentUpdate.json");
@@ -90,16 +91,20 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:date", async function (req, res, next) {
   try {
-    //SHOULD I JUST DROP THIS IN HERE TO UPDATE POINTS TABLE?
-    //await Point.update(req.params.date);
+    const { date } = req.params;
 
-    const tournament = await Tournament.get(req.params.date);
-    const strokesLeaderboard = await Tournament.getStrokes(req.params.date);
-    const puttsLeaderboard = await Tournament.getPutts(req.params.date);
-    const greenies = await Greenie.findAll(req.params.date);
+    //update the points table whenever this tournament route is hit
+    await Point.update(date);
+
+    const tournament = await Tournament.get(date);
+    const strokesLeaderboard = await Tournament.getStrokes(date);
+    const puttsLeaderboard = await Tournament.getPutts(date);
+    const pointsLeaderboard = await Point.getByTournament(date);
+    const greenies = await Greenie.findAll(date);
     return res.json({
       tournament: {
         ...tournament,
+        pointsLeaderboard,
         strokesLeaderboard,
         puttsLeaderboard,
         greenies,

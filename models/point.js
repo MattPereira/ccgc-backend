@@ -112,7 +112,7 @@ class Point {
           strokesIds[i],
         ]);
       } else {
-        //else block will handle removal of points from roundIds that are not longer top 5
+        //else block will handle removal of points from roundIds that are no longer top 5
         await db.query(`UPDATE points SET strokes=$1 WHERE round_id=$2`, [
           0,
           strokesIds[i],
@@ -157,26 +157,116 @@ class Point {
       [tournamentDate]
     );
 
-    //now we have an array of objects containing roundId and feet
-    //need to insert into points table at roundId the appropriate number of points based on feet
-    //trying to build nested array like [[1,3], [4, 1], [10, 5]]
-    //where the first index of the nested array is the roundId and the second index is the total number of greenie points
-    const greenieIdsAndPoints = greeniesRes.rows.map((g) => {
+    //array of objects containing roundId and points per greenie depending on feet
+    const greenieObjs = greeniesRes.rows.map((g) => {
       let total = 1;
       if (g.feet < 20 && g.feet >= 10) total += 1;
       if (g.feet < 10 && g.feet >= 2) total += 2;
       if (g.feet < 2) total += 3;
       return { roundId: g.roundId, points: total };
     });
-    console.log(greenieIdsAndPoints);
 
-    //THIS DOES NOT HANDLE DELETION OF A GREENIE TO TAKE AWAY POINTS!!!
-    //THIS DOES NOT HANDLE MULTIPLE GREENIES NEEDING TO BE SUMMED UP
-    for (let greenie of greenieIdsAndPoints) {
+    console.log("GREENIE OBJS", greenieObjs);
+
+    //reduce the greenieObjs to sum the points for each unique roundId
+    const reducedGreenieObjs = greenieObjs.reduce((acc, item) => {
+      //item points at each obj in array
+      const { roundId, points } = item;
+      //does roundId exist in intial object?
+      if (acc[roundId]) {
+        acc[roundId] += points;
+      } else {
+        acc[roundId] = points;
+      }
+      return acc;
+    }, {});
+
+    //reformat the reducedGreenieObjs
+    const finalGreenieObj = Object.keys(reducedGreenieObjs).map((k) => ({
+      roundId: k,
+      points: reducedGreenieObjs[k],
+    }));
+
+    for (let greenie of finalGreenieObj) {
       await db.query(`UPDATE points SET greenies=$1 WHERE round_id=$2`, [
         greenie.points,
         greenie.roundId,
       ]);
+    }
+
+    //EDGE CASE: deleting last existing greenie for a roundId will not remove the greenie points
+    const greenieRoundIds = greeniesRes.rows.map((g) => g.roundId);
+    //strokesId contains all roundIds for the tournament_date
+    const nonGreenieRoundIds = strokesIds.filter(
+      (id) => !greenieRoundIds.includes(id)
+    );
+
+    for (let id of nonGreenieRoundIds) {
+      await db.query(`UPDATE points SET greenies=$1 WHERE round_id=$2`, [
+        0,
+        id,
+      ]);
+    }
+
+    /*********Update the points table columns pars, birdies, eagles, aces **************/
+    //grab the pars for each hole for the course played using the tournamentDate
+    const parsRes = await db.query(
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+         FROM pars
+         JOIN courses ON courses.handle=pars.course_handle
+         JOIN tournaments ON courses.handle=tournaments.course_handle
+         WHERE tournaments.date=$1`,
+      [tournamentDate]
+    );
+
+    //create array of 18 par values from the parsRes
+    const parsArr = Object.values(parsRes.rows[0]);
+
+    //grab the roundId and strokes for each round for the tournamentDate
+    const strokesRes = await db.query(
+      `SELECT round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+         FROM strokes
+         JOIN rounds ON rounds.id=strokes.round_id
+         WHERE rounds.tournament_date=$1`,
+      [tournamentDate]
+    );
+
+    //array of objects containing roundId and strokes
+    const roundsArr = strokesRes.rows.map((s) => {
+      return {
+        roundId: Object.values(s)[0],
+        strokes: Object.values(s).slice(1, 19),
+      };
+    });
+
+    // console.log("ROUNDS ARR", roundsArr);
+
+    for (let round of roundsArr) {
+      // console.log("ROUND STROKES", round.strokes);
+      //count the pars and birdies
+      let parCount = 0;
+      let birdyCount = 0;
+      let eagleCount = 0;
+      let aceCount = 0;
+      for (let i = 0; i < round.strokes.length; i++) {
+        if (round.strokes[i] === parsArr[i]) {
+          parCount += 1;
+        }
+        if (round.strokes[i] === parsArr[i] - 1) {
+          birdyCount += 1;
+        }
+        if (round.strokes[i] === parsArr[i] - 2) {
+          eagleCount += 1;
+        }
+        if (round.strokes[i] === 1) {
+          aceCount += 1;
+        }
+      }
+      //Update pars, birdies, eagles, and aces including the bonus multiplier
+      await db.query(
+        `UPDATE points SET pars=$1, birdies=$2, eagles=$3, aces=$4 WHERE round_id=$5`,
+        [parCount, birdyCount * 2, eagleCount * 4, aceCount * 10, round.roundId]
+      );
     }
 
     /*********Query points table for the return statement**************/

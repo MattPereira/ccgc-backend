@@ -93,10 +93,10 @@ class Point {
   static async update(tournamentDate) {
     /********* Update the points table column "strokes" **************/
 
-    // insert into points the roundIds and appropriate number of points based on finishing position
+    // insert into points the roundIds with corresponding point values based on finishing position
     // select all the roundIds for that date ordered by net_strokes from lowest to highest
     const strokesPosRes = await db.query(
-      `SELECT id, net_strokes FROM rounds WHERE tournament_date=$1 ORDER BY net_strokes ASC`,
+      `SELECT id, net_strokes FROM rounds WHERE tournament_date=$1 ORDER BY net_strokes, total_strokes ASC`,
       [tournamentDate]
     );
 

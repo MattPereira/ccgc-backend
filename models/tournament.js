@@ -102,30 +102,30 @@ class Tournament {
 
     const tournament = tournamentRes.rows[0];
 
-    // Add pars to tournament
-    const parsRes = await db.query(
-      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-              hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
-              FROM pars
-              WHERE course_handle='${tournament.courseHandle}'`
-    );
+    // is this still necessary?
+    // const parsRes = await db.query(
+    //   `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+    //           hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
+    //           FROM pars
+    //           WHERE course_handle='${tournament.courseHandle}'`
+    // );
 
-    tournament.pars = parsRes.rows[0];
+    // tournament.pars = parsRes.rows[0];
 
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
     const roundsRes = await db.query(
-      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_strokes AS "totalStrokes", net_strokes AS "netStrokes", total_putts AS "totalPutts", player_index AS "playerIndex", score_differential AS "scoreDifferential", course_handicap AS "courseHandicap"
+      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_strokes AS "totalStrokes", net_strokes AS "netStrokes", course_handicap AS "courseHandicap"
           FROM rounds 
           JOIN users ON rounds.username = users.username
           WHERE tournament_date = $1
-          ORDER BY net_strokes ASC`,
+          ORDER BY net_strokes, total_strokes ASC`,
       [date]
     );
     const rounds = roundsRes.rows;
 
     if (rounds.length > 0) {
-      //map an array of roundIds to more efficiently query the strokes table
+      //map an array of roundIds to more efficiently query the strokes and points tables
       const roundsIds = rounds.map((r) => r.id);
 
       const strokesRes = await db.query(
@@ -138,12 +138,27 @@ class Tournament {
 
       const strokes = strokesRes.rows;
 
-      // associate strokes with each round based on roundId
+      const pointsRes = await db.query(
+        `SELECT round_id AS "roundId",
+                strokes
+                FROM points
+                WHERE round_id IN (${roundsIds.join(",")})`
+      );
+
+      const points = pointsRes.rows;
+
+      // associate strokes and points with each round based on roundId
       rounds.map((r) => {
         strokes.map((s) => {
           if (s.roundId === r.id) {
             delete s.roundId;
             r.strokes = s;
+          }
+        });
+        points.map((p) => {
+          if (p.roundId === r.id) {
+            delete p.roundId;
+            r.points = p.strokes;
           }
         });
       });
@@ -184,15 +199,25 @@ class Tournament {
       [date]
     );
 
+    const rounds = roundsRes.rows;
+    const roundsIds = rounds.map((r) => r.id);
+
     const puttsRes = await db.query(
       `SELECT round_id AS "roundId",
                   hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
                   hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                  FROM putts`
+                  FROM putts
+                  WHERE round_id IN (${roundsIds.join(",")})`
     );
-
-    const rounds = roundsRes.rows;
     const putts = puttsRes.rows;
+
+    const pointsRes = await db.query(
+      `SELECT round_id as "roundId",
+              putts
+              FROM points
+              WHERE round_id IN (${roundsIds.join(",")})`
+    );
+    const points = pointsRes.rows;
 
     // associate putts with each round based on roundId
     rounds.map((r) => {
@@ -200,6 +225,12 @@ class Tournament {
         if (p.roundId === r.id) {
           delete p.roundId;
           r.putts = p;
+        }
+      });
+      points.map((p) => {
+        if (p.roundId === r.id) {
+          delete p.roundId;
+          r.points = p.putts;
         }
       });
     });

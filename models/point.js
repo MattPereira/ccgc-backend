@@ -65,7 +65,8 @@ class Point {
    * */
   static async getByTournament(tournamentDate) {
     const result = await db.query(
-      `SELECT first_name AS "firstName",
+      `SELECT users.username,
+              first_name AS "firstName",
               last_name AS "lastName",
               participation,
               strokes,
@@ -102,6 +103,7 @@ class Point {
 
     //make array of roundIds ordered from lowest to highest net_strokes
     const strokesIds = strokesPosRes.rows.map((r) => r.id);
+    console.log("STROKES IDS", strokesIds);
     //array of points to be awarded for each roundId by finishing position
     const strokesPoints = [25, 20, 15, 10, 5];
 
@@ -201,6 +203,8 @@ class Point {
       (id) => !greenieRoundIds.includes(id)
     );
 
+    console.log("NON GREENIE ROUND IDS", nonGreenieRoundIds);
+
     for (let id of nonGreenieRoundIds) {
       await db.query(`UPDATE points SET greenies=$1 WHERE round_id=$2`, [
         0,
@@ -222,6 +226,8 @@ class Point {
     //create array of 18 par values from the parsRes
     const parsArr = Object.values(parsRes.rows[0]);
 
+    console.log("PARS ARR", parsArr);
+
     //grab the roundId and strokes for each round for the tournamentDate
     const strokesRes = await db.query(
       `SELECT round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
@@ -238,6 +244,8 @@ class Point {
         strokes: Object.values(s).slice(1, 19),
       };
     });
+
+    console.log("ROUNDS ARR", roundsArr);
 
     // console.log("ROUNDS ARR", roundsArr);
 

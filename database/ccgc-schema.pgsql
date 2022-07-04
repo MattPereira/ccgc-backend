@@ -97,7 +97,7 @@ create TABLE points (
 
 create TABLE greenies (
     id SERIAL PRIMARY KEY,
-    round_id INTEGER NOT NULL REFERENCES rounds(id),
+    round_id INTEGER NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
     hole_number INTEGER NOT NULL,
     feet INTEGER NOT NULL,
     inches INTEGER NOT NULL

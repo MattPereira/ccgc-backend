@@ -102,16 +102,6 @@ class Tournament {
 
     const tournament = tournamentRes.rows[0];
 
-    // is this still necessary?
-    // const parsRes = await db.query(
-    //   `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-    //           hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
-    //           FROM pars
-    //           WHERE course_handle='${tournament.courseHandle}'`
-    // );
-
-    // tournament.pars = parsRes.rows[0];
-
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
     const roundsRes = await db.query(
@@ -200,41 +190,43 @@ class Tournament {
     );
 
     const rounds = roundsRes.rows;
-    const roundsIds = rounds.map((r) => r.id);
 
-    const puttsRes = await db.query(
-      `SELECT round_id AS "roundId",
+    if (rounds.length > 0) {
+      const roundsIds = rounds.map((r) => r.id);
+
+      const puttsRes = await db.query(
+        `SELECT round_id AS "roundId",
                   hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
                   hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
                   FROM putts
                   WHERE round_id IN (${roundsIds.join(",")})`
-    );
-    const putts = puttsRes.rows;
+      );
+      const putts = puttsRes.rows;
 
-    const pointsRes = await db.query(
-      `SELECT round_id as "roundId",
+      const pointsRes = await db.query(
+        `SELECT round_id as "roundId",
               putts
               FROM points
               WHERE round_id IN (${roundsIds.join(",")})`
-    );
-    const points = pointsRes.rows;
+      );
+      const points = pointsRes.rows;
 
-    // associate putts with each round based on roundId
-    rounds.map((r) => {
-      putts.map((p) => {
-        if (p.roundId === r.id) {
-          delete p.roundId;
-          r.putts = p;
-        }
+      // associate putts with each round based on roundId
+      rounds.map((r) => {
+        putts.map((p) => {
+          if (p.roundId === r.id) {
+            delete p.roundId;
+            r.putts = p;
+          }
+        });
+        points.map((p) => {
+          if (p.roundId === r.id) {
+            delete p.roundId;
+            r.points = p.putts;
+          }
+        });
       });
-      points.map((p) => {
-        if (p.roundId === r.id) {
-          delete p.roundId;
-          r.points = p.putts;
-        }
-      });
-    });
-
+    }
     tournament.rounds = rounds;
 
     return tournament;

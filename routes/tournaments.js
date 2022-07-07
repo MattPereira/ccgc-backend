@@ -93,9 +93,6 @@ router.get("/:date", async function (req, res, next) {
   try {
     const { date } = req.params;
 
-    //update the points table whenever this tournament route is hit
-    await Point.update(date);
-
     const tournament = await Tournament.get(date);
     const strokesLeaderboard = await Tournament.getStrokes(date);
     const puttsLeaderboard = await Tournament.getPutts(date);

@@ -73,14 +73,14 @@ router.patch("/all", async function (req, res, next) {
     const tournaments = await Tournament.findAll();
     const dates = tournaments.map((tournament) => tournament.date);
 
-    //update points for each tournament date
-    const pointsUpdates = [];
+    //update points for each tournament date previously seeded into db
     for (const date of dates) {
-      let update = await Point.update(date);
-      pointsUpdates.push(update);
+      await Point.updateStrokes(date);
+      await Point.updatePutts(date);
+      await Point.updateSeededData(date);
     }
 
-    return res.status(201).json({ pointsUpdates });
+    return res.status(201).json({ success: "seed data updated!" });
   } catch (err) {
     return next(err);
   }

@@ -83,7 +83,7 @@ create TABLE rounds (
 );
 
 create TABLE points (
-    round_id INTEGER NOT NULL REFERENCES rounds(id) ON DELETE CASCADE,
+    round_id INTEGER PRIMARY KEY REFERENCES rounds(id) ON DELETE CASCADE,
     strokes INTEGER NOT NULL DEFAULT 0,
     putts INTEGER NOT NULL DEFAULT 0,
     greenies INTEGER NOT NULL DEFAULT 0,
@@ -91,7 +91,7 @@ create TABLE points (
     birdies INTEGER NOT NULL DEFAULT 0,
     eagles INTEGER NOT NULL DEFAULT 0,
     aces INTEGER NOT NULL DEFAULT 0,
-    participation INTEGER NOT NULL DEFAULT 5
+    participation INTEGER NOT NULL DEFAULT 3
 );
 
 

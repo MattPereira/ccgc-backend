@@ -17,6 +17,7 @@ const {
   ensureLoggedIn,
 } = require("../middleware/auth");
 const Round = require("../models/round");
+const Point = require("../models/point");
 
 // const roundNewSchema = require("../schemas/roundNew.json");
 // const roundUpdateSchema = require("../schemas/roundUpdate.json");
@@ -46,6 +47,15 @@ router.post("/", async function (req, res, next) {
     // }
 
     const round = await Round.create(req.body);
+
+    //create a points row for the new round
+    await Point.create(round);
+
+    // update the strokes and putts points for the
+    // corresponding tournament after adding a new round
+    await Point.updateStrokes(round.tournamentDate);
+    await Point.updatePutts(round.tournamentDate);
+
     return res.status(201).json({ round });
   } catch (err) {
     return next(err);
@@ -116,6 +126,11 @@ router.patch("/:id", async function (req, res, next) {
 
     const round = await Round.update(req.params.id, req.body);
 
+    // UPDATE THE POINTS TABLE
+    //await Point.update(round.id)
+    //await Point.updateScores
+    //await Point.updatePutts
+
     return res.json({ round });
   } catch (err) {
     return next(err);
@@ -131,7 +146,16 @@ router.patch("/:id", async function (req, res, next) {
 
 router.delete("/:id", async function (req, res, next) {
   try {
+    //sloppy but need to grab round data for Point.updates below
+    const round = await Round.get(req.params.id);
+
     await Round.remove(req.params.id);
+
+    //update the strokes and putts points after deleting a round
+    // the pars, bird, eag, ace, participation is handled by cascade
+    await Point.updateStrokes(round.tournamentDate);
+    await Point.updatePutts(round.tournamentDate);
+
     return res.json({ deleted: req.params.id });
   } catch (err) {
     return next(err);

@@ -101,7 +101,11 @@ class Round {
       `INSERT INTO rounds
            (tournament_date, username, total_strokes, total_putts, score_differential, player_index, course_handicap, net_strokes)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           RETURNING id, tournament_date, username, total_strokes AS "totalStrokes", total_putts AS "totalPutts" `,
+           RETURNING id, 
+           tournament_date AS "tournamentDate", 
+           username, 
+           total_strokes AS "totalStrokes", 
+           total_putts AS "totalPutts"`,
       [
         tournamentDate,
         username,
@@ -116,10 +120,6 @@ class Round {
     console.log("ROUND ID", roundRes.rows[0].id);
 
     const roundId = roundRes.rows[0].id;
-
-    // Insert the round into the points table to intiate points row for the round
-    // This points row will be updated later by the Point Model
-    await db.query(`INSERT INTO points (round_id) VALUES ($1)`, [roundId]);
 
     //Insert all the strokes for the round
     const strokesRes = await db.query(
@@ -184,6 +184,7 @@ class Round {
     round.strokes = strokesRes.rows[0];
     round.putts = puttsRes.rows[0];
 
+    console.log(round);
     return round;
   }
 

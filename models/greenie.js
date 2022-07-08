@@ -30,7 +30,7 @@ class Greenie {
       `INSERT INTO greenies
            (round_id, hole_number, feet, inches)
            VALUES ($1, $2, $3, $4)
-           RETURNING round_id AS "roundId", hole_number AS "holeNumber", feet, inches`,
+           RETURNING id, round_id AS "roundId", hole_number AS "holeNumber", feet, inches`,
       [roundId, holeNumber, feet, inches]
     );
 
@@ -114,12 +114,16 @@ class Greenie {
 
     const greenie = greenieRes.rows[0];
 
+    if (!greenie) throw new NotFoundError(`No greenie with id: ${id}`);
+
     return greenie;
   }
 
   /** Update a greenie with `data`.
    *
-   * Data must include: {holeNumber, feet, inches}
+   * Data must include: { feet, inches}
+   *
+   * (hole number is fixed for now)
    *
    * Returns {id, roundId, holeNumber, feet, inches}
    *
@@ -127,16 +131,19 @@ class Greenie {
    */
 
   static async update(id, data) {
+    //bad request error if no data!
+    if (Object.keys(data).length === 0)
+      throw new BadRequestError("No data provided");
+
     const greenieRes = await db.query(
       `UPDATE greenies
-      SET hole_number=$1, feet=$2, inches=$3
-      WHERE id=$4
+      SET feet=$1, inches=$2
+      WHERE id=$3
       RETURNING id, round_id AS "roundId", hole_number AS "holeNumber", feet, inches`,
-      [data.holeNumber, data.feet, data.inches, id]
+      [data.feet, data.inches, id]
     );
 
     const greenie = greenieRes.rows[0];
-
     if (!greenie) throw new NotFoundError(`No greenie with id: ${id}`);
 
     return greenie;

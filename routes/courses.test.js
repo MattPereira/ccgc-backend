@@ -46,6 +46,7 @@ describe("POST /courses", function () {
       hole16: 3,
       hole17: 3,
       hole18: 3,
+      total: 54,
     },
     handicaps: {
       hole1: 18,

@@ -60,17 +60,17 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- *  //////////////TODO: ADD ROUNDS TO THIS ROUTE?!?//////////////
+
  *
  * Returns { username, firstName, lastName, isAdmin, rounds }
- *   where rounds is { ... }
+* where rounds is [{ id, tournamentDate, pars, strokes, putts, greenies, totalStrokes, netStrokes, totalPutts }]
  *
  * Authorization required: none
  **/
 
 router.get("/:username", async function (req, res, next) {
   try {
-    const user = await User.get(req.params.username);
+    const user = await User.getRounds(req.params.username);
     return res.json({ user });
   } catch (err) {
     return next(err);

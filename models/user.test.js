@@ -136,6 +136,14 @@ describe("findAll", function () {
         bio: "u2 bio",
         isAdmin: false,
       },
+      {
+        username: "u3",
+        firstName: "U3F",
+        lastName: "U3L",
+        email: "u3@gmail.com",
+        bio: "u3 bio",
+        isAdmin: false,
+      },
     ]);
   });
 });
@@ -227,8 +235,8 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await User.remove("u1");
-    const res = await db.query("SELECT * FROM users WHERE username='u1'");
+    await User.remove("u3");
+    const res = await db.query("SELECT * FROM users WHERE username='u3'");
     expect(res.rows.length).toEqual(0);
   });
 

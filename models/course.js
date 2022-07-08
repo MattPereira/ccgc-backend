@@ -41,7 +41,7 @@ class Course {
       `INSERT INTO courses
            (handle, name, rating, slope, img_url)
            VALUES ($1, $2, $3, $4, $5)
-           RETURNING handle, name, rating, slope, img_url`,
+           RETURNING handle, name, rating, slope, img_url AS "imgUrl"`,
       [handle, name, rating, slope, imgUrl]
     );
 
@@ -51,8 +51,8 @@ class Course {
     const parsResult = await db.query(
       `INSERT INTO pars
         (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20)
-        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total`,
       [
         handle,
         pars.hole1,
@@ -225,7 +225,7 @@ class Course {
    * Throws NotFoundError if not found.
    */
 
-  /////////////// COULD PROBABLY BE REFACTORED TO BE MORE DRY //////////////////////
+  /////////////// COULD BE REFACTORED TO MAKE MORE DRY //////////////////////
   static async update(handle, data) {
     //Throw bad request error if data is empty
     if (Object.keys(data).length === 0) throw new BadRequestError("No data");

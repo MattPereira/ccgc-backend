@@ -128,6 +128,8 @@ router.patch("/:id", async function (req, res, next) {
 
     // UPDATE THE POINTS TABLE
     await Point.updateRound(round);
+    await Point.updateStrokes(round.tournamentDate);
+    await Point.updatePutts(round.tournamentDate);
 
     return res.json({ round });
   } catch (err) {
@@ -139,6 +141,12 @@ router.patch("/:id", async function (req, res, next) {
  *
  * Deletes a round by id.
  *
+ * WHY DOES THIS WORK LOL ITS MAGIC
+ *
+ * deleting the round should ruin the Point.updates but it doesnt?
+ *
+ * or does it?
+ *
  * Authorization: admin (not sure how to add owner of round auth?)
  */
 
@@ -148,6 +156,8 @@ router.delete("/:id", async function (req, res, next) {
     const round = await Round.get(req.params.id);
 
     await Round.remove(req.params.id);
+
+    console.log(round);
 
     //update the strokes and putts points after deleting a round
     // the pars, bird, eag, ace, participation is handled by cascade

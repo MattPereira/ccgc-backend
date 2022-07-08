@@ -13,6 +13,7 @@ const express = require("express");
 const { BadRequestError } = require("../expressError");
 const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const Greenie = require("../models/greenie");
+const Point = require("../models/point");
 
 // const greenieNewSchema = require("../schemas/greenieNew.json");
 // const greenieUpdateSchema = require("../schemas/greenieUpdate.json");
@@ -40,6 +41,9 @@ router.post("/", async function (req, res, next) {
     //     }
 
     const greenie = await Greenie.create(req.body);
+
+    await Point.updateGreenie(greenie);
+
     return res.status(201).json({ greenie });
   } catch (err) {
     return next(err);
@@ -106,6 +110,8 @@ router.patch("/:id", async function (req, res, next) {
 
     const greenie = await Greenie.update(req.params.id, req.body);
 
+    await Point.updateGreenie(greenie);
+
     return res.json({ greenie });
   } catch (err) {
     return next(err);
@@ -116,12 +122,19 @@ router.patch("/:id", async function (req, res, next) {
  *
  * Deletes a tournament by date.
  *
+ * this works but still kinda gross
+ *
  * Authorization: logged in user
  */
 
 router.delete("/:id", async function (req, res, next) {
   try {
+    //remove the points first because you need the id to still exist for query
+    await Point.removeGreenie(req.params.id);
+
+    //then remove the actual greenie?
     await Greenie.remove(req.params.id);
+
     return res.json({ deleted: req.params.id });
   } catch (err) {
     return next(err);

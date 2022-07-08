@@ -80,6 +80,17 @@ class Tournament {
 
     const tournament = tournamentRes.rows[0];
 
+    const parsRes = await db.query(
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+         FROM pars
+         JOIN courses ON courses.handle=pars.course_handle
+         JOIN tournaments ON courses.handle=tournaments.course_handle
+         WHERE tournaments.date=$1`,
+      [date]
+    );
+
+    tournament.pars = parsRes.rows[0];
+
     return tournament;
   }
 
@@ -203,6 +214,7 @@ class Tournament {
       );
       const putts = puttsRes.rows;
 
+      //add putt points to each round object
       const pointsRes = await db.query(
         `SELECT round_id as "roundId",
               putts
@@ -211,7 +223,7 @@ class Tournament {
       );
       const points = pointsRes.rows;
 
-      // associate putts with each round based on roundId
+      // associate putts and points with each round based on roundId
       rounds.map((r) => {
         putts.map((p) => {
           if (p.roundId === r.id) {

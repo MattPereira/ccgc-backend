@@ -69,9 +69,10 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[date]  =>  { tournament }
  *
- *  Returns all data about a specific tournament by date.
+ *  Returns all leaderboard data about a specific tournament by date.
  *
- *  strokesLeaderboard orders rounds by net_strokes ascending
+ *
+ *  pointsLeaderboard is ...
  *
  *  strokesLeaderboard is { date, course_handle, season_end_year, rounds }
  *  where rounds is [{ username, strokes, total_strokes, net_strokes, player_index, score_differential, course_handicap }, ...]
@@ -82,7 +83,6 @@ router.get("/", async function (req, res, next) {
  * puttsLeaderboard is { date, courseHandle, seasonEndYear, rounds}
  * *  where rounds is [{ username, firstName, lastName, totalPutts, putts }, ...]
  *  where putts is {hole1, hole2, ..., hole18}
- *
  *
  * greenies is [{id, roundId, tournamentDate, courseName, holeNumber, feet, inches, firstName, lastName}, ...]
  *

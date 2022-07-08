@@ -32,7 +32,7 @@ class Point {
    *  called when a new round is created
    *
    */
-  static async create(round) {
+  static async createRound(round) {
     //figure out pars, birdies, eagles, aces
 
     const parsRes = await db.query(
@@ -47,13 +47,21 @@ class Point {
     //create array of 18 par values from the parsRes
     const parsArr = Object.values(parsRes.rows[0]);
 
-    console.log("PARS ARR", parsArr);
+    const strokesArr = Object.values(round.strokes);
 
-    const pars = 1;
-    const birdies = 2;
-    const eagles = 3;
-    const aces = 4;
+    let pars = 0;
+    let birdies = 0;
+    let eagles = 0;
+    let aces = 0;
 
+    for (let i = 0; i < strokesArr.length; i++) {
+      if (strokesArr[i] === parsArr[i]) pars++;
+      else if (strokesArr[i] === parsArr[i] - 1) birdies++;
+      else if (strokesArr[i] === 1) aces++;
+      else if (strokesArr[i] <= parsArr[i] - 2) eagles++;
+    }
+
+    // input points for hole scores with corresponding bonus multipliers
     const pointsRes = await db.query(
       `INSERT INTO points 
           (round_id, 
@@ -63,7 +71,124 @@ class Point {
           eagles, 
           aces)
             VALUES ($1, $2, $3, $4, $5, $6)`,
-      [round.id, 3, pars, birdies, eagles, aces]
+      [round.id, 3, pars, birdies * 2, eagles * 4, aces * 10]
+    );
+
+    return pointsRes.rows[0];
+  }
+
+  /** Update the pars, birdies, eagles, aces columns of the
+   *  points table (on a round update)
+   *
+   *  called when a round is updated through patch request
+   *  to "/rounds/:id"
+   *
+   */
+  static async updateRound(round) {
+    const parsRes = await db.query(
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+         FROM pars
+         JOIN courses ON courses.handle=pars.course_handle
+         JOIN tournaments ON courses.handle=tournaments.course_handle
+         WHERE tournaments.date=$1`,
+      [round.tournamentDate]
+    );
+
+    const parsArr = Object.values(parsRes.rows[0]);
+    const strokesArr = Object.values(round.strokes);
+
+    let pars = 0;
+    let birdies = 0;
+    let eagles = 0;
+    let aces = 0;
+
+    for (let i = 0; i < strokesArr.length; i++) {
+      if (strokesArr[i] === parsArr[i]) pars++;
+      else if (strokesArr[i] === parsArr[i] - 1) birdies++;
+      else if (strokesArr[i] === 1) aces++;
+      else if (strokesArr[i] <= parsArr[i] - 2) eagles++;
+    }
+
+    // input points for hole scores with corresponding bonus multipliers
+    const pointsRes = await db.query(
+      `UPDATE points 
+          SET pars = $1, birdies = $2, eagles = $3, aces = $4
+          WHERE round_id = $5
+          RETURNING round_id AS "roundId", pars, birdies, eagles, aces`,
+      [pars, birdies * 2, eagles * 4, aces * 10, round.id]
+    );
+
+    return pointsRes.rows[0];
+  }
+
+  /** Update the points for greenies
+   *
+   *  called when a greenie is created, updated, or deleted
+   *
+   */
+
+  static async updateGreenie(greenie) {
+    //NEW PLAN
+    //Select all the existing greenies for a single roundId
+    //Loop to calculate points and update points.greenies based on that
+    const greeniesRes = await db.query(
+      `SELECT rounds.id AS "roundId", username, feet FROM rounds
+          JOIN greenies ON rounds.id=greenies.round_id
+          WHERE round_id = $1`,
+      [greenie.roundId]
+    );
+
+    const greenies = greeniesRes.rows;
+
+    console.log(greenies);
+
+    const greeniePointsArr = greenies.map((g) => {
+      if (g.feet > 20) return 1;
+      if (g.feet < 20 && g.feet >= 10) return 2;
+      if (g.feet < 10 && g.feet >= 2) return 3;
+      if (g.feet < 2) return 4;
+    });
+
+    console.log(greeniePointsArr);
+
+    const greeniePointTotal = greeniePointsArr.reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+
+    console.log(greeniePointTotal);
+
+    const pointsRes = await db.query(
+      `UPDATE points SET greenies = $1 WHERE round_id = $2`,
+      [greeniePointTotal, greenie.roundId]
+    );
+
+    return pointsRes.rows[0];
+  }
+
+  /** Removes greenies points for a greenie deletion
+   *
+   * necessary because you can delete a greenie without deleting the round
+   */
+
+  static async removeGreenie(greenieId) {
+    const greenieRes = await db.query(
+      `SELECT id, round_id, feet FROM greenies WHERE id = $1`,
+      [greenieId]
+    );
+
+    const greenie = greenieRes.rows[0];
+
+    let subtractPoints = 0;
+
+    if (greenie.feet > 20) subtractPoints = 1;
+    if (greenie.feet < 20 && greenie.feet >= 10) subtractPoints = 2;
+    if (greenie.feet < 10 && greenie.feet >= 2) subtractPoints = 3;
+    if (greenie.feet < 2) subtractPoints = 4;
+
+    const pointsRes = await db.query(
+      `UPDATE points SET greenies = greenies - $1 WHERE round_id = $2`,
+      [subtractPoints, greenie.round_id]
     );
 
     return pointsRes.rows[0];
@@ -218,7 +343,7 @@ class Point {
   /**
    * handle the updating of greenie points for a tournament
    *
-   * call on each round create/update
+   * called only in development for adding points to seed data
    *
    */
   static async updateGreenies(tournamentDate) {
@@ -292,7 +417,7 @@ class Point {
   /**
    * Update pars, birdies, eagles and aces points
    *
-   *  called each time a round is created or updated or deleted?
+   *  called only in development for adding points to seed data
    *
    */
   static async updateScores(tournamentDate) {

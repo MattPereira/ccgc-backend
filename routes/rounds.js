@@ -49,7 +49,7 @@ router.post("/", async function (req, res, next) {
     const round = await Round.create(req.body);
 
     //create a points row for the new round
-    await Point.create(round);
+    await Point.createRound(round);
 
     // update the strokes and putts points for the
     // corresponding tournament after adding a new round
@@ -127,9 +127,7 @@ router.patch("/:id", async function (req, res, next) {
     const round = await Round.update(req.params.id, req.body);
 
     // UPDATE THE POINTS TABLE
-    //await Point.update(round.id)
-    //await Point.updateScores
-    //await Point.updatePutts
+    await Point.updateRound(round);
 
     return res.json({ round });
   } catch (err) {

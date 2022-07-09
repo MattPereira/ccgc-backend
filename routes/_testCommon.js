@@ -7,13 +7,13 @@ const { createToken } = require("../helpers/tokens");
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
-  // noinspection SqlWithoutWhere
   await db.query("DELETE FROM rounds");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM tournaments");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM courses");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM users");
 
   /** CREATE SOME COURSES */
   await Course.create({

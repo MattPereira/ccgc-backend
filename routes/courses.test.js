@@ -27,6 +27,7 @@ describe("POST /courses", function () {
     name: "New Course Country Club",
     rating: 72.1,
     slope: 123,
+    imgUrl: "test.com/new-course.jpg",
     pars: {
       hole1: 3,
       hole2: 3,
@@ -46,7 +47,6 @@ describe("POST /courses", function () {
       hole16: 3,
       hole17: 3,
       hole18: 3,
-      total: 54,
     },
     handicaps: {
       hole1: 18,
@@ -77,7 +77,11 @@ describe("POST /courses", function () {
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
-      course: { ...newCourse, rating: "72.1" },
+      course: {
+        ...newCourse,
+        rating: "72.1",
+        pars: { ...newCourse.pars, total: 54 },
+      },
     });
   });
 
@@ -124,6 +128,7 @@ describe("GET /courses", function () {
           name: "Lone Tree Golf Course",
           rating: "69.1",
           slope: 121,
+          imgUrl: null,
           pars: {
             hole1: 4,
             hole2: 3,
@@ -143,6 +148,7 @@ describe("GET /courses", function () {
             hole16: 5,
             hole17: 5,
             hole18: 4,
+            total: 71,
           },
           handicaps: {
             hole1: 1,
@@ -170,6 +176,7 @@ describe("GET /courses", function () {
           name: "Paradise Valley Golf Course",
           rating: "70.4",
           slope: 125,
+          imgUrl: null,
           pars: {
             hole1: 5,
             hole2: 4,
@@ -189,6 +196,7 @@ describe("GET /courses", function () {
             hole16: 5,
             hole17: 4,
             hole18: 4,
+            total: 72,
           },
           handicaps: {
             hole1: 5,
@@ -216,6 +224,7 @@ describe("GET /courses", function () {
           name: "Wild Horse Golf Course",
           rating: "68.4",
           slope: 120,
+          imgUrl: null,
           pars: {
             hole1: 4,
             hole2: 4,
@@ -235,6 +244,7 @@ describe("GET /courses", function () {
             hole16: 4,
             hole17: 5,
             hole18: 4,
+            total: 72,
           },
           handicaps: {
             hole1: 9,
@@ -273,6 +283,7 @@ describe("GET /courses/:handle", function () {
         name: "Lone Tree Golf Course",
         rating: "69.1",
         slope: 121,
+        imgUrl: null,
         pars: {
           hole1: 4,
           hole2: 3,
@@ -292,6 +303,7 @@ describe("GET /courses/:handle", function () {
           hole16: 5,
           hole17: 5,
           hole18: 4,
+          total: 71,
         },
         handicaps: {
           hole1: 1,
@@ -340,6 +352,7 @@ describe("PATCH /courses/:handle", function () {
         name: "Patched Name Golf Course",
         rating: "69.1",
         slope: 222,
+        imgUrl: null,
         pars: {
           hole1: 4,
           hole2: 3,
@@ -359,6 +372,7 @@ describe("PATCH /courses/:handle", function () {
           hole16: 5,
           hole17: 5,
           hole18: 4,
+          total: 71,
         },
         handicaps: {
           hole1: 1,

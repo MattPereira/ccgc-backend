@@ -232,7 +232,8 @@ class Point {
    * */
   static async getByTournament(tournamentDate) {
     const result = await db.query(
-      `SELECT users.username,
+      `SELECT rounds.id AS "roundId",
+              users.username,
               first_name AS "firstName",
               last_name AS "lastName",
               participation,

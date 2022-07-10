@@ -20,6 +20,16 @@ const morgan = require("morgan");
 
 const app = express();
 
+//TRYING TO FIX BLOCKED BY CORS POLICY BUG
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "https://ccgc.surge.sh");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));

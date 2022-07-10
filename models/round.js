@@ -240,11 +240,12 @@ class Round {
     return rounds;
   }
 
-  /** Given a round_id, return data about that round.
+  /** Given a round_id, return all the data associated with that round.
    *
-   * Returns { tournament_date, username, strokes, putts }
+   * Returns { id, tournament_date, username, strokes, putts, totalStrokes, totalPutts, greenies}
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
+   *  and greenies is {id, roundId, tournamentDate, holeNumber, feet, inches, firstName, lastName, courseImg, courseName}
    *
    * Throws NotFoundError if not found.
    **/
@@ -253,12 +254,8 @@ class Round {
     const roundRes = await db.query(
       `SELECT id, tournament_date AS "tournamentDate",
                   username, 
-                  total_strokes AS "totalStrokes", 
-                  net_strokes AS "netStrokes", 
+                  total_strokes AS "totalStrokes",
                   total_putts AS "totalPutts", 
-                  player_index AS "playerIndex", 
-                  score_differential AS "scoreDifferential", 
-                  course_handicap AS "courseHandicap",
                   courses.name AS "courseName"
             FROM rounds 
             JOIN tournaments ON tournaments.date=rounds.tournament_date
@@ -286,7 +283,7 @@ class Round {
     );
 
     const parsRes = await db.query(
-      `Select hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
+      `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total
              FROM rounds
              JOIN tournaments ON tournaments.date=rounds.tournament_date
              JOIN courses ON tournaments.course_handle=courses.handle
@@ -295,9 +292,31 @@ class Round {
       [id]
     );
 
+    const greeniesRes = await db.query(
+      `SELECT greenies.id, 
+              round_id AS "roundId", 
+              first_name AS "firstName",
+              last_name AS "lastName",
+              tournament_date AS "tournamentDate", 
+              name AS "courseName", 
+              hole_number AS "holeNumber", 
+              img_url AS "courseImg",
+              feet, 
+              inches
+          FROM greenies
+          JOIN rounds ON greenies.round_id = rounds.id
+          JOIN tournaments ON rounds.tournament_date = tournaments.date
+          JOIN courses ON tournaments.course_handle = courses.handle
+          JOIN users ON rounds.username=users.username
+          WHERE round_id = $1
+          ORDER BY hole_number`,
+      [id]
+    );
+
     round.strokes = strokesRes.rows[0];
     round.putts = puttsRes.rows[0];
     round.pars = parsRes.rows[0];
+    round.greenies = greeniesRes.rows;
 
     return round;
   }

@@ -9,7 +9,8 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testGreenieIds,
+  testGreeniesIds,
+  testRoundsIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -20,14 +21,13 @@ afterAll(commonAfterAll);
 /************************************** create */
 
 describe("create", function () {
-  const newGreenie = {
-    roundId: 1,
-    holeNumber: 11,
-    feet: 11,
-    inches: 11,
-  };
-
   test("works", async function () {
+    const newGreenie = {
+      roundId: testRoundsIds[2],
+      holeNumber: 11,
+      feet: 11,
+      inches: 11,
+    };
     let greenie = await Greenie.create(newGreenie);
     expect(greenie).toEqual({
       ...newGreenie,
@@ -37,6 +37,12 @@ describe("create", function () {
 
   test("bad request with dupe roundId/holeNumber combination", async function () {
     try {
+      const newGreenie = {
+        roundId: testRoundsIds[2],
+        holeNumber: 11,
+        feet: 11,
+        inches: 11,
+      };
       await Greenie.create(newGreenie);
       await Greenie.create(newGreenie);
       fail();
@@ -51,11 +57,13 @@ describe("create", function () {
 describe("findAll", function () {
   test("works: all ordered by distance", async function () {
     let greenies = await Greenie.findAll();
-    console.log(testGreenieIds);
+
+    console.log("TEST ROUND IDS", testRoundsIds);
+
     expect(greenies).toEqual([
       {
-        id: testGreenieIds[0],
-        roundId: 1,
+        id: testGreeniesIds[0],
+        roundId: testRoundsIds[0],
         holeNumber: 1,
         feet: 1,
         inches: 1,
@@ -66,8 +74,8 @@ describe("findAll", function () {
         tournamentDate: parse("2022-01-01"),
       },
       {
-        id: testGreenieIds[1],
-        roundId: 1,
+        id: testGreeniesIds[1],
+        roundId: testRoundsIds[0],
         holeNumber: 7,
         feet: 7,
         inches: 7,
@@ -78,8 +86,8 @@ describe("findAll", function () {
         tournamentDate: parse("2022-01-01"),
       },
       {
-        id: testGreenieIds[3],
-        roundId: 4,
+        id: testGreeniesIds[3],
+        roundId: testRoundsIds[3],
         holeNumber: 7,
         feet: 7,
         inches: 7,
@@ -90,8 +98,8 @@ describe("findAll", function () {
         tournamentDate: parse("2022-02-02"),
       },
       {
-        id: testGreenieIds[2],
-        roundId: 2,
+        id: testGreeniesIds[2],
+        roundId: testRoundsIds[1],
         holeNumber: 1,
         feet: 11,
         inches: 11,
@@ -107,8 +115,8 @@ describe("findAll", function () {
     let greenies = await Greenie.findAll("2022-02-02");
     expect(greenies).toEqual([
       {
-        id: testGreenieIds[3],
-        roundId: 4,
+        id: testGreeniesIds[3],
+        roundId: testRoundsIds[3],
         holeNumber: 7,
         feet: 7,
         inches: 7,
@@ -126,10 +134,10 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let greenie = await Greenie.get(testGreenieIds[0]);
+    let greenie = await Greenie.get(testGreeniesIds[0]);
     expect(greenie).toEqual({
-      id: testGreenieIds[0],
-      roundId: 1,
+      id: testGreeniesIds[0],
+      roundId: testRoundsIds[0],
       holeNumber: 1,
       feet: 1,
       inches: 1,
@@ -160,10 +168,10 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let greenie = await Greenie.update(testGreenieIds[0], updateData);
+    let greenie = await Greenie.update(testGreeniesIds[0], updateData);
     expect(greenie).toEqual({
-      id: testGreenieIds[0],
-      roundId: 1,
+      id: testGreeniesIds[0],
+      roundId: testRoundsIds[0],
       holeNumber: 1,
       feet: 22,
       inches: 2,
@@ -182,10 +190,9 @@ describe("update", function () {
 
   test("bad request with no data", async function () {
     try {
-      await Greenie.update(testGreenieIds[0], {});
+      await Greenie.update(testGreeniesIds[0], {});
       fail();
     } catch (err) {
-      console.log(err);
       expect(err instanceof BadRequestError).toBeTruthy();
     }
   });
@@ -195,9 +202,9 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Greenie.remove(testGreenieIds[0]);
+    await Greenie.remove(testGreeniesIds[0]);
     const res = await db.query("SELECT id FROM greenies WHERE id=$1", [
-      testGreenieIds[0],
+      testGreeniesIds[0],
     ]);
     expect(res.rows.length).toEqual(0);
   });

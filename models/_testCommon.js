@@ -3,9 +3,18 @@ const bcrypt = require("bcrypt");
 const db = require("../db.js");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
-const testGreenieIds = [];
+const testGreeniesIds = [];
+const testRoundsIds = [];
 
 async function commonBeforeAll() {
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM points");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM greenies");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM putts");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM strokes");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM rounds");
   // noinspection SqlWithoutWhere
@@ -65,39 +74,51 @@ async function commonBeforeAll() {
           ('2022-03-03', 'roddy-ranch', '2021-22')`);
 
   //// TEST DATA FOR ROUNDS ////
-  await db.query(`
-    INSERT INTO rounds (id,tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
-    VALUES (1, '2022-01-01', 'u1', 72, 72, 18, 0, 0, 0),
-           (2, '2022-01-01', 'u2', 90, 75, 36, 17.7, 15.5, 15),
-           (3, '2022-02-02', 'u1', 72, 72, 18, 0, 0, 0),
-           (4, '2022-02-02', 'u2', 90, 75, 36, 17.7, 15.5, 15)`);
-
-  //// TEST DATA FOR STROKES ////
-  await db.query(`
-    INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-    VALUES (1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
-           (2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
-           (3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
-           (4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)`);
-
-  //// TEST DATA FOR PUTTS ////
-  await db.query(`
-    INSERT INTO putts (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-    VALUES (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-           (2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
-           (3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-           (4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)`);
-
-  //// TEST DATA FOR GREENIES ////
-  const greenieRes = await db.query(`
-    INSERT INTO greenies (round_id, hole_number, feet, inches)
-    VALUES (1, 1, 1, 1),
-           (1, 7, 7, 7),
-           (2, 1, 11, 11),
-           (4, 7, 7, 7)
+  const roundsRes = await db.query(`
+    INSERT INTO rounds (tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap)
+    VALUES ('2022-01-01', 'u1', 72, 72, 18, 0, 0, 0),
+           ('2022-01-01', 'u2', 90, 75, 36, 17.7, 15.5, 15),
+           ('2022-02-02', 'u1', 72, 72, 18, 0, 0, 0),
+           ('2022-02-02', 'u2', 90, 75, 36, 17.7, 15.5, 15)
            RETURNING id`);
 
-  testGreenieIds.splice(0, 0, ...greenieRes.rows.map((row) => row.id));
+  testRoundsIds.splice(0, 0, ...roundsRes.rows.map((row) => row.id));
+
+  //// TEST DATA FOR STROKES ////
+  await db.query(
+    `
+    INSERT INTO strokes (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+    VALUES ($1, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+           ($2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5),
+           ($3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4),
+           ($4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5)`,
+    [testRoundsIds[0], testRoundsIds[1], testRoundsIds[2], testRoundsIds[3]]
+  );
+
+  //// TEST DATA FOR PUTTS ////
+  await db.query(
+    `
+    INSERT INTO putts (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+    VALUES ($1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+           ($2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2),
+           ($3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+           ($4, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2)`,
+    [testRoundsIds[0], testRoundsIds[1], testRoundsIds[2], testRoundsIds[3]]
+  );
+
+  //// TEST DATA FOR GREENIES ////
+  const greenieRes = await db.query(
+    `
+    INSERT INTO greenies (round_id, hole_number, feet, inches)
+    VALUES ($1, 1, 1, 1),
+           ($1, 7, 7, 7),
+           ($2, 1, 11, 11),
+           ($3, 7, 7, 7)
+           RETURNING id`,
+    [testRoundsIds[0], testRoundsIds[1], testRoundsIds[3]]
+  );
+
+  testGreeniesIds.splice(0, 0, ...greenieRes.rows.map((row) => row.id));
 }
 
 async function commonBeforeEach() {
@@ -117,5 +138,6 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testGreenieIds,
+  testGreeniesIds,
+  testRoundsIds,
 };

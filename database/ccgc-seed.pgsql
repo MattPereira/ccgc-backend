@@ -35,7 +35,8 @@ VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125, '/course-ph
        ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, '/course-photos/cypress_lakes.jpg'),
        ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131, '/course-photos/yocha_dehe.jpg'),
        ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121, '/course-photos/blue_rock.jpg'),
-       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, '/course-photos/wolf_run.png');
+       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, '/course-photos/wolf_run.png'),
+       ('rooster-run', 'Roster Run Golf Club', 70.5, 127, '/course-photos/rooster_run.jpg');
 
 
 INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)
@@ -46,7 +47,8 @@ VALUES ('paradise-valley', 5,4,3,5,4,4,4,3,4,5,4,3,4,4,3,5,4,4,72),
        ('cypress-lakes', 5,4,3,4,5,4,4,3,4,5,3,4,4,3,4,4,5,4,72),
        ('yocha-dehe', 4,5,4,3,4,5,3,4,4,5,4,4,3,4,4,3,5,4,72),
        ('blue-rock-east', 4,3,4,4,5,3,5,3,4,4,3,4,4,5,4,3,4,4,70),
-       ('wolf-run', 4,5,4,4,3,4,3,5,4,4,4,4,4,3,5,4,3,5,72);
+       ('wolf-run', 4,5,4,4,3,4,3,5,4,4,4,4,4,3,5,4,3,5,72),
+       ('rooster-run', 4,5,4,4,4,3,4,3,5,5,3,4,4,4,3,4,4,5, 72);
 
 INSERT INTO handicaps (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
 VALUES ('paradise-valley', 5,7,17,9,1,3,11,15,13,4,10,18,6,14,16,8,12,2),
@@ -56,7 +58,8 @@ VALUES ('paradise-valley', 5,7,17,9,1,3,11,15,13,4,10,18,6,14,16,8,12,2),
        ('cypress-lakes', 13,11,17,3,1,7,9,15,5,6,16,14,10,18,12,2,4,8),
        ('yocha-dehe', 5,7,1,15,13,3,11,17,9,6,14,16,10,8,12,18,4,2),
        ('blue-rock-east', 9,17,7,3,1,11,13,15,5,12,16,4,10,18,2,14,6,8),
-       ('wolf-run', 9,3,11,1,15,5,17,7,13,14,10,4,8,18,2,16,12,6);
+       ('wolf-run', 9,3,11,1,15,5,17,7,13,14,10,4,8,18,2,16,12,6),
+       ('rooster-run', 9,5,15,11,7,13,1,17,3,14,16,18,6,2,12,4,8,10);
 
 ----------------------------TOURNAMENTS TABLE----------------------------------------------------
 
@@ -921,5 +924,5 @@ VALUES (107, 1,3,2,1,2,2,2,1,2,2,2,3,3,2,1,2,2,3),
 
 
 
--- handle pre-seeding with real data by moving starting serial pk value of rounds.id  to 107---
-ALTER SEQUENCE rounds_id_seq RESTART WITH 107;
+-- handle pre-seeding with real data by moving starting serial pk value of rounds.id  to 115---
+ALTER SEQUENCE rounds_id_seq RESTART WITH 115;

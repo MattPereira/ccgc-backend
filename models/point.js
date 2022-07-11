@@ -33,7 +33,17 @@ class Point {
    *
    */
   static async createRound(round) {
-    //figure out pars, birdies, eagles, aces
+    const duplicateCheck = await db.query(
+      `SELECT round_id
+           FROM points
+           WHERE round_id = $1`,
+      [round.id]
+    );
+
+    if (duplicateCheck.rows[0])
+      throw new BadRequestError(
+        `Points already exist for round id: ${round.id}`
+      );
 
     const parsRes = await db.query(
       `SELECT hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18

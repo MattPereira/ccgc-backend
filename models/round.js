@@ -35,8 +35,8 @@ class Round {
     /**  Sum the strokes and putts objects to get total_strokes and total_putts */
     const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);
     const totalPutts = Object.values(putts).reduce((a, b) => a + b, 0);
-    console.log("TOTAL STROKES", totalStrokes);
-    console.log("TOTAL PUTTS", totalPutts);
+    // console.log("TOTAL STROKES", totalStrokes);
+    // console.log("TOTAL PUTTS", totalPutts);
 
     /** Compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating) */
 
@@ -71,30 +71,30 @@ class Round {
     const scoreDiffsArr = roundsRes.rows.map((r) => +r.scoreDifferential);
     //push current round scoreDifferential onto scoreDiffsArr
     scoreDiffsArr.push(scoreDifferential);
-    console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
+    // console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
 
     //sort from lowest to highest and slice to get the two lowest
     const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
-    console.log("LOWEST DIFFS", lowestDiffs);
+    // console.log("LOWEST DIFFS", lowestDiffs);
 
     const playerIndex = (
       lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
     ).toFixed(1);
-    console.log("PLAYER INDEX", playerIndex);
+    // console.log("PLAYER INDEX", playerIndex);
 
     /** Compute the course_handicap
      * (player_index * (course_slope)) / 113
      *
      */
     const courseHandicap = Math.round((playerIndex * courseSlope) / 113);
-    console.log("COURSE HANDICAP", courseHandicap);
+    // console.log("COURSE HANDICAP", courseHandicap);
 
     /** Compute the net_strokes :
      * (total_strokes - course_handicap)
      */
 
     const netStrokes = totalStrokes - courseHandicap;
-    console.log("NET STROKES", netStrokes);
+    // console.log("NET STROKES", netStrokes);
 
     // Insert into rounds table first and grab the round_id
     const roundRes = await db.query(
@@ -184,7 +184,6 @@ class Round {
     round.strokes = strokesRes.rows[0];
     round.putts = puttsRes.rows[0];
 
-    console.log(round);
     return round;
   }
 
@@ -195,54 +194,54 @@ class Round {
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    * */
+  ////////////////// NOT CURRENTLY IN USE /////////////////////////
+  // static async findAll() {
+  //   const roundsRes = await db.query(
+  //     `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
+  //                  FROM rounds
+  //                  ORDER BY net_strokes ASC`
+  //   );
 
-  static async findAll() {
-    const roundsRes = await db.query(
-      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
-                   FROM rounds
-                   ORDER BY net_strokes ASC`
-    );
+  //   const strokesRes = await db.query(
+  //     `SELECT round_id AS "roundId",
+  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+  //               FROM strokes`
+  //   );
 
-    const strokesRes = await db.query(
-      `SELECT round_id AS "roundId",
-                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                FROM strokes`
-    );
+  //   const puttsRes = await db.query(
+  //     `SELECT round_id AS "roundId",
+  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+  //               FROM putts`
+  //   );
 
-    const puttsRes = await db.query(
-      `SELECT round_id AS "roundId",
-                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                FROM putts`
-    );
+  //   const rounds = roundsRes.rows;
+  //   const strokes = strokesRes.rows;
+  //   const putts = puttsRes.rows;
 
-    const rounds = roundsRes.rows;
-    const strokes = strokesRes.rows;
-    const putts = puttsRes.rows;
+  //   // associate strokes and putts with each round based on roundId
+  //   rounds.map((r) => {
+  //     strokes.map((s) => {
+  //       if (s.roundId === r.id) {
+  //         //   delete s.roundId;
+  //         r.strokes = s;
+  //       }
+  //     });
+  //     putts.map((p) => {
+  //       if (p.roundId === r.id) {
+  //         //   delete p.roundId;
+  //         r.putts = p;
+  //       }
+  //     });
+  //   });
 
-    // associate strokes and putts with each round based on roundId
-    rounds.map((r) => {
-      strokes.map((s) => {
-        if (s.roundId === r.id) {
-          //   delete s.roundId;
-          r.strokes = s;
-        }
-      });
-      putts.map((p) => {
-        if (p.roundId === r.id) {
-          //   delete p.roundId;
-          r.putts = p;
-        }
-      });
-    });
-
-    return rounds;
-  }
+  //   return rounds;
+  // }
 
   /** Given a round_id, return all the data associated with that round.
    *
-   * Returns { id, tournament_date, username, strokes, putts, totalStrokes, totalPutts, greenies}
+   * Returns { id, tournament_date, username, totalStrokes, totalPutts, strokes, putts, greenies}
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    *  and greenies is {id, roundId, tournamentDate, holeNumber, feet, inches, firstName, lastName, courseImg, courseName}
@@ -252,7 +251,8 @@ class Round {
 
   static async get(id) {
     const roundRes = await db.query(
-      `SELECT id, tournament_date AS "tournamentDate",
+      `SELECT id, 
+                  tournament_date AS "tournamentDate",
                   username, 
                   total_strokes AS "totalStrokes",
                   total_putts AS "totalPutts", 
@@ -333,21 +333,20 @@ class Round {
    *  where strokes could be any of {hole1, hole2, ..., hole18}
    *  and putts could be any of {hole1, hole2, ..., hole18}
    *
-   * Returns { id, tournament_date, username, strokes, putts }
+   * Returns { id, tournamentDate, username, totalStrokes, totalPutts, strokes, putts }
    *
    * Throws NotFoundError if not found.
    */
 
-  static async update(id, { strokes, putts }) {
+  static async update(id, data) {
     //Throw bad request error if data is empty
-    if (Object.keys(strokes).length === 0 || Object.keys(putts).length === 0)
-      throw new BadRequestError("No data");
+    if (Object.keys(data).length === 0) throw new BadRequestError("No data");
 
     /**  Sum the strokes and putts objects to get the new total_strokes and total_putts */
-    const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);
-    const totalPutts = Object.values(putts).reduce((a, b) => a + b, 0);
-    console.log("TOTAL STROKES", totalStrokes);
-    console.log("TOTAL PUTTS", totalPutts);
+    const totalStrokes = Object.values(data.strokes).reduce((a, b) => a + b, 0);
+    const totalPutts = Object.values(data.putts).reduce((a, b) => a + b, 0);
+    // console.log("TOTAL STROKES", totalStrokes);
+    // console.log("TOTAL PUTTS", totalPutts);
 
     /** Compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating) */
 
@@ -361,7 +360,10 @@ class Round {
       [id]
     );
 
-    const { courseRating, courseSlope } = courseRes.rows[0];
+    const course = courseRes.rows[0];
+    if (!course) throw new NotFoundError(`No round id: ${id}`);
+
+    const { courseRating, courseSlope } = course;
 
     const scoreDifferential = +(
       (113 / courseSlope) *
@@ -397,30 +399,30 @@ class Round {
     scoreDiffsArr.pop();
     //push current round scoreDifferential onto scoreDiffsArr
     scoreDiffsArr.push(scoreDifferential);
-    console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
+    // console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
 
     //sort from lowest to highest and slice to get the two lowest
     const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
-    console.log("LOWEST DIFFS", lowestDiffs);
+    // console.log("LOWEST DIFFS", lowestDiffs);
 
     const playerIndex = (
       lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
     ).toFixed(1);
-    console.log("PLAYER INDEX", playerIndex);
+    // console.log("PLAYER INDEX", playerIndex);
 
     /** Compute the course_handicap
      * (player_index * (course_slope)) / 113
      *
      */
     const courseHandicap = Math.round((playerIndex * courseSlope) / 113);
-    console.log("COURSE HANDICAP", courseHandicap);
+    // console.log("COURSE HANDICAP", courseHandicap);
 
     /** Compute the net_strokes :
      * (total_strokes - course_handicap)
      */
 
     const netStrokes = totalStrokes - courseHandicap;
-    console.log("NET STROKES", netStrokes);
+    // console.log("NET STROKES", netStrokes);
 
     // Update all computed data into rounds table
     const roundRes = await db.query(
@@ -439,40 +441,33 @@ class Round {
       ]
     );
 
-    // update the strokes table if data.strokes is provided
-    if (strokes) {
-      const { setCols, values } = sqlForPartialUpdate(strokes, {});
+    const round = roundRes.rows[0];
 
-      const idVarIdx = "$" + (values.length + 1);
+    if (!round) throw new NotFoundError(`No round id: ${id}`);
 
-      const querySql = `UPDATE strokes
-                          SET ${setCols}
-                          WHERE round_id = ${idVarIdx}
-                          RETURNING *`;
-      const result = await db.query(querySql, [...values, id]);
-      // const strokes = result.rows[0];
+    const strokesRes = await db.query(
+      `UPDATE strokes SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$16, hole17=$17, hole18=$18
+          WHERE round_id=$19
+          RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+      [...Object.values(data.strokes), round.id]
+    );
 
-      if (!strokes) throw new NotFoundError(`No round id: ${id}`);
-    }
+    const strokes = strokesRes.rows[0];
 
-    // update the putts table if data.putts is provided
-    if (putts) {
-      const { setCols, values } = sqlForPartialUpdate(putts, {});
+    round.strokes = strokes;
 
-      const idVarIdx = "$" + (values.length + 1);
+    const puttsRes = await db.query(
+      `UPDATE putts SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$16, hole17=$17, hole18=$18
+          WHERE round_id=$19
+          RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+      [...Object.values(data.putts), round.id]
+    );
 
-      const querySql = `UPDATE putts
-                          SET ${setCols}
-                          WHERE round_id = ${idVarIdx}
-                          RETURNING *`;
-      const result = await db.query(querySql, [...values, id]);
-      // const putts = result.rows[0];
+    const putts = puttsRes.rows[0];
 
-      if (!putts) throw new NotFoundError(`No course handle: ${handle}`);
-    }
+    round.putts = putts;
 
-    //call the get method to return the updated round data lol
-    return Round.get(id);
+    return round;
   }
 
   static async remove(id) {

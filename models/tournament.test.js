@@ -90,7 +90,26 @@ describe("findAll", function () {
 
 /************************************** get */
 
-//TODO: MUST DECIDE ON PARS FOR GREENIES FORM INPUT ISSUE
+describe("get", function () {
+  test("works", async function () {
+    let tournament = await Tournament.get("2022-01-01");
+    expect(tournament).toEqual({
+      date: parse("2022-01-01"),
+      courseHandle: "roddy-ranch",
+      courseName: "Roddy Ranch Golf Course",
+      tourYears: "2021-22",
+    });
+  });
+
+  test("not found if no such tournament", async function () {
+    try {
+      await Tournament.get("1999-01-01");
+      fail();
+    } catch (err) {
+      expect(err instanceof NotFoundError).toBeTruthy();
+    }
+  });
+});
 
 /************************************** update */
 

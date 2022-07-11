@@ -21,16 +21,17 @@ const morgan = require("morgan");
 const app = express();
 
 //TRYING TO FIX BLOCKED BY CORS POLICY ERROR
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://ccgc.surge.sh");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "https://ccgc.surge.sh");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept"
+//   );
+//   next();
+// });
 
-app.use(cors());
+//google 'npm cors' and try more stuff if this doesnt work lol
+app.use(cors({ credentials: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);

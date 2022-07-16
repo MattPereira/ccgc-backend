@@ -388,55 +388,13 @@ describe("update", function () {
   test("works", async function () {
     let course = await Course.update("roddy-ranch", updateData);
     expect(course).toEqual({
+      ...updateData,
       handle: "roddy-ranch",
-      name: "Updated Name",
       rating: "99.9",
-      slope: 123,
-      imgUrl: "test.com/updated.jpg",
-      pars: {
-        hole1: 3,
-        hole2: 3,
-        hole3: 3,
-        hole4: 4,
-        hole5: 4,
-        hole6: 4,
-        hole7: 4,
-        hole8: 4,
-        hole9: 4,
-        hole10: 4,
-        hole11: 4,
-        hole12: 4,
-        hole13: 4,
-        hole14: 4,
-        hole15: 4,
-        hole16: 5,
-        hole17: 5,
-        hole18: 5,
-        total: 72,
-      },
-      handicaps: {
-        hole1: 18,
-        hole2: 17,
-        hole3: 16,
-        hole4: 15,
-        hole5: 14,
-        hole6: 13,
-        hole7: 12,
-        hole8: 11,
-        hole9: 10,
-        hole10: 9,
-        hole11: 8,
-        hole12: 7,
-        hole13: 6,
-        hole14: 5,
-        hole15: 4,
-        hole16: 3,
-        hole17: 2,
-        hole18: 1,
-      },
+      pars: { ...updateData.pars, total: 72 },
     });
 
-    //check database for updated course
+    // check database for updated course
     const result = await db.query(
       `SELECT handle, name, rating, slope
            FROM courses

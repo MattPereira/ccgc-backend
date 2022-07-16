@@ -209,86 +209,58 @@ class Course {
 
   /** Update course, pars, and, handicaps data with `data`.
    *
-   * More specifically, dynamically update the course, pars,
-   * and handicaps tables depending on which are present in `data`
-   *
-   *
-   * This is a "partial update" --- it's fine if data doesn't contain all the
-   * fields; this only changes provided ones.
-   *
-   * Data can include: {name, rating, slope, pars, handicaps}
-   *  where pars could be any of {hole1, hole2, ..., hole18}
-   *  and handicaps could be any of {hole1, hole2, ..., hole18}
+   * Data must include: {name, rating, slope, pars, handicaps}
+   *  where pars is{hole1, hole2, ..., hole18}
+   *  and handicaps is {hole1, hole2, ..., hole18}
    *
    * Returns {handle, name, rating, slope, pars, handicaps}
    *
    * Throws NotFoundError if not found.
    */
 
-  /////////////// COULD BE REFACTORED TO MAKE MORE DRY //////////////////////
   static async update(handle, data) {
     //Throw bad request error if data is empty
     if (Object.keys(data).length === 0) throw new BadRequestError("No data");
 
-    //destructure and rename and spread object properties from data lol
-    const { pars: parsData, handicaps: handicapsData, ...basicData } = data;
+    const courseRes = await db.query(
+      `UPDATE courses 
+          SET name=$1, rating=$2, slope=$3, img_url=$4
+        WHERE handle=$5
+        RETURNING handle, name, rating, slope, img_url AS "imgUrl"`,
+      [data.name, data.rating, data.slope, data.imgUrl, handle]
+    );
 
-    // update the pars table if data.pars is provided
-    if (parsData) {
-      const { setCols, values } = sqlForPartialUpdate(parsData, {});
+    const course = courseRes.rows[0];
 
-      const handleVarIdx = "$" + (values.length + 1);
+    if (!course) throw new NotFoundError(`No course with handle: ${handle}`);
 
-      const querySql = `UPDATE pars 
-                        SET ${setCols} 
-                        WHERE course_handle = ${handleVarIdx} 
-                        RETURNING *`;
-      const result = await db.query(querySql, [...values, handle]);
-      const pars = result.rows[0];
+    //sum the pars object values to get the total
+    const total = Object.values(data.pars).reduce((a, b) => a + b, 0);
 
-      if (!pars) throw new NotFoundError(`No course handle: ${handle}`);
-    }
+    const parsRes = await db.query(
+      `UPDATE pars
+        SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$16, hole17=$17, hole18=$18, total=$19
+        WHERE course_handle=$20
+        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total`,
+      [...Object.values(data.pars), total, handle]
+    );
 
-    // update the handicaps table if data.handicaps is provided
-    if (handicapsData) {
-      const { setCols, values } = sqlForPartialUpdate(handicapsData, {});
+    const pars = parsRes.rows[0];
 
-      const handleVarIdx = "$" + (values.length + 1);
+    const handicapsRes = await db.query(
+      `UPDATE handicaps
+            SET hole1=$1, hole2=$2, hole3=$3, hole4=$4, hole5=$5, hole6=$6, hole7=$7, hole8=$8, hole9=$9, hole10=$10, hole11=$11, hole12=$12, hole13=$13, hole14=$14, hole15=$15, hole16=$16, hole17=$17, hole18=$18
+            WHERE course_handle=$19
+            RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+      [...Object.values(data.handicaps), handle]
+    );
 
-      const querySql = `UPDATE handicaps 
-                        SET ${setCols} 
-                        WHERE course_handle = ${handleVarIdx} 
-                        RETURNING *`;
-      const result = await db.query(querySql, [...values, handle]);
-      const handicaps = result.rows[0];
+    const handicaps = handicapsRes.rows[0];
 
-      if (!handicaps) throw new NotFoundError(`No course handle: ${handle}`);
-    }
+    course.pars = pars;
+    course.handicaps = handicaps;
 
-    console.log("BASIC DATA", basicData);
-    // update the basic course data if data.basicData is provided
-    if (Object.keys(basicData).length > 0) {
-      const { setCols, values } = sqlForPartialUpdate(basicData, {
-        imgUrl: "img_url",
-      });
-
-      const handleVarIdx = "$" + (values.length + 1);
-
-      const querySql = `UPDATE courses 
-                        SET ${setCols} 
-                        WHERE handle = ${handleVarIdx} 
-                        RETURNING handle, 
-                                  name, 
-                                  rating, 
-                                  slope`;
-      const result = await db.query(querySql, [...values, handle]);
-      const course = result.rows[0];
-
-      if (!course) throw new NotFoundError(`No course: ${handle}`);
-    }
-
-    //call the get method to return the updated course data
-    return Course.get(handle);
+    return course;
   }
 
   static async remove(handle) {

@@ -5,6 +5,7 @@ const request = require("supertest");
 const db = require("../db.js");
 const app = require("../app");
 const User = require("../models/user");
+const parse = require("postgres-date");
 
 const {
   commonBeforeAll,
@@ -14,6 +15,7 @@ const {
   happyToken,
   shooterToken,
   adminToken,
+  testRoundIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -132,13 +134,22 @@ describe("GET /users", function () {
     expect(resp.body).toEqual({
       users: [
         {
+          firstName: "Bob",
+          lastName: "Barker",
+          email: "bob@gmail.com",
+          bio: "Enthusiastic member of the Contra Costa Golf Club",
+          username: "bob-barker",
+          isAdmin: false,
+        },
+        {
           username: "chubbs-peterson",
           firstName: "Chubbs",
           lastName: "Peterson",
           email: "chubbs@gmail.com",
           bio: "Enthusiastic member of the Contra Costa Golf Club",
-          isAdmin: false,
+          isAdmin: true,
         },
+
         {
           username: "happy-gilmore",
           firstName: "Happy",
@@ -151,7 +162,7 @@ describe("GET /users", function () {
           username: "shooter-mcgavin",
           firstName: "Shooter",
           lastName: "McGavin",
-          email: "user2@user.com",
+          email: "shooter@gmail.com",
           bio: "Enthusiastic member of the Contra Costa Golf Club",
           isAdmin: false,
         },
@@ -175,6 +186,7 @@ describe("GET /users", function () {
 describe("GET /users/:username", function () {
   test("works", async function () {
     const resp = await request(app).get(`/users/happy-gilmore`);
+
     expect(resp.body).toEqual({
       user: {
         username: "happy-gilmore",
@@ -183,6 +195,81 @@ describe("GET /users/:username", function () {
         email: "happy@gmail.com",
         bio: "Enthusiastic member of the Contra Costa Golf Club",
         isAdmin: false,
+        rounds: [
+          {
+            id: testRoundIds[0],
+            tournamentDate: "2022-01-01T08:00:00.000Z",
+            courseHandle: "lone-tree",
+            courseName: "Lone Tree Golf Course",
+            totalStrokes: 72,
+            netStrokes: 69,
+            totalPutts: 18,
+            courseHandicap: 3,
+            playerIndex: "2.7",
+            greenies: [],
+            strokes: {
+              hole1: 4,
+              hole2: 4,
+              hole3: 4,
+              hole4: 4,
+              hole5: 4,
+              hole6: 4,
+              hole7: 4,
+              hole8: 4,
+              hole9: 4,
+              hole10: 4,
+              hole11: 4,
+              hole12: 4,
+              hole13: 4,
+              hole14: 4,
+              hole15: 4,
+              hole16: 4,
+              hole17: 4,
+              hole18: 4,
+            },
+            putts: {
+              hole1: 1,
+              hole2: 1,
+              hole3: 1,
+              hole4: 1,
+              hole5: 1,
+              hole6: 1,
+              hole7: 1,
+              hole8: 1,
+              hole9: 1,
+              hole10: 1,
+              hole11: 1,
+              hole12: 1,
+              hole13: 1,
+              hole14: 1,
+              hole15: 1,
+              hole16: 1,
+              hole17: 1,
+              hole18: 1,
+            },
+            pars: {
+              hole1: 4,
+              hole2: 3,
+              hole3: 4,
+              hole4: 5,
+              hole5: 4,
+              hole6: 4,
+              hole7: 4,
+              hole8: 3,
+              hole9: 4,
+              hole10: 3,
+              hole11: 3,
+              hole12: 5,
+              hole13: 4,
+              hole14: 3,
+              hole15: 4,
+              hole16: 5,
+              hole17: 5,
+              hole18: 4,
+              total: 71,
+            },
+          },
+        ],
       },
     });
   });
@@ -300,20 +387,20 @@ describe("PATCH /users/:username", () => {
 describe("DELETE /users/:username", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-      .delete(`/users/happy-gilmore`)
+      .delete(`/users/bob-barker`)
       .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.body).toEqual({ deleted: "happy-gilmore" });
+    expect(resp.body).toEqual({ deleted: "bob-barker" });
   });
 
   test("unauth if not admin", async function () {
     const resp = await request(app)
-      .delete(`/users/happy-gilmore`)
+      .delete(`/users/bob-barker`)
       .set("authorization", `Bearer ${happyToken}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app).delete(`/users/happy-gilmore`);
+    const resp = await request(app).delete(`/users/bob-barker`);
     expect(resp.statusCode).toEqual(401);
   });
 

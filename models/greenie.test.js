@@ -21,16 +21,19 @@ afterAll(commonAfterAll);
 /************************************** create */
 
 describe("create", function () {
+  const newGreenie = {
+    holeNumber: 11,
+    feet: 11,
+    inches: 11,
+  };
   test("works", async function () {
-    const newGreenie = {
+    let greenie = await Greenie.create({
+      ...newGreenie,
       roundId: testRoundsIds[2],
-      holeNumber: 11,
-      feet: 11,
-      inches: 11,
-    };
-    let greenie = await Greenie.create(newGreenie);
+    });
     expect(greenie).toEqual({
       ...newGreenie,
+      roundId: testRoundsIds[2],
       id: expect.any(Number),
     });
   });
@@ -43,8 +46,9 @@ describe("create", function () {
         feet: 11,
         inches: 11,
       };
-      await Greenie.create(newGreenie);
-      await Greenie.create(newGreenie);
+      await Greenie.create({ ...newGreenie, roundId: testRoundsIds[2] });
+      await Greenie.create({ ...newGreenie, roundId: testRoundsIds[2] });
+
       fail();
     } catch (err) {
       expect(err instanceof BadRequestError).toBeTruthy();

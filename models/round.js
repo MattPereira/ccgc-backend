@@ -54,7 +54,7 @@ class Round {
       (113 / courseSlope) *
       (totalStrokes - courseRating)
     ).toFixed(1);
-    console.log("SCORE DIFFERENTIAL", scoreDifferential);
+    // console.log("SCORE DIFFERENTIAL", scoreDifferential);
 
     /** Compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2
      *  score_differentials (includes the current round scoring_differential) */
@@ -117,7 +117,7 @@ class Round {
         netStrokes,
       ]
     );
-    console.log("ROUND ID", roundRes.rows[0].id);
+    // console.log("ROUND ID", roundRes.rows[0].id);
 
     const roundId = roundRes.rows[0].id;
 
@@ -369,7 +369,7 @@ class Round {
       (113 / courseSlope) *
       (totalStrokes - courseRating)
     ).toFixed(1);
-    console.log("SCORE DIFFERENTIAL", scoreDifferential);
+    // console.log("SCORE DIFFERENTIAL", scoreDifferential);
 
     /** Compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2
      *  score_differentials (includes the current round scoring_differential) */

@@ -17,8 +17,6 @@ class Tournament {
    * */
 
   static async create({ date, courseHandle, tourYears }) {
-    //dont need to validate date because magic of input type date does that
-
     const duplicateCheck = await db.query(
       `SELECT date
            FROM tournaments
@@ -252,9 +250,9 @@ class Tournament {
    * This is a "partial update" --- it's fine if data doesn't contain all the
    * fields; this only changes provided ones.
    *
-   * Data can include: {courseHandle, seasonEndYear}
+   * Data can include: {courseHandle, tourYears}
    *
-   * Returns {date, courseHandle, seasonEndYear}
+   * Returns {date, courseHandle, tourYears}
    *
    * Throws NotFoundError if not found.
    */

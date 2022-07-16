@@ -49,12 +49,11 @@ router.post("/", async function (req, res, next) {
     const round = await Round.create(req.body);
 
     //create a points row for the new round
-    await Point.createRound(round);
+    await Point.create(round);
 
-    // update the strokes and putts points for the
-    // corresponding tournament after adding a new round
-    await Point.updateStrokes(round.tournamentDate);
-    await Point.updatePutts(round.tournamentDate);
+    // Update the tournament strokes and putts points incase of new top 5
+    await Point.updateStrokesPositions(round.tournamentDate);
+    await Point.updatePuttsPositions(round.tournamentDate);
 
     return res.status(201).json({ round });
   } catch (err) {
@@ -126,10 +125,11 @@ router.patch("/:id", async function (req, res, next) {
 
     const round = await Round.update(req.params.id, req.body);
 
-    // UPDATE THE POINTS TABLE
-    await Point.updateRound(round);
-    await Point.updateStrokes(round.tournamentDate);
-    await Point.updatePutts(round.tournamentDate);
+    // Update the scores(pars, birdies, etc) for the round since strokes have changed
+    await Point.updateScores(round);
+    // Update the tournament strokes and putts incase of new top 5
+    await Point.updateStrokesPositions(round.tournamentDate);
+    await Point.updatePuttsPositions(round.tournamentDate);
 
     return res.json({ round });
   } catch (err) {
@@ -152,17 +152,14 @@ router.patch("/:id", async function (req, res, next) {
 
 router.delete("/:id", async function (req, res, next) {
   try {
-    //sloppy but need to grab round data for Point.updates below
+    //Need to grab round.tournamentDate for Point.updates below
     const round = await Round.get(req.params.id);
 
     await Round.remove(req.params.id);
 
-    console.log(round);
-
-    //update the strokes and putts points after deleting a round
-    // the pars, bird, eag, ace, participation is handled by cascade
-    await Point.updateStrokes(round.tournamentDate);
-    await Point.updatePutts(round.tournamentDate);
+    // Update the tournament strokes and putts incase of new top 5 post deletion
+    await Point.updateStrokesPositions(round.tournamentDate);
+    await Point.updatePuttsPositions(round.tournamentDate);
 
     return res.json({ deleted: req.params.id });
   } catch (err) {

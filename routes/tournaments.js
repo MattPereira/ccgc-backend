@@ -16,8 +16,8 @@ const Tournament = require("../models/tournament");
 const Greenie = require("../models/greenie");
 const Point = require("../models/point");
 
-// const tournamentNewSchema = require("../schemas/tournamentNew.json");
-// const tournamentUpdateSchema = require("../schemas/tournamentUpdate.json");
+const tournamentNewSchema = require("../schemas/tournamentNew.json");
+const tournamentUpdateSchema = require("../schemas/tournamentUpdate.json");
 
 const router = new express.Router();
 
@@ -25,9 +25,9 @@ const router = new express.Router();
  *
  * Creates a new tournament.
  *
- * req.body data should be { date, courseHandle, seasonEndYear }
+ * req.body data should be { date, courseHandle, tourYears }
  *
- * Returns { date, courseHandle, seasonEndYear }
+ * Returns { date, courseHandle, tourYears }
  *
  * Authorization required: admin
  *
@@ -35,11 +35,11 @@ const router = new express.Router();
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    //     const validator = jsonschema.validate(req.body, tournamentNewSchema);
-    //     if (!validator.valid) {
-    //       const errs = validator.errors.map((e) => e.stack);
-    //       throw new BadRequestError(errs);
-    //     }
+    const validator = jsonschema.validate(req.body, tournamentNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const tournament = await Tournament.create(req.body);
     return res.status(201).json({ tournament });
@@ -96,7 +96,7 @@ router.get("/:date", async function (req, res, next) {
     const tournament = await Tournament.get(date);
     const strokesLeaderboard = await Tournament.getStrokes(date);
     const puttsLeaderboard = await Tournament.getPutts(date);
-    const pointsLeaderboard = await Point.getByTournament(date);
+    const pointsLeaderboard = await Point.getTournamentStandings(date);
     const greenies = await Greenie.findAll(date);
     return res.json({
       tournament: {
@@ -125,11 +125,11 @@ router.get("/:date", async function (req, res, next) {
 
 router.patch("/:date", ensureAdmin, async function (req, res, next) {
   try {
-    // const validator = jsonschema.validate(req.body, tournamentUpdateSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((e) => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const validator = jsonschema.validate(req.body, tournamentUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const tournament = await Tournament.update(req.params.date, req.body);
 

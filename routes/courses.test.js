@@ -344,55 +344,97 @@ describe("PATCH /courses/:handle", function () {
       .send({
         name: "Patched Name Golf Course",
         slope: 222,
+        rating: 77.7,
+        imgUrl: "test.com/patched.jpg",
+        pars: {
+          hole1: 5,
+          hole2: 5,
+          hole3: 5,
+          hole4: 5,
+          hole5: 5,
+          hole6: 5,
+          hole7: 5,
+          hole8: 5,
+          hole9: 5,
+          hole10: 5,
+          hole11: 5,
+          hole12: 5,
+          hole13: 5,
+          hole14: 5,
+          hole15: 5,
+          hole16: 5,
+          hole17: 5,
+          hole18: 5,
+        },
+        handicaps: {
+          hole1: 1,
+          hole2: 2,
+          hole3: 3,
+          hole4: 4,
+          hole5: 5,
+          hole6: 6,
+          hole7: 7,
+          hole8: 8,
+          hole9: 9,
+          hole10: 10,
+          hole11: 11,
+          hole12: 12,
+          hole13: 13,
+          hole14: 14,
+          hole15: 15,
+          hole16: 16,
+          hole17: 17,
+          hole18: 18,
+        },
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
       course: {
         handle: "lone-tree",
         name: "Patched Name Golf Course",
-        rating: "69.1",
+        rating: "77.7",
         slope: 222,
-        imgUrl: null,
+        imgUrl: "test.com/patched.jpg",
         pars: {
-          hole1: 4,
-          hole2: 3,
-          hole3: 4,
+          hole1: 5,
+          hole2: 5,
+          hole3: 5,
           hole4: 5,
-          hole5: 4,
-          hole6: 4,
-          hole7: 4,
-          hole8: 3,
-          hole9: 4,
-          hole10: 3,
-          hole11: 3,
+          hole5: 5,
+          hole6: 5,
+          hole7: 5,
+          hole8: 5,
+          hole9: 5,
+          hole10: 5,
+          hole11: 5,
           hole12: 5,
-          hole13: 4,
-          hole14: 3,
-          hole15: 4,
+          hole13: 5,
+          hole14: 5,
+          hole15: 5,
           hole16: 5,
           hole17: 5,
-          hole18: 4,
-          total: 71,
+          hole18: 5,
+          total: 90,
         },
         handicaps: {
           hole1: 1,
-          hole2: 13,
-          hole3: 17,
-          hole4: 9,
-          hole5: 7,
-          hole6: 15,
-          hole7: 3,
-          hole8: 11,
-          hole9: 5,
-          hole10: 16,
-          hole11: 12,
-          hole12: 2,
-          hole13: 4,
-          hole14: 18,
-          hole15: 6,
-          hole16: 8,
-          hole17: 10,
-          hole18: 14,
+          hole2: 2,
+          hole3: 3,
+          hole4: 4,
+          hole5: 5,
+          hole6: 6,
+          hole7: 7,
+          hole8: 8,
+          hole9: 9,
+          hole10: 10,
+          hole11: 11,
+          hole12: 12,
+          hole13: 13,
+          hole14: 14,
+          hole15: 15,
+          hole16: 16,
+          hole17: 17,
+          hole18: 18,
         },
       },
     });
@@ -451,24 +493,24 @@ describe("PATCH /courses/:handle", function () {
 describe("DELETE /courses/:handle", function () {
   test("works for admin", async function () {
     const resp = await request(app)
-      .delete(`/courses/lone-tree`)
+      .delete(`/courses/wild-horse`)
       .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.body).toEqual({ deleted: "lone-tree" });
+    expect(resp.body).toEqual({ deleted: "wild-horse" });
   });
 
   test("unauth for non-admin", async function () {
     const resp = await request(app)
-      .delete(`/courses/lone-tree`)
+      .delete(`/courses/wild-horse`)
       .set("authorization", `Bearer ${happyToken}`);
     expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
-    const resp = await request(app).delete(`/courses/lone-tree`);
+    const resp = await request(app).delete(`/courses/wild-horse`);
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("not found for no such company", async function () {
+  test("not found for no such course", async function () {
     const resp = await request(app)
       .delete(`/courses/invalid-course`)
       .set("authorization", `Bearer ${adminToken}`);

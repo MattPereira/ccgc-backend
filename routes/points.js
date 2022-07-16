@@ -29,7 +29,7 @@ const router = new express.Router();
  */
 router.get("/standings", async function (req, res, next) {
   try {
-    const standings = await Point.getStandings();
+    const standings = await Point.getOverallStandings();
     return res.status(200).json({ standings });
   } catch (err) {
     return next(err);
@@ -48,7 +48,7 @@ router.get("/standings", async function (req, res, next) {
  */
 router.get("/:date", async function (req, res, next) {
   try {
-    const points = await Point.getByTournament(req.params.date);
+    const points = await Point.getTournamentStandings(req.params.date);
     return res.status(200).json({ points });
   } catch (err) {
     return next(err);
@@ -75,9 +75,10 @@ router.patch("/all", async function (req, res, next) {
 
     //update points for each tournament date previously seeded into db
     for (const date of dates) {
-      await Point.updateStrokes(date);
-      await Point.updatePutts(date);
-      await Point.updateSeededData(date);
+      await Point.updateStrokesPositions(date);
+      await Point.updatePuttsPositions(date);
+      await Point.updateAllGreenies(date);
+      await Point.updateAllScores(date);
     }
 
     return res.status(201).json({ success: "seed data updated!" });

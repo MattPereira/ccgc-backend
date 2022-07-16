@@ -6,16 +6,9 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 const testGreeniesIds = [];
 const testRoundsIds = [];
 
+/* ON DELETE CASCADE handles the putts, strokes, pars,
+ * handicaps, greenies, and points */
 async function commonBeforeAll() {
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM points");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM greenies");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM putts");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM strokes");
-  // noinspection SqlWithoutWhere
   await db.query("DELETE FROM rounds");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM tournaments");
@@ -119,6 +112,32 @@ async function commonBeforeAll() {
   );
 
   testGreeniesIds.splice(0, 0, ...greenieRes.rows.map((row) => row.id));
+
+  //// TEST DATA FOR POINTS ////
+  await db.query(
+    `
+      INSERT INTO points (round_id, participation, strokes, putts, pars, birdies, eagles, aces, greenies)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [testRoundsIds[0], 3, 25, 6, 18, 0, 0, 0, 7]
+  );
+  await db.query(
+    `
+      INSERT INTO points (round_id, participation, strokes, putts, pars, birdies, eagles, aces, greenies)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [testRoundsIds[1], 3, 20, 4, 0, 0, 0, 0, 2]
+  );
+  await db.query(
+    `
+      INSERT INTO points (round_id, participation, strokes, putts, pars, birdies, eagles, aces, greenies)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [testRoundsIds[2], 3, 25, 6, 0, 36, 0, 0, 0]
+  );
+  await db.query(
+    `
+      INSERT INTO points (round_id, participation, strokes, putts, pars, birdies, eagles, aces, greenies)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [testRoundsIds[3], 3, 20, 4, 18, 0, 0, 0, 3]
+  );
 }
 
 async function commonBeforeEach() {

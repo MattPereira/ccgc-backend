@@ -173,7 +173,7 @@ class User {
       `SELECT id, 
               tournament_date AS "tournamentDate",
               course_handle AS "courseHandle",
-              name AS "courseName",
+              courses.name AS "courseName",
               total_strokes AS "totalStrokes",
               course_handicap AS "courseHandicap",
               player_index AS "playerIndex",

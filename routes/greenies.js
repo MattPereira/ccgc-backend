@@ -42,7 +42,8 @@ router.post("/", async function (req, res, next) {
 
     const greenie = await Greenie.create(req.body);
 
-    await Point.updateGreenie(greenie);
+    //add points to the greenies column in the points table
+    await Point.updateGreenies(greenie);
 
     return res.status(201).json({ greenie });
   } catch (err) {
@@ -63,7 +64,7 @@ router.post("/", async function (req, res, next) {
 router.get("/", async function (req, res, next) {
   try {
     const date = req.query.date;
-    console.log("DATE:", date);
+
     const greenies = await Greenie.findAll(date);
     return res.json({ greenies });
   } catch (err) {
@@ -110,7 +111,8 @@ router.patch("/:id", async function (req, res, next) {
 
     const greenie = await Greenie.update(req.params.id, req.body);
 
-    await Point.updateGreenie(greenie);
+    //update the greenies points incase newly updated greenie is worth more or less points
+    await Point.updateGreenies(greenie);
 
     return res.json({ greenie });
   } catch (err) {
@@ -129,10 +131,10 @@ router.patch("/:id", async function (req, res, next) {
 
 router.delete("/:id", async function (req, res, next) {
   try {
-    //remove the points first because you need the id to still exist for query
+    //remove the points first because you need the id to still exist
     await Point.removeGreenie(req.params.id);
 
-    //then remove the actual greenie?
+    //then remove the greenie
     await Greenie.remove(req.params.id);
 
     return res.json({ deleted: req.params.id });

@@ -19,7 +19,7 @@ const {
 const Round = require("../models/round");
 const Point = require("../models/point");
 
-// const roundNewSchema = require("../schemas/roundNew.json");
+const roundNewSchema = require("../schemas/roundNew.json");
 // const roundUpdateSchema = require("../schemas/roundUpdate.json");
 
 const router = new express.Router();
@@ -38,13 +38,13 @@ const router = new express.Router();
  *
  */
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    // const validator = jsonschema.validate(req.body, roundNewSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((e) => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const validator = jsonschema.validate(req.body, roundNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const round = await Round.create(req.body);
 
@@ -150,7 +150,7 @@ router.patch("/:id", async function (req, res, next) {
  * Authorization: admin (not sure how to add owner of round auth?)
  */
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
     //Need to grab round.tournamentDate for Point.updates below
     const round = await Round.get(req.params.id);

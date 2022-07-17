@@ -199,16 +199,18 @@ class Point {
 
     const greenie = greenieRes.rows[0];
 
-    let subtractPoints = 0;
+    if (!greenie) throw new NotFoundError(`No greenie with id: ${greenieId}`);
 
-    if (greenie.feet > 20) subtractPoints = 1;
-    if (greenie.feet < 20 && greenie.feet >= 10) subtractPoints = 2;
-    if (greenie.feet < 10 && greenie.feet >= 2) subtractPoints = 3;
-    if (greenie.feet < 2) subtractPoints = 4;
+    let subtrahend = 0;
+
+    if (greenie.feet > 20) subtrahend = 1;
+    if (greenie.feet < 20 && greenie.feet >= 10) subtrahend = 2;
+    if (greenie.feet < 10 && greenie.feet >= 2) subtrahend = 3;
+    if (greenie.feet < 2) subtrahend = 4;
 
     const pointsRes = await db.query(
       `UPDATE points SET greenies = greenies - $1 WHERE round_id = $2`,
-      [subtractPoints, greenie.round_id]
+      [subtrahend, greenie.round_id]
     );
 
     return pointsRes.rows[0];

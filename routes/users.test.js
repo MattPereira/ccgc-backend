@@ -16,6 +16,7 @@ const {
   shooterToken,
   adminToken,
   testRoundIds,
+  testGreenieIds,
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -206,7 +207,20 @@ describe("GET /users/:username", function () {
             totalPutts: 18,
             courseHandicap: 3,
             playerIndex: "2.7",
-            greenies: [],
+            greenies: [
+              {
+                id: testGreenieIds[0],
+                roundId: testRoundIds[0],
+                holeNumber: 1,
+                feet: 1,
+                inches: 1,
+                courseImg: null,
+                courseName: "Lone Tree Golf Course",
+                firstName: "Happy",
+                lastName: "Gilmore",
+                tournamentDate: "2022-01-01T08:00:00.000Z",
+              },
+            ],
             strokes: {
               hole1: 4,
               hole2: 4,

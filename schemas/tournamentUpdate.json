@@ -4,6 +4,7 @@
     "title": "Root Schema",
     "type": "object",
     "default": {},
+    "additionalProperties": false,
     "required": [
         "courseHandle",
         "tourYears"

@@ -15,8 +15,8 @@ const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const Greenie = require("../models/greenie");
 const Point = require("../models/point");
 
-// const greenieNewSchema = require("../schemas/greenieNew.json");
-// const greenieUpdateSchema = require("../schemas/greenieUpdate.json");
+const greenieNewSchema = require("../schemas/greenieNew.json");
+const greenieUpdateSchema = require("../schemas/greenieUpdate.json");
 
 const router = new express.Router();
 
@@ -32,13 +32,13 @@ const router = new express.Router();
  *
  */
 
-router.post("/", async function (req, res, next) {
+router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    //     const validator = jsonschema.validate(req.body, tournamentNewSchema);
-    //     if (!validator.valid) {
-    //       const errs = validator.errors.map((e) => e.stack);
-    //       throw new BadRequestError(errs);
-    //     }
+    const validator = jsonschema.validate(req.body, greenieNewSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const greenie = await Greenie.create(req.body);
 
@@ -94,20 +94,20 @@ router.get("/:id", async function (req, res, next) {
  *
  * Patches greenie data by id.
  *
- * fields must include: { holeNumber, feet, inches }
+ * fields must (and only can) include: { feet, inches }
  *
  * Returns { id, roundId, holeNumber, feet, inches }
  *
  * Authorization: logged in user
  */
 
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
-    // const validator = jsonschema.validate(req.body, tournamentUpdateSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((e) => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const validator = jsonschema.validate(req.body, greenieUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const greenie = await Greenie.update(req.params.id, req.body);
 
@@ -122,14 +122,13 @@ router.patch("/:id", async function (req, res, next) {
 
 /** DELETE /[date]  =>  { deleted: date }
  *
- * Deletes a tournament by date.
+ * Deletes a greenie by id.
  *
- * this works but still kinda gross
  *
- * Authorization: logged in user
+ * Authorization: admin user
  */
 
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
     //remove the points first because you need the id to still exist
     await Point.removeGreenie(req.params.id);

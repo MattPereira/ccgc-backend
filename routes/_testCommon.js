@@ -10,6 +10,7 @@ const Point = require("../models/point");
 const { createToken } = require("../helpers/tokens");
 
 const testRoundIds = [];
+const testGreenieIds = [];
 
 /* ON DELETE CASCADE handles the putts, strokes, pars,
  * handicaps, greenies, and points */
@@ -310,7 +311,7 @@ async function commonBeforeAll() {
     })
   ).id;
 
-  testRoundIds[1] = (
+  testRoundIds[2] = (
     await Round.create({
       tournamentDate: "2022-01-01",
       username: "chubbs-peterson",
@@ -356,8 +357,36 @@ async function commonBeforeAll() {
       },
     })
   ).id;
-}
 
+  /****************** CREATE 3 GREENIES *****************/
+
+  testGreenieIds[0] = (
+    await Greenie.create({
+      roundId: testRoundIds[0],
+      holeNumber: 1,
+      feet: 1,
+      inches: 1,
+    })
+  ).id;
+
+  testGreenieIds[1] = (
+    await Greenie.create({
+      roundId: testRoundIds[1],
+      holeNumber: 1,
+      feet: 2,
+      inches: 2,
+    })
+  ).id;
+
+  testGreenieIds[2] = (
+    await Greenie.create({
+      roundId: testRoundIds[2],
+      holeNumber: 1,
+      feet: 3,
+      inches: 3,
+    })
+  ).id;
+}
 async function commonBeforeEach() {
   await db.query("BEGIN");
 }
@@ -386,4 +415,5 @@ module.exports = {
   shooterToken,
   adminToken,
   testRoundIds,
+  testGreenieIds,
 };

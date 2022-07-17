@@ -20,7 +20,7 @@ const Round = require("../models/round");
 const Point = require("../models/point");
 
 const roundNewSchema = require("../schemas/roundNew.json");
-// const roundUpdateSchema = require("../schemas/roundUpdate.json");
+const roundUpdateSchema = require("../schemas/roundUpdate.json");
 
 const router = new express.Router();
 
@@ -115,13 +115,13 @@ router.get("/:id", async function (req, res, next) {
  * Authorization: admin (not sure how to handle this yet)
  */
 
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
-    // const validator = jsonschema.validate(req.body, roundUpdateSchema);
-    // if (!validator.valid) {
-    //   const errs = validator.errors.map((e) => e.stack);
-    //   throw new BadRequestError(errs);
-    // }
+    const validator = jsonschema.validate(req.body, roundUpdateSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map((e) => e.stack);
+      throw new BadRequestError(errs);
+    }
 
     const round = await Round.update(req.params.id, req.body);
 
@@ -141,23 +141,19 @@ router.patch("/:id", async function (req, res, next) {
  *
  * Deletes a round by id.
  *
- * WHY DOES THIS WORK LOL ITS MAGIC
  *
- * deleting the round should ruin the Point.updates but it doesnt?
- *
- * or does it?
- *
- * Authorization: admin (not sure how to add owner of round auth?)
+ * Authorization: admin
  */
 
 router.delete("/:id", ensureAdmin, async function (req, res, next) {
   try {
-    //Need to grab round.tournamentDate for Point.updates below
+    //grab round.tournamentDate for Point.updates below
     const round = await Round.get(req.params.id);
 
     await Round.remove(req.params.id);
 
-    // Update the tournament strokes and putts incase of new top 5 post deletion
+    // Update the tournament strokes and putts
+    // incase of new top 5 post round deletion
     await Point.updateStrokesPositions(round.tournamentDate);
     await Point.updatePuttsPositions(round.tournamentDate);
 

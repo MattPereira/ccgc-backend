@@ -217,175 +217,188 @@ async function commonBeforeAll() {
 
   /****************** CREATE 3 ROUNDS *****************/
 
-  testRoundIds[0] = (
-    await Round.create({
-      tournamentDate: "2022-01-01",
-      username: "happy-gilmore",
-      strokes: {
-        hole1: 4,
-        hole2: 4,
-        hole3: 4,
-        hole4: 4,
-        hole5: 4,
-        hole6: 4,
-        hole7: 4,
-        hole8: 4,
-        hole9: 4,
-        hole10: 4,
-        hole11: 4,
-        hole12: 4,
-        hole13: 4,
-        hole14: 4,
-        hole15: 4,
-        hole16: 4,
-        hole17: 4,
-        hole18: 4,
-      },
-      putts: {
-        hole1: 1,
-        hole2: 1,
-        hole3: 1,
-        hole4: 1,
-        hole5: 1,
-        hole6: 1,
-        hole7: 1,
-        hole8: 1,
-        hole9: 1,
-        hole10: 1,
-        hole11: 1,
-        hole12: 1,
-        hole13: 1,
-        hole14: 1,
-        hole15: 1,
-        hole16: 1,
-        hole17: 1,
-        hole18: 1,
-      },
-    })
-  ).id;
+  const happyRound = await Round.create({
+    tournamentDate: "2022-01-01",
+    username: "happy-gilmore",
+    strokes: {
+      hole1: 4,
+      hole2: 4,
+      hole3: 4,
+      hole4: 4,
+      hole5: 4,
+      hole6: 4,
+      hole7: 4,
+      hole8: 4,
+      hole9: 4,
+      hole10: 4,
+      hole11: 4,
+      hole12: 4,
+      hole13: 4,
+      hole14: 4,
+      hole15: 4,
+      hole16: 4,
+      hole17: 4,
+      hole18: 4,
+    },
+    putts: {
+      hole1: 1,
+      hole2: 1,
+      hole3: 1,
+      hole4: 1,
+      hole5: 1,
+      hole6: 1,
+      hole7: 1,
+      hole8: 1,
+      hole9: 1,
+      hole10: 1,
+      hole11: 1,
+      hole12: 1,
+      hole13: 1,
+      hole14: 1,
+      hole15: 1,
+      hole16: 1,
+      hole17: 1,
+      hole18: 1,
+    },
+  });
 
-  testRoundIds[1] = (
-    await Round.create({
-      tournamentDate: "2022-01-01",
-      username: "shooter-mcgavin",
-      strokes: {
-        hole1: 5,
-        hole2: 5,
-        hole3: 5,
-        hole4: 5,
-        hole5: 5,
-        hole6: 5,
-        hole7: 5,
-        hole8: 5,
-        hole9: 5,
-        hole10: 5,
-        hole11: 5,
-        hole12: 5,
-        hole13: 5,
-        hole14: 5,
-        hole15: 5,
-        hole16: 5,
-        hole17: 5,
-        hole18: 5,
-      },
-      putts: {
-        hole1: 2,
-        hole2: 2,
-        hole3: 2,
-        hole4: 2,
-        hole5: 2,
-        hole6: 2,
-        hole7: 2,
-        hole8: 2,
-        hole9: 2,
-        hole10: 2,
-        hole11: 2,
-        hole12: 2,
-        hole13: 2,
-        hole14: 2,
-        hole15: 2,
-        hole16: 2,
-        hole17: 2,
-        hole18: 2,
-      },
-    })
-  ).id;
+  await Point.create(happyRound);
 
-  testRoundIds[2] = (
-    await Round.create({
-      tournamentDate: "2022-01-01",
-      username: "chubbs-peterson",
-      strokes: {
-        hole1: 6,
-        hole2: 6,
-        hole3: 6,
-        hole4: 6,
-        hole5: 6,
-        hole6: 6,
-        hole7: 6,
-        hole8: 6,
-        hole9: 6,
-        hole10: 6,
-        hole11: 6,
-        hole12: 6,
-        hole13: 6,
-        hole14: 6,
-        hole15: 6,
-        hole16: 6,
-        hole17: 6,
-        hole18: 6,
-      },
-      putts: {
-        hole1: 3,
-        hole2: 3,
-        hole3: 3,
-        hole4: 3,
-        hole5: 3,
-        hole6: 3,
-        hole7: 3,
-        hole8: 3,
-        hole9: 3,
-        hole10: 3,
-        hole11: 3,
-        hole12: 3,
-        hole13: 3,
-        hole14: 3,
-        hole15: 3,
-        hole16: 3,
-        hole17: 3,
-        hole18: 3,
-      },
-    })
-  ).id;
+  testRoundIds[0] = happyRound.id;
+
+  const shooterRound = await Round.create({
+    tournamentDate: "2022-01-01",
+    username: "shooter-mcgavin",
+    strokes: {
+      hole1: 5,
+      hole2: 5,
+      hole3: 5,
+      hole4: 5,
+      hole5: 5,
+      hole6: 5,
+      hole7: 5,
+      hole8: 5,
+      hole9: 5,
+      hole10: 5,
+      hole11: 5,
+      hole12: 5,
+      hole13: 5,
+      hole14: 5,
+      hole15: 5,
+      hole16: 5,
+      hole17: 5,
+      hole18: 5,
+    },
+    putts: {
+      hole1: 2,
+      hole2: 2,
+      hole3: 2,
+      hole4: 2,
+      hole5: 2,
+      hole6: 2,
+      hole7: 2,
+      hole8: 2,
+      hole9: 2,
+      hole10: 2,
+      hole11: 2,
+      hole12: 2,
+      hole13: 2,
+      hole14: 2,
+      hole15: 2,
+      hole16: 2,
+      hole17: 2,
+      hole18: 2,
+    },
+  });
+
+  await Point.create(shooterRound);
+
+  testRoundIds[1] = shooterRound.id;
+
+  const chubbsRound = await Round.create({
+    tournamentDate: "2022-01-01",
+    username: "chubbs-peterson",
+    strokes: {
+      hole1: 6,
+      hole2: 6,
+      hole3: 6,
+      hole4: 6,
+      hole5: 6,
+      hole6: 6,
+      hole7: 6,
+      hole8: 6,
+      hole9: 6,
+      hole10: 6,
+      hole11: 6,
+      hole12: 6,
+      hole13: 6,
+      hole14: 6,
+      hole15: 6,
+      hole16: 6,
+      hole17: 6,
+      hole18: 6,
+    },
+    putts: {
+      hole1: 3,
+      hole2: 3,
+      hole3: 3,
+      hole4: 3,
+      hole5: 3,
+      hole6: 3,
+      hole7: 3,
+      hole8: 3,
+      hole9: 3,
+      hole10: 3,
+      hole11: 3,
+      hole12: 3,
+      hole13: 3,
+      hole14: 3,
+      hole15: 3,
+      hole16: 3,
+      hole17: 3,
+      hole18: 3,
+    },
+  });
+
+  await Point.create(chubbsRound);
+  testRoundIds[2] = chubbsRound.id;
+
+  await Point.updateStrokesPositions("2022-01-01");
+  await Point.updatePuttsPositions("2022-01-01");
 
   /****************** CREATE 3 GREENIES *****************/
 
-  testGreenieIds[0] = (
-    await Greenie.create({
-      roundId: testRoundIds[0],
-      holeNumber: 1,
-      feet: 1,
-      inches: 1,
-    })
-  ).id;
+  const happyGreenie = await Greenie.create({
+    roundId: testRoundIds[0],
+    holeNumber: 1,
+    feet: 1,
+    inches: 1,
+  });
 
-  testGreenieIds[1] = (
-    await Greenie.create({
-      roundId: testRoundIds[1],
-      holeNumber: 1,
-      feet: 2,
-      inches: 2,
-    })
-  ).id;
+  await Point.updateGreenies(happyGreenie);
+  testGreenieIds[0] = happyGreenie.id;
 
-  testGreenieIds[2] = (
-    await Greenie.create({
-      roundId: testRoundIds[2],
-      holeNumber: 1,
-      feet: 3,
-      inches: 3,
-    })
-  ).id;
+  const shooterGreenie = await Greenie.create({
+    roundId: testRoundIds[1],
+    holeNumber: 1,
+    feet: 2,
+    inches: 2,
+  });
+
+  await Point.updateGreenies(shooterGreenie);
+  testGreenieIds[1] = shooterGreenie.id;
+
+  const chubbsGreenie = await Greenie.create({
+    roundId: testRoundIds[2],
+    holeNumber: 1,
+    feet: 3,
+    inches: 3,
+  });
+
+  await Point.updateGreenies(chubbsGreenie);
+  testGreenieIds[2] = chubbsGreenie.id;
+
+  /****************** CREATE SOME POINTS *****************/
 }
 async function commonBeforeEach() {
   await db.query("BEGIN");

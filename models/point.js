@@ -155,11 +155,11 @@ class Point {
       [greenie.roundId]
     );
 
-    console.log(greenie);
+    // console.log(greenie);
 
     const greenies = greeniesRes.rows;
 
-    console.log(greenies);
+    // console.log(greenies);
 
     const greeniePointsArr = greenies.map((g) => {
       if (g.feet > 20) return 1;
@@ -168,7 +168,7 @@ class Point {
       if (g.feet < 2) return 4;
     });
 
-    console.log(greeniePointsArr);
+    // console.log(greeniePointsArr);
 
     const greeniePointTotal = greeniePointsArr.reduce(
       (acc, curr) => acc + curr,
@@ -228,7 +228,7 @@ class Point {
       `SELECT rounds.username,
               first_name AS "firstName",
               last_name AS "lastName",
-            SUM(participation) AS "participations",
+            SUM(participation) AS "participation",
             SUM(strokes) AS "strokes", 
             SUM(putts) AS "putts", 
             SUM(greenies) AS "greenies", 
@@ -443,7 +443,7 @@ class Point {
     //create array of 18 par values from the parsRes
     const parsArr = Object.values(parsRes.rows[0]);
 
-    console.log("PARS ARR", parsArr);
+    // console.log("PARS ARR", parsArr);
 
     //grab the roundId and strokes for each round for the tournamentDate
     const strokesRes = await db.query(
@@ -462,7 +462,7 @@ class Point {
       };
     });
 
-    console.log("ROUNDS ARR", roundsArr);
+    // console.log("ROUNDS ARR", roundsArr);
 
     // console.log("ROUNDS ARR", roundsArr);
 

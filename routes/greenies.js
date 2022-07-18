@@ -128,7 +128,7 @@ router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
  * Authorization: admin user
  */
 
-router.delete("/:id", ensureAdmin, async function (req, res, next) {
+router.delete("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
     //remove the points first because you need the id to still exist
     await Point.removeGreenie(req.params.id);

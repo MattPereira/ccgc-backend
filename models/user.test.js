@@ -30,7 +30,6 @@ describe("authenticate", function () {
       lastName: "U1L",
       email: "u1@gmail.com",
       isAdmin: false,
-      bio: "u1 bio",
     });
   });
 
@@ -60,7 +59,6 @@ describe("register", function () {
     firstName: "Test",
     lastName: "Tester",
     email: "test@test.com",
-    bio: "Enthusiastic member of the Contra Costa Golf Club",
     isAdmin: false,
   };
 
@@ -125,7 +123,6 @@ describe("findAll", function () {
         firstName: "U1F",
         lastName: "U1L",
         email: "u1@gmail.com",
-        bio: "u1 bio",
         isAdmin: false,
       },
       {
@@ -133,7 +130,6 @@ describe("findAll", function () {
         firstName: "U2F",
         lastName: "U2L",
         email: "u2@gmail.com",
-        bio: "u2 bio",
         isAdmin: false,
       },
       {
@@ -141,7 +137,6 @@ describe("findAll", function () {
         firstName: "U3F",
         lastName: "U3L",
         email: "u3@gmail.com",
-        bio: "u3 bio",
         isAdmin: false,
       },
     ]);
@@ -158,7 +153,6 @@ describe("get", function () {
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@gmail.com",
-      bio: "u1 bio",
       isAdmin: false,
     });
   });
@@ -180,7 +174,7 @@ describe("update", function () {
     firstName: "NewFirst",
     lastName: "NewLast",
     email: "new@gmail.com",
-    bio: "new bio",
+
     isAdmin: true,
   };
 
@@ -201,7 +195,6 @@ describe("update", function () {
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@gmail.com",
-      bio: "u1 bio",
       isAdmin: false,
     });
     const found = await db.query("SELECT * FROM users WHERE username = 'u1'");

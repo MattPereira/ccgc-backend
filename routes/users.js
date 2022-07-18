@@ -80,9 +80,9 @@ router.get("/:username", async function (req, res, next) {
 /** PATCH /[username] { user } => { user }
  *
  * Data can include:
- *   { firstName, lastName, password, email, bio, isAdmin }
+ *   { firstName, lastName, password, email, isAdmin }
  *
- * Returns { username, firstName, lastName, email, bio, isAdmin }
+ * Returns { username, firstName, lastName, email, isAdmin }
  *
  * Authorization required: admin or same-user-as-:username
  **/

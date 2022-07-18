@@ -45,7 +45,6 @@ describe("POST /users", function () {
         firstName: "newFirst",
         lastName: "newLast",
         email: "new@gmail.com",
-        bio: "Enthusiastic member of the Contra Costa Golf Club",
         isAdmin: false,
       },
       token: expect.any(String),
@@ -70,7 +69,6 @@ describe("POST /users", function () {
         firstName: "newFirst",
         lastName: "newLast",
         email: "new@gmail.com",
-        bio: "Enthusiastic member of the Contra Costa Golf Club",
         isAdmin: true,
       },
       token: expect.any(String),
@@ -138,7 +136,6 @@ describe("GET /users", function () {
           firstName: "Bob",
           lastName: "Barker",
           email: "bob@gmail.com",
-          bio: "Enthusiastic member of the Contra Costa Golf Club",
           username: "bob-barker",
           isAdmin: false,
         },
@@ -147,7 +144,6 @@ describe("GET /users", function () {
           firstName: "Chubbs",
           lastName: "Peterson",
           email: "chubbs@gmail.com",
-          bio: "Enthusiastic member of the Contra Costa Golf Club",
           isAdmin: true,
         },
 
@@ -156,7 +152,6 @@ describe("GET /users", function () {
           firstName: "Happy",
           lastName: "Gilmore",
           email: "happy@gmail.com",
-          bio: "Enthusiastic member of the Contra Costa Golf Club",
           isAdmin: false,
         },
         {
@@ -164,7 +159,6 @@ describe("GET /users", function () {
           firstName: "Shooter",
           lastName: "McGavin",
           email: "shooter@gmail.com",
-          bio: "Enthusiastic member of the Contra Costa Golf Club",
           isAdmin: false,
         },
       ],
@@ -194,7 +188,6 @@ describe("GET /users/:username", function () {
         firstName: "Happy",
         lastName: "Gilmore",
         email: "happy@gmail.com",
-        bio: "Enthusiastic member of the Contra Costa Golf Club",
         isAdmin: false,
         rounds: [
           {
@@ -302,7 +295,6 @@ describe("PATCH /users/:username", () => {
       .patch(`/users/happy-gilmore`)
       .send({
         firstName: "Sad",
-        bio: "Sad member of the Contra Costa Golf Club",
       })
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.body).toEqual({
@@ -311,7 +303,6 @@ describe("PATCH /users/:username", () => {
         firstName: "Sad",
         lastName: "Gilmore",
         email: "happy@gmail.com",
-        bio: "Sad member of the Contra Costa Golf Club",
         isAdmin: false,
       },
     });
@@ -322,7 +313,6 @@ describe("PATCH /users/:username", () => {
       .patch(`/users/happy-gilmore`)
       .send({
         firstName: "Joyful",
-        bio: "Joyful member of the Contra Costa Golf Club",
       })
       .set("authorization", `Bearer ${happyToken}`);
     expect(resp.body).toEqual({
@@ -331,7 +321,6 @@ describe("PATCH /users/:username", () => {
         firstName: "Joyful",
         lastName: "Gilmore",
         email: "happy@gmail.com",
-        bio: "Joyful member of the Contra Costa Golf Club",
         isAdmin: false,
       },
     });
@@ -387,7 +376,6 @@ describe("PATCH /users/:username", () => {
         firstName: "Happy",
         lastName: "Gilmore",
         email: "happy@gmail.com",
-        bio: "Enthusiastic member of the Contra Costa Golf Club",
         isAdmin: false,
       },
     });

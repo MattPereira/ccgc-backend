@@ -5,7 +5,6 @@ email TEXT
 password TEXT
 first_name TEXT
 last_name TEXT
-bio TEXT
 is_admin BOOLEAN
 
 

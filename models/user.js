@@ -16,7 +16,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config.js");
 class User {
   /** authenticate user with email, password.
    *
-   * Returns { username, email, first_name, last_name, bio, is_admin }
+   * Returns { username, email, first_name, last_name, is_admin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
    **/
@@ -29,7 +29,6 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   username,
-                  bio,
                   is_admin AS "isAdmin"
            FROM users
            WHERE email = $1`,
@@ -53,7 +52,7 @@ class User {
 
   /** Register user with data.
    *
-   * Returns { username, email, firstName, lastName, bio, isAdmin }
+   * Returns { username, email, firstName, lastName, isAdmin }
    *
    * Throws BadRequestError on duplicates.
    **/
@@ -84,7 +83,7 @@ class User {
             last_name,
             is_admin)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING username, email, first_name AS "firstName", last_name AS "lastName", bio, is_admin AS "isAdmin"`,
+           RETURNING username, email, first_name AS "firstName", last_name AS "lastName", is_admin AS "isAdmin"`,
       [username, email, hashedPassword, firstName, lastName, isAdmin]
     );
 
@@ -95,27 +94,57 @@ class User {
 
   /** Find all users.
    *
-   * Returns [{ username, email, first_name, last_name, bio, is_admin }, ...]
+   * Returns [{ username, first_name, last_name, is_admin, avgStrokes, avgPutts, avgGreenies }, ...]
+   *
+   *
+   *  bug with trying to double join users to rounds to greenies
    **/
 
   static async findAll() {
-    const result = await db.query(
-      `SELECT username,
-                  email,
+    const usersRes = await db.query(
+      `SELECT users.username,
                   first_name AS "firstName",
                   last_name AS "lastName",
-                  bio,
-                  is_admin AS "isAdmin"
+                  is_admin AS "isAdmin",
+                  ROUND(AVG(total_strokes), 2) AS "avgStrokes",
+                  ROUND(AVG(total_putts), 2) AS "avgPutts",
+                  COUNT(rounds.id) AS "totalRounds"
            FROM users
-           ORDER BY username`
+           LEFT JOIN ROUNDS on users.username = rounds.username
+           GROUP BY users.username
+           ORDER BY AVG(total_strokes) ASC`
     );
 
-    return result.rows;
+    const users = usersRes.rows;
+
+    const greenieRes = await db.query(
+      `SELECT username,
+              COUNT(greenies.id) AS "totalGreenies"
+          FROM rounds
+          LEFT JOIN GREENIES on rounds.id = greenies.round_id
+          GROUP BY username`
+    );
+
+    const greenies = greenieRes.rows;
+
+    const result = {};
+
+    result.members = users;
+
+    users.map((m) => {
+      greenies.map((g) => {
+        if (g.username === m.username) {
+          m.avgGreenies = (g.totalGreenies / m.totalRounds).toFixed(2);
+        }
+      });
+    });
+
+    return result.members;
   }
 
   /** Given a username, return basic data about user.
    *
-   *  Returns { username, email, first_name, last_name, bio, is_admin }
+   *  Returns { username, email, first_name, last_name, is_admin }
    *
    *
    */
@@ -126,7 +155,6 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  bio,
                   is_admin AS "isAdmin"
            FROM users
            WHERE username = $1`,
@@ -158,7 +186,6 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   email,
-                  bio,
                   is_admin AS "isAdmin"
            FROM users
            WHERE username = $1`,
@@ -285,9 +312,9 @@ class User {
    * all the fields; this only changes provided ones.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, bio }
+   *   { firstName, lastName, password, email }
    *
-   * Returns { username, firstName, lastName, email,bio, isAdmin }
+   * Returns { username, firstName, lastName, email, isAdmin }
    *
    * Throws NotFoundError if not found.
    *
@@ -319,7 +346,6 @@ class User {
                                 first_name AS "firstName",
                                 last_name AS "lastName",
                                 email,
-                                bio,
                                 is_admin AS "isAdmin"`;
     const result = await db.query(querySql, [...values, username]);
     const user = result.rows[0];

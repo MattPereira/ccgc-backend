@@ -94,7 +94,8 @@ class Greenie {
   static async get(id) {
     const greenieRes = await db.query(
       `SELECT greenies.id, 
-              round_id AS "roundId", 
+              round_id AS "roundId",
+              users.username,
               first_name AS "firstName",
               last_name AS "lastName",
               tournament_date AS "tournamentDate", 

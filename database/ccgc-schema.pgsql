@@ -4,7 +4,6 @@ CREATE TABLE users (
     password TEXT NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
-    bio TEXT DEFAULT 'Enthusiastic member of the Contra Costa Golf Club',
     is_admin BOOLEAN NOT NULL DEFAULT FALSE
 );
 

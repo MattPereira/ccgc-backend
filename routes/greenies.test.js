@@ -174,6 +174,7 @@ describe("GET /greenies/:id", function () {
         firstName: "Happy",
         lastName: "Gilmore",
         tournamentDate: "2022-01-01T08:00:00.000Z",
+        username: "happy-gilmore",
       },
     });
   });
@@ -238,19 +239,20 @@ describe("PATCH /greenies/:id", function () {
 /************************************** DELETE /greenies/:id */
 
 describe("DELETE /greenies/:id", function () {
-  test("works for admin", async function () {
-    const resp = await request(app)
-      .delete(`/greenies/${testGreenieIds[0]}`)
-      .set("authorization", `Bearer ${adminToken}`);
-    expect(resp.body).toEqual({ deleted: testGreenieIds[0].toString() });
-  });
-
-  test("unauth for non-admin", async function () {
+  test("works for logged in users", async function () {
     const resp = await request(app)
       .delete(`/greenies/${testGreenieIds[0]}`)
       .set("authorization", `Bearer ${happyToken}`);
-    expect(resp.statusCode).toEqual(401);
+    expect(resp.body).toEqual({ deleted: testGreenieIds[0].toString() });
   });
+
+  //TRYING AUTH FOR ALL LOGGED IN USERS
+  // test("unauth for non-admin", async function () {
+  //   const resp = await request(app)
+  //     .delete(`/greenies/${testGreenieIds[0]}`)
+  //     .set("authorization", `Bearer ${happyToken}`);
+  //   expect(resp.statusCode).toEqual(401);
+  // });
 
   test("unauth for anon", async function () {
     const resp = await request(app).delete(`/greenies/${testGreenieIds[0]}`);

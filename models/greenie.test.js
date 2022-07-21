@@ -149,6 +149,7 @@ describe("get", function () {
       courseName: "Roddy Ranch Golf Course",
       firstName: "U1F",
       lastName: "U1L",
+      username: "u1",
       tournamentDate: parse("2022-01-01"),
     });
   });

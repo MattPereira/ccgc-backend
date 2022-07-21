@@ -93,9 +93,10 @@ router.get("/:date", async function (req, res, next) {
   try {
     const { date } = req.params;
 
+    ////// Promise.all() to speed up ////////
     const tournament = await Tournament.get(date);
-    const strokesLeaderboard = await Tournament.getStrokes(date);
-    const puttsLeaderboard = await Tournament.getPutts(date);
+    const strokesLeaderboard = await Tournament.getStrokesLeaderboard(date);
+    const puttsLeaderboard = await Tournament.getPuttsLeaderboard(date);
     const pointsLeaderboard = await Point.getTournamentStandings(date);
     const greenies = await Greenie.findAll(date);
     return res.json({

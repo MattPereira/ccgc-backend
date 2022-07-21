@@ -28,15 +28,15 @@ VALUES ('tom-moore','moore.tom@comcast.net', '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvA
 
 ----------------------- COURSES TABLES -------------------------------------
 INSERT INTO courses (handle, name, rating, slope, img_url)
-VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125, '/course-photos/paradise_valley.jpg'),
-       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120, '/course-photos/wild_horse.jpg'),
-       ('lone-tree', 'Lone Tree Golf Course', 69.1, 121, '/course-photos/lone_tree.jpg'),
-       ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127, '/course-photos/franklin_canyon.jpg'),
-       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, '/course-photos/cypress_lakes.jpg'),
-       ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131, '/course-photos/yocha_dehe.jpg'),
-       ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121, '/course-photos/blue_rock.jpg'),
-       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, '/course-photos/wolf_run.png'),
-       ('rooster-run', 'Roster Run Golf Club', 70.5, 127, '/course-photos/rooster_run.jpg');
+VALUES ('paradise-valley', 'Paradise Valley Golf Course', 70.4, 125, '/course-photos/paradise-valley.jpg'),
+       ('wild-horse', 'Wild Horse Golf Course', 68.4, 120, '/course-photos/wild-horse.jpg'),
+       ('lone-tree', 'Lone Tree Golf Course', 69.1, 121, '/course-photos/lone-tree.jpg'),
+       ('franklin-canyon', 'Franklin Canyon Golf Course', 69.6, 127, '/course-photos/franklin-canyon.jpg'),
+       ('cypress-lakes', 'Cypress Lakes Golf Course', 71.2, 120, '/course-photos/cypress-lakes.jpg'),
+       ('yocha-dehe', 'Yocha Dehe Golf Club', 71.4, 131, '/course-photos/yocha-dehe.jpg'),
+       ('blue-rock-east', 'Blue Rock Springs East', 68.4, 121, '/course-photos/blue-rock.jpg'),
+       ('wolf-run', 'Wolf Run Golf Club', 67.3, 122, '/course-photos/wolf-run.png'),
+       ('rooster-run', 'Roster Run Golf Club', 70.5, 127, '/course-photos/rooster-run.jpg');
 
 
 INSERT INTO pars (course_handle, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18, total)

@@ -41,9 +41,10 @@ app.use("/points", pointsRoutes);
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Welcome to the CCGC API!",
+    message: "Welcome to the Contra Costa Golf Club API!",
     github: "https://github.com/MattPereira/ccgc-backend",
     linkedIn: "https://www.linkedin.com/in/matt-pereira-32428a63/",
+    sampleGetRoutes: ["/courses", "/rounds", "/tournaments", "/greenies"],
   });
 });
 

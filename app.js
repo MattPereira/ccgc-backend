@@ -34,6 +34,15 @@ app.use("/tournaments", tournamentsRoutes);
 app.use("/greenies", greeniesRoutes);
 app.use("/points", pointsRoutes);
 
+/** GET / =>
+ * display info on all the available routes
+ *
+ */
+
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to the CCGC API!" });
+});
+
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
   return next(new NotFoundError());

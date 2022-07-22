@@ -194,50 +194,50 @@ class Round {
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    * */
-  ////////////////// NOT CURRENTLY IN USE /////////////////////////
-  // static async findAll() {
-  //   const roundsRes = await db.query(
-  //     `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
-  //                  FROM rounds
-  //                  ORDER BY net_strokes ASC`
-  //   );
 
-  //   const strokesRes = await db.query(
-  //     `SELECT round_id AS "roundId",
-  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-  //               FROM strokes`
-  //   );
+  static async findAll() {
+    const roundsRes = await db.query(
+      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
+                   FROM rounds
+                   ORDER BY net_strokes ASC`
+    );
 
-  //   const puttsRes = await db.query(
-  //     `SELECT round_id AS "roundId",
-  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-  //               FROM putts`
-  //   );
+    const strokesRes = await db.query(
+      `SELECT round_id AS "roundId",
+                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+                FROM strokes`
+    );
 
-  //   const rounds = roundsRes.rows;
-  //   const strokes = strokesRes.rows;
-  //   const putts = puttsRes.rows;
+    const puttsRes = await db.query(
+      `SELECT round_id AS "roundId",
+                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+                FROM putts`
+    );
 
-  //   // associate strokes and putts with each round based on roundId
-  //   rounds.map((r) => {
-  //     strokes.map((s) => {
-  //       if (s.roundId === r.id) {
-  //         //   delete s.roundId;
-  //         r.strokes = s;
-  //       }
-  //     });
-  //     putts.map((p) => {
-  //       if (p.roundId === r.id) {
-  //         //   delete p.roundId;
-  //         r.putts = p;
-  //       }
-  //     });
-  //   });
+    const rounds = roundsRes.rows;
+    const strokes = strokesRes.rows;
+    const putts = puttsRes.rows;
 
-  //   return rounds;
-  // }
+    // associate strokes and putts with each round based on roundId
+    rounds.map((r) => {
+      strokes.map((s) => {
+        if (s.roundId === r.id) {
+          //   delete s.roundId;
+          r.strokes = s;
+        }
+      });
+      putts.map((p) => {
+        if (p.roundId === r.id) {
+          //   delete p.roundId;
+          r.putts = p;
+        }
+      });
+    });
+
+    return rounds;
+  }
 
   /** Given a round_id, return all the data associated with that round.
    *

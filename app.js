@@ -40,7 +40,11 @@ app.use("/points", pointsRoutes);
  */
 
 app.get("/", (req, res) => {
-  res.json({ message: "Welcome to the CCGC API!" });
+  res.json({
+    message: "Welcome to the CCGC API!",
+    github: "https://github.com/MattPereira/ccgc-backend",
+    linkedIn: "https://www.linkedin.com/in/matt-pereira-32428a63/",
+  });
 });
 
 /** Handle 404 errors -- this matches everything */

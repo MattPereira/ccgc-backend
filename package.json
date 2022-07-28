@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon server.js",
-    "test": "jest -i"
+    "test": "jest -i",
+    "deploy": "git push heroku main",
+    "resetDb": "heroku pg:reset",
+    "uploadDb": "heroku pg:push ccgc DATABSE_URL -a contra-costa-golf-club",
+    "config": "heroku config:set PGSSLMODE=no-verify"
   },
   "repository": {
     "type": "git",
@@ -34,3 +38,4 @@
     "supertest": "^6.2.3"
   }
 }
+

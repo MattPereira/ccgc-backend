@@ -1,6 +1,6 @@
 
 # [Contra Costa Golf Club](https://ccgc.surge.sh/)
-#### A full-stack web application deployed at [ccgc.surge.sh/](https://ccgc.surge.sh/)
+
 
 ![](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
@@ -9,7 +9,7 @@
 
 [<img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>](https://ccgc.surge.sh/)
 
-
+#### A full-stack web application deployed at [ccgc.surge.sh/](https://ccgc.surge.sh/)
 
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
 [Back-End](https://github.com/MattPereira/ccgc-backend)

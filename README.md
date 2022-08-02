@@ -9,8 +9,6 @@
 
 [<img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>](https://ccgc.surge.sh/)
 
-#### A full-stack web application deployed at [ccgc.surge.sh/](https://ccgc.surge.sh/)
-
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
 [Back-End](https://github.com/MattPereira/ccgc-backend)
 

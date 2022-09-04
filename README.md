@@ -7,16 +7,24 @@
 ![](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
+<<<<<<< HEAD
 <img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>
 
 #### A full-stack web application deployed at [ccgc.surge.sh/](https://ccgc.surge.sh/)
 
+=======
+>>>>>>> f615d109d01a65154349e085f7179f57da49ab12
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
 [Back-End](https://github.com/MattPereira/ccgc-backend)
 
+[<img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>](https://ccgc.surge.sh/)
+
+
+
 
 ## Description
-The site displays all of the [tournaments](https://ccgc.surge.sh/tournaments), [greenies](https://ccgc.surge.sh/greenies), [members](https://ccgc.surge.sh/members), [courses](https://ccgc.surge.sh/courses), and [standings](https://ccgc.surge.sh/standings) data for the 2021-22 season. Tournament data tables are sorted in ascending order to display the winners of each round. Additionally, all users are able to input their strokes, putts, and greenies for each round. Upon submission of any new, edited, or deleted data, tour points are automatically recalculated. 
+
+This is a full stack web application I built for the Contra Costa Golf Club. The website displays all of the [tournaments](https://ccgc.surge.sh/tournaments), [greenies](https://ccgc.surge.sh/greenies), [members](https://ccgc.surge.sh/members), [courses](https://ccgc.surge.sh/courses), and [standings](https://ccgc.surge.sh/standings) data for the 2021-22 season. Tournament data tables are sorted in ascending order to display the winners of each round. Additionally, all users are able to input their strokes, putts, and greenies for each round. Upon submission of any new, edited, or deleted data, tour points are automatically recalculated. 
 
 
 ## Features

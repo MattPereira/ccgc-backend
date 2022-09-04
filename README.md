@@ -7,13 +7,6 @@
 ![](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-<<<<<<< HEAD
-<img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>
-
-#### A full-stack web application deployed at [ccgc.surge.sh/](https://ccgc.surge.sh/)
-
-=======
->>>>>>> f615d109d01a65154349e085f7179f57da49ab12
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
 [Back-End](https://github.com/MattPereira/ccgc-backend)
 

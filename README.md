@@ -15,12 +15,12 @@
 
 
 ---
-### Description
+### **Description**
 
 A full stack web application for the Contra Costa Golf Club. The website displays all of the [tournaments](https://ccgc.surge.sh/tournaments), [greenies](https://ccgc.surge.sh/greenies), [members](https://ccgc.surge.sh/members), [courses](https://ccgc.surge.sh/courses), and [standings](https://ccgc.surge.sh/standings) data for the 2021-22 season. Tournament data tables are sorted in ascending order to display the winners of each round. Additionally, all users are able to input their strokes, putts, and greenies for each round. Upon submission of any new, edited, or deleted data, tour points are automatically recalculated. 
 
 ---
-### Features
+### **Features**
 **Full CRUD for all registered users**
   * Regular Users can create,update, and delete their round scores (strokes and putts and greenies) 
   * Admin users can additionally add new golf course data and create new tournaments
@@ -56,7 +56,7 @@ A full stack web application for the Contra Costa Golf Club. The website display
 Coming soon...
 
 ---
-### Tech Stack
+### **Tech Stack**
 * React
 * Express
 * PostgreSQL
@@ -66,7 +66,7 @@ Coming soon...
 * CSS
 
 ---
-### Testing
+### **Testing**
 * 104 front-end tests with React Testing Library
 * 180 back-end tests with SuperTest
 * Run using "npm test"

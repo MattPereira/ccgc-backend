@@ -1,14 +1,14 @@
 
-# [Contra Costa Golf Club](https://ccgc.surge.sh/)
+# **Contra Costa Golf Club**
 
-
+<!-- 
 ![ExpressJs badge](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
 ![React badge](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Javascript badge](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
-[Back-End](https://github.com/MattPereira/ccgc-backend)
+[Back-End](https://github.com/MattPereira/ccgc-backend) -->
 
 <img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>
 

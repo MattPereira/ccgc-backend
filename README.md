@@ -10,7 +10,7 @@
 [Front-End](https://github.com/MattPereira/ccgc-frontend) | 
 [Back-End](https://github.com/MattPereira/ccgc-backend) -->
 
-<img src="https://raw.githubusercontent.com/MattPereira/ccgc-frontend/main/src/assets/ccgc_logo.png" width="200" height="250"/>
+<img src="https://raw.githubusercontent.com/MattPereira/ccgc-frontend/main/src/assets/ccgc_logo.png" width="200" height="200"/>
 
 
 

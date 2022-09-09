@@ -229,15 +229,15 @@ class Point {
               first_name AS "firstName",
               last_name AS "lastName",
             SUM(participation) AS "participation",
-            SUM(strokes) AS "strokes", 
-            SUM(putts) AS "putts", 
-            SUM(greenies) AS "greenies", 
-            SUM(pars) AS "pars", 
-            SUM(birdies) AS "birdies", 
-            SUM(eagles) AS "eagles", 
+            SUM(strokes) AS "strokes",
+            SUM(putts) AS "putts",
+            SUM(greenies) AS "greenies",
+            SUM(pars) AS "pars",
+            SUM(birdies) AS "birdies",
+            SUM(eagles) AS "eagles",
             SUM(aces) AS "aces",
             (SUM(strokes) + SUM(putts) + SUM(greenies) + SUM(participation) + SUM(pars) + SUM(birdies) + SUM(eagles) + SUM(aces)) AS "total"
-          FROM points 
+          FROM points
           JOIN rounds ON points.round_id=rounds.id
           JOIN users ON rounds.username=users.username
           GROUP BY rounds.username, last_name, first_name

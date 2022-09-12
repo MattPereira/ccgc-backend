@@ -68,14 +68,14 @@ class Greenie {
               JOIN courses ON tournaments.course_handle = courses.handle
               JOIN users ON rounds.username=users.username`;
     let queryValues = [];
-
+    //always order by distance from cup
     if (date !== undefined) {
-      //order by hole_number if looking at a particular tournament
+      //add WHERE clause if date is passed in as a parameter
       query += " WHERE tournament_date = $1";
       queryValues.push(date);
-      query += " ORDER BY hole_number, feet, inches";
+      query += " ORDER BY feet, inches";
     } else {
-      //order by distance only if looking at all greenies
+      //if no date is passed in
       query += " ORDER BY feet, inches";
     }
 

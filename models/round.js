@@ -239,6 +239,123 @@ class Round {
     return rounds;
   }
 
+  /** Find all rounds in database.
+   *
+   *
+   * Returns [{ tournament_date, username, strokes, putts }, ...]
+   *  where strokes is {hole1, hole2, hole3, ...}
+   *  and putts is {hole1, hole2, hole3, ...}
+   * */
+
+  static async getByUsername({ username }) {
+    const roundsRes = await db.query(
+      `SELECT id, 
+      tournament_date AS "tournamentDate",
+      course_handle AS "courseHandle",
+      courses.name AS "courseName",
+      total_strokes AS "totalStrokes",
+      course_handicap AS "courseHandicap",
+      player_index AS "playerIndex",
+      net_strokes AS "netStrokes",
+      total_putts AS "totalPutts"
+   FROM rounds
+   JOIN tournaments ON rounds.tournament_date = tournaments.date
+   JOIN courses ON tournaments.course_handle = courses.handle
+   WHERE username = $1
+   ORDER BY tournament_date DESC`,
+      [username]
+    );
+
+    if (roundsRes.rows.length === 0) {
+      throw new NotFoundError(`No rounds found for user ${username}`, 404);
+    }
+    const rounds = roundsRes.rows;
+
+    //map an array of roundIds and courseHandles to efficiently query strokes and putts and pars tables
+    const roundsIds = rounds.map((r) => r.id);
+    const courseHandles = rounds.map((r) => `'${r.courseHandle}'`);
+
+    const strokesRes = await db.query(
+      `SELECT *
+          FROM strokes
+          WHERE round_id IN (${roundsIds.join(", ")})`
+    );
+
+    const puttsRes = await db.query(
+      `SELECT *
+          FROM putts
+          WHERE round_id IN (${roundsIds.join(", ")})`
+    );
+    const parsRes = await db.query(
+      `SELECT *
+          FROM pars
+          WHERE course_handle IN (${courseHandles.join(", ")})`
+    );
+
+    const greeniesRes = await db.query(
+      `SELECT greenies.id, 
+              round_id AS "roundId", 
+              first_name AS "firstName",
+              last_name AS "lastName",
+              tournament_date AS "tournamentDate", 
+              name AS "courseName", 
+              hole_number AS "holeNumber", 
+              img_url AS "courseImg",
+              feet, 
+              inches
+            FROM greenies
+            JOIN rounds ON greenies.round_id = rounds.id
+            JOIN tournaments ON rounds.tournament_date = tournaments.date
+            JOIN courses ON tournaments.course_handle = courses.handle
+            JOIN users ON rounds.username=users.username
+            WHERE round_id IN (${roundsIds.join(", ")})
+            ORDER BY hole_number`
+    );
+
+    const strokes = strokesRes.rows;
+    const putts = puttsRes.rows;
+    const pars = parsRes.rows;
+    const greenies = greeniesRes.rows;
+
+    //map strokes and putts data to rounds
+    rounds.map((r) => {
+      strokes.map((s) => {
+        if (s.round_id === r.id) {
+          delete s.round_id;
+          r.strokes = s;
+        }
+      });
+      putts.map((p) => {
+        if (p.round_id === r.id) {
+          delete p.round_id;
+          r.putts = p;
+        }
+      });
+      pars.map((p) => {
+        if (p.course_handle === r.courseHandle) {
+          // delete p.course_handle;
+          r.pars = p;
+        }
+      });
+
+      //make an array to push each greenie into
+      r.greenies = [];
+      greenies.map((g) => {
+        if (g.roundId === r.id) {
+          r.greenies.push(g);
+        }
+      });
+    });
+
+    //Have to wait to delete the course handles after the above map to avoid bug with
+    //user playing more than one round at same course
+    rounds.map((r) => {
+      delete r.pars.course_handle;
+    });
+
+    return rounds;
+  }
+
   /** Given a round_id, return all the data associated with that round.
    *
    * Returns { id, tournament_date, username, totalStrokes, totalPutts, strokes, putts, greenies}

@@ -61,7 +61,7 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
-/** GET /  =>
+/** GET /[username]  => { rounds }
  *
  *   Returns a list of all rounds associated with a particular tournament.
  *
@@ -77,16 +77,18 @@ router.get("/", async function (req, res, next) {
   try {
     //how to pass some date to Round.findAll()?
 
-    const rounds = await Round.findAll();
+    const rounds = await Round.getByUsername(req.query);
+    console.log(rounds);
     return res.json({ rounds });
   } catch (err) {
     return next(err);
   }
 });
 
-/** GET /[handle]  =>  { round }
+/** GET /[id]  =>  { round }
  *
  *  Returns data about a specific round by id.
+ *
  *
  *  Round is { id, tournament_date, username, strokes, putts, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap }
  *  where strokes is {hole1, hole2, ..., hole18}
@@ -97,6 +99,7 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   try {
+    console.log(typeof Number(req.params.id));
     const round = await Round.get(req.params.id);
     return res.json({ round });
   } catch (err) {
@@ -104,7 +107,7 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
-/** PATCH /[handle] { fld1, fld2, ... } => { round }
+/** PATCH /[id] { fld1, fld2, ... } => { round }
  *
  * Patches round data (including strokes and putts) by id.
  *

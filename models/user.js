@@ -221,7 +221,7 @@ class User {
 
     user.rounds = userRoundsRes.rows;
 
-    //map an array of roundIds and courseHandles to efficiently query strokes and putts and pars
+    //map an array of roundIds and courseHandles to efficiently query strokes and putts and pars tables
     const roundsIds = user.rounds.map((r) => r.id);
     const courseHandles = user.rounds.map((r) => `'${r.courseHandle}'`);
 
@@ -297,7 +297,7 @@ class User {
       });
     });
 
-    //Had to wait to delete the course handles after the above map to avoid bug with
+    //Have to wait to delete the course handles after the above map to avoid bug with
     //user playing more than one round at same course
     user.rounds.map((r) => {
       delete r.pars.course_handle;

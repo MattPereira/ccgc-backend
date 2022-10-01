@@ -189,6 +189,7 @@ class Round {
 
   /** Find all rounds in database.
    *
+   * /////////NOT CURRENTLY IN USE///////////
    *
    * Returns [{ tournament_date, username, strokes, putts }, ...]
    *  where strokes is {hole1, hole2, hole3, ...}
@@ -239,7 +240,7 @@ class Round {
     return rounds;
   }
 
-  /** Find all rounds in database.
+  /** Find all rounds in database for a particular user.
    *
    *
    * Returns [{ tournament_date, username, strokes, putts }, ...]
@@ -247,7 +248,7 @@ class Round {
    *  and putts is {hole1, hole2, hole3, ...}
    * */
 
-  static async getByUsername({ username }) {
+  static async getByUsername(username) {
     const roundsRes = await db.query(
       `SELECT id, 
       tournament_date AS "tournamentDate",
@@ -347,8 +348,8 @@ class Round {
       });
     });
 
-    //Have to wait to delete the course handles after the above map to avoid bug with
-    //user playing more than one round at same course
+    /** Have to wait to delete the course handles until after the above map 
+     to avoid bug caused by user playing more than one round at same course */
     rounds.map((r) => {
       delete r.pars.course_handle;
     });

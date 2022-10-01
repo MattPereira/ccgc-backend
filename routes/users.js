@@ -60,7 +60,7 @@ router.get("/", async function (req, res, next) {
 
 /** GET /[username] => { user }
  *
- *  Grab only the necessary data for "currentUser" object
+ *  MEMBER DETAILS PAGE & "currentUser" FOR LOGIN STATUS
  *
  *  Returns { username, firstName, lastName, isAdmin }
  *

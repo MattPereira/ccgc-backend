@@ -216,18 +216,18 @@ class Point {
     return pointsRes.rows[0];
   }
 
-  /** Find all the points
+  /** Find all the points by tour years
    *
-   *  (eventually by tour year?)
+   *
    *
    * sum the column values and group by username
    *
    * */
-  static async getOverallStandings() {
+  static async getYearlyStandings(tourYears) {
     const standingsRes = await db.query(
       `SELECT rounds.username,
-              first_name AS "firstName",
-              last_name AS "lastName",
+            first_name AS "firstName",
+            last_name AS "lastName",
             SUM(participation) AS "participation",
             SUM(strokes) AS "strokes",
             SUM(putts) AS "putts",
@@ -240,9 +240,66 @@ class Point {
           FROM points
           JOIN rounds ON points.round_id=rounds.id
           JOIN users ON rounds.username=users.username
+          JOIN tournaments ON rounds.tournament_date = tournaments.date
+          WHERE tour_years = $1
           GROUP BY rounds.username, last_name, first_name
-          ORDER BY total DESC;`
+          ORDER BY total DESC`,
+      [tourYears]
     );
+
+    /// TOUR YEARS FILTER NOT WORKING WITH row_number() solution?!?!
+
+    // const standingsRes = await db.query(
+    //   `SELECT * FROM (
+    //     SELECT rounds.username,
+    //           first_name AS "firstName",
+    //           last_name AS "lastName",
+    //           participation,
+    //           strokes,
+    //           putts,
+    //           greenies,
+    //           pars,
+    //           birdies,
+    //           eagles,
+    //           aces,
+    //           (strokes + putts + greenies + participation + pars + birdies + eagles + aces) AS "total",
+    //           tour_years,
+    //           row_number() OVER (PARTITION BY rounds.username ORDER BY (strokes + putts + greenies + participation + pars + birdies + eagles + aces) DESC) AS rn
+    //       FROM points
+    //       JOIN rounds ON points.round_id=rounds.id
+    //       JOIN users ON rounds.username=users.username
+    //       JOIN tournaments ON rounds.tournament_date = tournaments.date
+    //       WHERE tour_years = $1) AS sub
+    //       WHERE rn < 4`,
+    //   [tourYears]
+    // );
+
+    // const standingsRes = await db.query(
+    //   `SELECT *
+    //   FROM (
+    //     SELECT rounds.username,
+    //     first_name AS "firstName",
+    //     last_name AS "lastName",
+    //     SUM(participation) AS "participation",
+    //     SUM(strokes) AS "strokes",
+    //     SUM(putts) AS "putts",
+    //     SUM(greenies) AS "greenies",
+    //     SUM(pars) AS "pars",
+    //     SUM(birdies) AS "birdies",
+    //     SUM(eagles) AS "eagles",
+    //     SUM(aces) AS "aces",
+    //     (SUM(strokes) + SUM(putts) + SUM(greenies) + SUM(participation) + SUM(pars) + SUM(birdies) + SUM(eagles) + SUM(aces)) AS "total",
+    //     row_number() OVER (PARTITION BY rounds.username ORDER BY (SUM(strokes) + SUM(putts) + SUM(greenies) + SUM(participation) + SUM(pars) + SUM(birdies) + SUM(eagles) + SUM(aces)) DESC) AS rn
+    //       FROM points
+    //       JOIN rounds ON points.round_id=rounds.id
+    //       JOIN users ON rounds.username=users.username
+    //       JOIN tournaments ON rounds.tournament_date = tournaments.date
+    //       WHERE tour_years = $1
+    //       GROUP BY rounds.username, last_name, first_name
+    //       ORDER BY total DESC) AS sub
+    //       WHERE rn < 4`,
+    //   [tourYears]
+    // );
 
     return standingsRes.rows;
   }

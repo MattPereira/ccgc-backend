@@ -27,9 +27,10 @@ const router = new express.Router();
  *
  *  Authorization required: none
  */
-router.get("/standings", async function (req, res, next) {
+router.get("/standings/:tourYears", async function (req, res, next) {
   try {
-    const standings = await Point.getOverallStandings();
+    console.log(req.params.tourYears);
+    const standings = await Point.getYearlyStandings(req.params.tourYears);
     return res.status(200).json({ standings });
   } catch (err) {
     return next(err);

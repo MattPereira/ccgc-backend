@@ -175,11 +175,11 @@ describe("updateGreenies", function () {
   });
 });
 
-/************************************** getOverallStandings */
+/************************************** getYearlyStandings */
 
-describe("getOverallStandings", function () {
+describe("getYearlyStandings", function () {
   test("works", async function () {
-    let standings = await Point.getOverallStandings();
+    let standings = await Point.getYearlyStandings();
     expect(standings).toEqual([
       {
         username: "u1",

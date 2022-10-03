@@ -59,6 +59,7 @@ class Point {
     const parsArr = Object.values(parsRes.rows[0]);
 
     const strokesArr = Object.values(round.strokes);
+    console.log(strokesArr);
 
     let pars = 0;
     let birdies = 0;
@@ -69,7 +70,12 @@ class Point {
       if (strokesArr[i] === parsArr[i]) pars++;
       else if (strokesArr[i] === parsArr[i] - 1) birdies++;
       else if (strokesArr[i] === 1) aces++;
-      else if (strokesArr[i] <= parsArr[i] - 2) eagles++;
+      // now that null values are allowed, watch for shooting 2 on par 4 or 2 on par 5 to count as an eagle
+      else if (
+        strokesArr[i] === parsArr[i] - 2 ||
+        strokesArr[i] === parsArr[i] - 3
+      )
+        eagles++;
     }
 
     // input points for hole scores with corresponding bonus multipliers
@@ -354,7 +360,7 @@ class Point {
 
     //make array of roundIds ordered from lowest to highest net_strokes
     const roundsIds = strokesPosRes.rows.map((r) => r.id);
-    console.log("STROKES IDS", roundsIds);
+    // console.log("STROKES IDS", roundsIds);
     //array of points to be awarded for each roundId by finishing position
     const strokesPoints = [25, 20, 15, 10, 5];
 

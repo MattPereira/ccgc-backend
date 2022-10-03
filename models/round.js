@@ -7,13 +7,14 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 /** Related functions for courses. */
 
 class Round {
-  /** Create a round (from data), update db, return new round data.
+  /** Create a round from data, update db, return new round data.
    *
    * data should be { tournament_date, username, strokes, putts }
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    *
    * Returns { tournamentDate, username, strokes, putts }
+   *
    *
    * Throws BadRequestError if round already in database.
    * */
@@ -32,80 +33,111 @@ class Round {
         `Each golfer is only allowed to submit one round per tournament!`
       );
 
-    /**  Sum the strokes and putts objects to get total_strokes and total_putts */
+    /******  STEP 1 : Sum the strokes and putts objects to get total_strokes and total_putts *******/
     const totalStrokes = Object.values(strokes).reduce((a, b) => a + b, 0);
     const totalPutts = Object.values(putts).reduce((a, b) => a + b, 0);
     // console.log("TOTAL STROKES", totalStrokes);
     // console.log("TOTAL PUTTS", totalPutts);
 
-    /** Compute the score_differential for the round (113 / course_slope) * (total_strokes - course_rating) */
-
+    /**** Need course data for eventual computation of score diff and course handicap ******/
     const courseRes = await db.query(
       `SELECT date, course_handle AS "courseHandle", name AS "courseName", rating AS "courseRating", slope AS "courseSlope"
-        FROM tournaments 
-        JOIN courses ON tournaments.course_handle = courses.handle
-        WHERE date = $1`,
+            FROM tournaments 
+            JOIN courses ON tournaments.course_handle = courses.handle
+            WHERE date = $1`,
       [tournamentDate]
     );
-
     const { courseRating, courseSlope } = courseRes.rows[0];
 
-    const scoreDifferential = +(
-      (113 / courseSlope) *
-      (totalStrokes - courseRating)
-    ).toFixed(1);
-    // console.log("SCORE DIFFERENTIAL", scoreDifferential);
-
-    /** Compute the player_index by querying the last 4 rounds for the player and taking the average of the lowest 2
-     *  score_differentials (includes the current round scoring_differential) */
+    /*******  Compute player_index by averaging lowest 2 of last 4 score diffs  ************/
     const roundsRes = await db.query(
       `SELECT tournament_date AS "tournamentDate",
               score_differential AS "scoreDifferential" 
               FROM rounds 
-              WHERE username=$1 
+              WHERE username=$1 AND score_differential IS NOT NULL
               ORDER BY tournament_date DESC LIMIT 4`,
       [username]
     );
 
     // make array of last 4 scoreDifferentials ['18.3', '22.1', '19.5', '24.4']
     const scoreDiffsArr = roundsRes.rows.map((r) => +r.scoreDifferential);
-    //push current round scoreDifferential onto scoreDiffsArr
-    scoreDiffsArr.push(scoreDifferential);
-    // console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
 
-    //sort from lowest to highest and slice to get the two lowest
-    const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
-    // console.log("LOWEST DIFFS", lowestDiffs);
+    //if this is the players first round start them with score diff of 0
+    if (scoreDiffsArr.length === 0) {
+      scoreDiffsArr.push(0);
+    }
+    console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
 
-    const playerIndex = (
-      lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
-    ).toFixed(1);
-    // console.log("PLAYER INDEX", playerIndex);
+    // if the round is completed, these values will be reassigned in the "if" block
+    let scoreDifferential = null;
+    let netStrokes = null;
+    let playerIndex;
+    let courseHandicap;
 
-    /** Compute the course_handicap
-     * (player_index * (course_slope)) / 113
-     *
-     */
-    const courseHandicap = Math.round((playerIndex * courseSlope) / 113);
-    // console.log("COURSE HANDICAP", courseHandicap);
+    ///////////////// IF THE ROUND IS FULLY COMPLETED ///////////////////////
+    /******** calculate the score differential and net strokes  ******/
+    if (
+      Object.values(strokes).every((val) => val !== null) &&
+      Object.values(putts).every((val) => val !== null)
+    ) {
+      /***** Compute score_differential for round: (113 / course_slope) * (total_strokes - course_rating) *****/
+      scoreDifferential = +(
+        (113 / courseSlope) *
+        (totalStrokes - courseRating)
+      ).toFixed(1);
+      // console.log("SCORE DIFFERENTIAL", scoreDifferential);
 
-    /** Compute the net_strokes :
-     * (total_strokes - course_handicap)
-     */
+      //If player has less than 4 previous rounds but more than 0, push current round scoreDifferential onto scoreDiffsArr to calculate a player index
+      if (scoreDiffsArr.length > 0 && scoreDiffsArr.length < 4) {
+        scoreDiffsArr.push(scoreDifferential);
+      }
+      console.log("SCORE DIFFS ARRAY", scoreDiffsArr);
 
-    const netStrokes = totalStrokes - courseHandicap;
-    // console.log("NET STROKES", netStrokes);
+      //sort from lowest to highest and slice to get the two lowest
+      const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
+      // console.log("LOWEST DIFFS", lowestDiffs);
 
+      playerIndex = (
+        lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
+      ).toFixed(1);
+      console.log("PLAYER INDEX", playerIndex);
+
+      /** Compute the course_handicap = (player_index * (course_slope)) / 113 ***/
+      courseHandicap = Math.round((playerIndex * courseSlope) / 113);
+      console.log("COURSE HANDICAP", courseHandicap);
+
+      /** Compute the net_strokes = (total_strokes - course_handicap) ***/
+      netStrokes = totalStrokes - courseHandicap;
+      // console.log("NET STROKES", netStrokes);
+    } else {
+      ///////////////// IF THE ROUND IS ONLY PARTIALLY COMPLETED ///////////////////////
+      /******** leave score differential and net strokes as null ******/
+
+      //sort from lowest to highest and slice to get the two lowest
+      const lowestDiffs = scoreDiffsArr.sort((a, b) => a - b).slice(0, 2);
+      console.log("LOWEST DIFFS", lowestDiffs);
+
+      playerIndex = (
+        lowestDiffs.reduce((a, b) => a + b, 0) / lowestDiffs.length
+      ).toFixed(1);
+      console.log("PLAYER INDEX", playerIndex);
+
+      /** Compute the course_handicap = (player_index * course_slope) / 113 ***/
+      courseHandicap = Math.round((playerIndex * courseSlope) / 113);
+      console.log("COURSE HANDICAP", courseHandicap);
+    }
+
+    /*** ALL TABLE INSERTION HAPPENS BELOW THE CONDITIONALS THAT SET ROUND COLUMN VALUES */
     // Insert into rounds table first and grab the round_id
     const roundRes = await db.query(
       `INSERT INTO rounds
-           (tournament_date, username, total_strokes, total_putts, score_differential, player_index, course_handicap, net_strokes)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-           RETURNING id, 
-           tournament_date AS "tournamentDate", 
-           username, 
-           total_strokes AS "totalStrokes", 
-           total_putts AS "totalPutts"`,
+               (tournament_date, username, total_strokes, total_putts, score_differential, player_index, course_handicap, net_strokes)
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+               RETURNING id, 
+               tournament_date AS "tournamentDate", 
+               username, 
+               total_strokes AS "totalStrokes", 
+               total_putts AS "totalPutts"`,
       [
         tournamentDate,
         username,
@@ -124,121 +156,82 @@ class Round {
     //Insert all the strokes for the round
     const strokesRes = await db.query(
       `INSERT INTO strokes
-        (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
-      [
-        roundId,
-        strokes.hole1,
-        strokes.hole2,
-        strokes.hole3,
-        strokes.hole4,
-        strokes.hole5,
-        strokes.hole6,
-        strokes.hole7,
-        strokes.hole8,
-        strokes.hole9,
-        strokes.hole10,
-        strokes.hole11,
-        strokes.hole12,
-        strokes.hole13,
-        strokes.hole14,
-        strokes.hole15,
-        strokes.hole16,
-        strokes.hole17,
-        strokes.hole18,
-      ]
+      (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+      RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+      [roundId, ...Object.values(strokes)]
     );
+
+    console.log(strokes);
+    console.log(Object.values(strokes));
 
     //Insert all the putts for the round
     const puttsRes = await db.query(
       `INSERT INTO putts
-        (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
-        RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
-      [
-        roundId,
-        putts.hole1,
-        putts.hole2,
-        putts.hole3,
-        putts.hole4,
-        putts.hole5,
-        putts.hole6,
-        putts.hole7,
-        putts.hole8,
-        putts.hole9,
-        putts.hole10,
-        putts.hole11,
-        putts.hole12,
-        putts.hole13,
-        putts.hole14,
-        putts.hole15,
-        putts.hole16,
-        putts.hole17,
-        putts.hole18,
-      ]
+      (round_id, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+      RETURNING hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18`,
+      [roundId, ...Object.values(putts)]
     );
 
     const round = roundRes.rows[0];
 
     round.strokes = strokesRes.rows[0];
     round.putts = puttsRes.rows[0];
-
     return round;
   }
 
-  /** Find all rounds in database.
-   *
-   * /////////NOT CURRENTLY IN USE///////////
+  /**  /////////NOT CURRENTLY IN USE///////////
+   * Find all rounds in database.
    *
    * Returns [{ tournament_date, username, strokes, putts }, ...]
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    * */
 
-  static async findAll() {
-    const roundsRes = await db.query(
-      `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
-                   FROM rounds
-                   ORDER BY net_strokes ASC`
-    );
+  // static async findAll() {
+  //   const roundsRes = await db.query(
+  //     `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
+  //                  FROM rounds
+  //                  ORDER BY net_strokes ASC`
+  //   );
 
-    const strokesRes = await db.query(
-      `SELECT round_id AS "roundId",
-                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                FROM strokes`
-    );
+  //   const strokesRes = await db.query(
+  //     `SELECT round_id AS "roundId",
+  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+  //               FROM strokes`
+  //   );
 
-    const puttsRes = await db.query(
-      `SELECT round_id AS "roundId",
-                hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-                hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                FROM putts`
-    );
+  //   const puttsRes = await db.query(
+  //     `SELECT round_id AS "roundId",
+  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
+  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+  //               FROM putts`
+  //   );
 
-    const rounds = roundsRes.rows;
-    const strokes = strokesRes.rows;
-    const putts = puttsRes.rows;
+  //   const rounds = roundsRes.rows;
+  //   const strokes = strokesRes.rows;
+  //   const putts = puttsRes.rows;
 
-    // associate strokes and putts with each round based on roundId
-    rounds.map((r) => {
-      strokes.map((s) => {
-        if (s.roundId === r.id) {
-          //   delete s.roundId;
-          r.strokes = s;
-        }
-      });
-      putts.map((p) => {
-        if (p.roundId === r.id) {
-          //   delete p.roundId;
-          r.putts = p;
-        }
-      });
-    });
+  //   // associate strokes and putts with each round based on roundId
+  //   rounds.map((r) => {
+  //     strokes.map((s) => {
+  //       if (s.roundId === r.id) {
+  //         //   delete s.roundId;
+  //         r.strokes = s;
+  //       }
+  //     });
+  //     putts.map((p) => {
+  //       if (p.roundId === r.id) {
+  //         //   delete p.roundId;
+  //         r.putts = p;
+  //       }
+  //     });
+  //   });
 
-    return rounds;
-  }
+  //   return rounds;
+  // }
 
   /** Find all rounds in database for a particular user.
    *
@@ -506,7 +499,7 @@ class Round {
       `SELECT tournament_date AS "tournamentDate",
                   score_differential AS "scoreDifferential" 
                   FROM rounds 
-                  WHERE username=$1 
+                  WHERE username=$1 AND score_differential IS NOT NULL
                   ORDER BY tournament_date ASC LIMIT 4`,
       [username]
     );

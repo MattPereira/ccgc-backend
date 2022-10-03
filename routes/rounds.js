@@ -40,11 +40,12 @@ const router = new express.Router();
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, roundNewSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+    /****** TEMP TURN OFF VALIDATION DURING PARTIAL ROUND INPUT WORK *******/
+    // const validator = jsonschema.validate(req.body, roundNewSchema);
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((e) => e.stack);
+    //   throw new BadRequestError(errs);
+    // }
 
     const round = await Round.create(req.body);
 
@@ -123,11 +124,13 @@ router.get("/:id", async function (req, res, next) {
 
 router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, roundUpdateSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+    /****** TEMP TURN OFF VALIDATION DURING PARTIAL ROUND INPUT WORK *******/
+
+    // const validator = jsonschema.validate(req.body, roundUpdateSchema);
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((e) => e.stack);
+    //   throw new BadRequestError(errs);
+    // }
 
     const round = await Round.update(req.params.id, req.body);
 
@@ -151,22 +154,26 @@ router.patch("/:id", ensureLoggedIn, async function (req, res, next) {
  * Authorization: admin
  */
 
-router.delete("/:id", ensureAdmin, async function (req, res, next) {
-  try {
-    //grab round.tournamentDate for Point.updates below
-    const round = await Round.get(req.params.id);
+router.delete(
+  "/:id",
+  ensureCorrectUserOrAdmin,
+  async function (req, res, next) {
+    try {
+      //grab round.tournamentDate for Point.updates below
+      const round = await Round.get(req.params.id);
 
-    await Round.remove(req.params.id);
+      await Round.remove(req.params.id);
 
-    // Update the tournament strokes and putts
-    // incase of new top 5 post round deletion
-    await Point.updateStrokesPositions(round.tournamentDate);
-    await Point.updatePuttsPositions(round.tournamentDate);
+      // Update the tournament strokes and putts
+      // incase of new top 5 post round deletion
+      await Point.updateStrokesPositions(round.tournamentDate);
+      await Point.updatePuttsPositions(round.tournamentDate);
 
-    return res.json({ deleted: req.params.id });
-  } catch (err) {
-    return next(err);
+      return res.json({ deleted: req.params.id });
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 module.exports = router;

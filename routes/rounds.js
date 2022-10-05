@@ -77,9 +77,9 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
   try {
-    const { username } = req.query;
+    const q = req.query;
 
-    const rounds = await Round.getByUsername(username);
+    const rounds = await Round.findAll(q);
     // console.log(rounds);
     return res.json({ rounds });
   } catch (err) {

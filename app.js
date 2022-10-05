@@ -36,7 +36,6 @@ app.use("/points", pointsRoutes);
 
 /** GET / =>
  * display info on all the available routes
- *
  */
 
 app.get("/", (req, res) => {

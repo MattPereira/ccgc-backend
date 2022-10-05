@@ -101,6 +101,20 @@ class User {
    **/
 
   static async findAll() {
+    // const usersRes = await db.query(
+    //   `SELECT users.username,
+    //               first_name AS "firstName",
+    //               last_name AS "lastName",
+    //               is_admin AS "isAdmin",
+    //               ROUND(AVG(total_strokes), 2) AS "avgStrokes",
+    //               ROUND(AVG(total_putts), 2) AS "avgPutts",
+    //               COUNT(rounds.id) AS "totalRounds"
+    //        FROM users
+    //        LEFT JOIN ROUNDS on users.username = rounds.username
+    //        GROUP BY users.username
+    //        ORDER BY AVG(total_strokes) ASC`
+    // );
+
     const usersRes = await db.query(
       `SELECT users.username,
                   first_name AS "firstName",
@@ -112,7 +126,7 @@ class User {
            FROM users
            LEFT JOIN ROUNDS on users.username = rounds.username
            GROUP BY users.username
-           ORDER BY AVG(total_strokes) ASC`
+           ORDER BY COUNT(rounds.id) DESC`
     );
 
     const users = usersRes.rows;

@@ -177,57 +177,54 @@ class Round {
     return round;
   }
 
-  /**  /////////NOT CURRENTLY IN USE///////////
-   * Find all rounds in database.
+  /** Search all rounds in database by username or tournament_date.
    *
    * Returns [{ tournament_date, username, strokes, putts }, ...]
    *  where strokes is {hole1, hole2, hole3, ...}
    *  and putts is {hole1, hole2, hole3, ...}
    * */
 
-  // static async findAll() {
-  //   const roundsRes = await db.query(
-  //     `SELECT id, tournament_date, username, total_strokes, net_strokes, total_putts, player_index, score_differential, course_handicap
-  //                  FROM rounds
-  //                  ORDER BY net_strokes ASC`
-  //   );
+  static async findAll(searchFilters = {}) {
+    let query = `SELECT id, 
+                      tournament_date AS "tournamentDate", 
+                      username, 
+                      total_strokes AS "totalStrokes", 
+                      net_strokes AS "netStrokes", 
+                      total_putts AS "totalPutts", 
+                      player_index AS "playerIndex", 
+                      score_differential AS "scoreDifferential", 
+                      course_handicap AS "courseHandicap"
+                  FROM rounds`;
 
-  //   const strokesRes = await db.query(
-  //     `SELECT round_id AS "roundId",
-  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-  //               FROM strokes`
-  //   );
+    const { username, date } = searchFilters;
 
-  //   const puttsRes = await db.query(
-  //     `SELECT round_id AS "roundId",
-  //               hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-  //               hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-  //               FROM putts`
-  //   );
+    let whereExpressions = [];
+    let queryValues = [];
 
-  //   const rounds = roundsRes.rows;
-  //   const strokes = strokesRes.rows;
-  //   const putts = puttsRes.rows;
+    if (username) {
+      queryValues.push(username);
+      whereExpressions.push(`username = $${queryValues.length}`);
+    }
 
-  //   // associate strokes and putts with each round based on roundId
-  //   rounds.map((r) => {
-  //     strokes.map((s) => {
-  //       if (s.roundId === r.id) {
-  //         //   delete s.roundId;
-  //         r.strokes = s;
-  //       }
-  //     });
-  //     putts.map((p) => {
-  //       if (p.roundId === r.id) {
-  //         //   delete p.roundId;
-  //         r.putts = p;
-  //       }
-  //     });
-  //   });
+    if (date) {
+      queryValues.push(date);
+      whereExpressions.push(`tournament_date = $${queryValues.length}`);
+    }
 
-  //   return rounds;
-  // }
+    // .join will only actually run if whereExpressions.length > 1
+    if (whereExpressions.length > 0) {
+      query += " WHERE " + whereExpressions.join(" AND ");
+    }
+
+    console.log(query);
+    query += " ORDER BY tournament_date DESC";
+
+    const roundsRes = await db.query(query, queryValues);
+
+    const rounds = roundsRes.rows;
+
+    return rounds;
+  }
 
   /** Find all rounds in database for a particular user.
    *

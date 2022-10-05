@@ -16,7 +16,7 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
  *
  *  SPECIAL EVENT
  * Big loops triggered only in development for seeded data at bottom of class
- * (Allows for copying of local database and pushing up to herokue to handle
+ * (Allows for copying of local database and pushing up to heroku to handle
  *  all of the previously seeded data)
  *
  *

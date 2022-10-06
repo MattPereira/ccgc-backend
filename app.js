@@ -20,8 +20,10 @@ const morgan = require("morgan");
 
 const app = express();
 
+//still trying to fix cors bug - does this work?
+app.options("*", cors());
 //{credentials: true} fixed CORS policy error! something about headers....
-app.use(cors({ credentials: true }));
+app.use(cors({ credentials: true, preflightContinue: true }));
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);

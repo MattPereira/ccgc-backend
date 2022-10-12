@@ -216,7 +216,6 @@ class Round {
       query += " WHERE " + whereExpressions.join(" AND ");
     }
 
-    console.log(query);
     query += " ORDER BY tournament_date DESC";
 
     const roundsRes = await db.query(query, queryValues);

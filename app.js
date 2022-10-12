@@ -20,10 +20,20 @@ const morgan = require("morgan");
 
 const app = express();
 
-//still trying to fix cors bug - does this work?
-app.options("*", cors());
-//{credentials: true} fixed CORS policy error! something about headers....
-app.use(cors({ credentials: true, preflightContinue: true }));
+/** Access to XMLHttpRequest at 'https://ccgc.up.railway.app/greenies'
+ *  from origin 'https://ccgc.surge.sh' has been blocked by
+ * CORS policy: Response to preflight request doesn't pass access
+ *  control check: No 'Access-Control-Allow-Origin' header is present
+ * on the requested resource.
+ */
+var corsOptions = {
+  origin: "*",
+  credentials: true,
+  preflightContinue: true,
+};
+app.use(cors(corsOptions));
+/////////////////////////////////////////////////////////////////////////
+
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);

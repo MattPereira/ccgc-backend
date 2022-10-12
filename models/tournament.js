@@ -78,8 +78,18 @@ class Tournament {
 
     const tournament = tournamentRes.rows[0];
 
+    const parsRes = await db.query(
+      `SELECT date, hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9, hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
+      FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle JOIN pars ON courses.handle = pars.course_handle
+      WHERE date = $1`,
+      [date]
+    );
+
+    const pars = parsRes.rows[0];
+    delete pars.date;
     if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
 
+    tournament.pars = pars;
     return tournament;
   }
 

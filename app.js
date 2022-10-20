@@ -26,12 +26,13 @@ const app = express();
  *  control check: No 'Access-Control-Allow-Origin' header is present
  * on the requested resource.
  */
-var corsOptions = {
-  origin: "*",
-  credentials: true,
-  preflightContinue: true,
-};
-app.use(cors(corsOptions));
+// var corsOptions = {
+//   origin: "*",
+//   credentials: true,
+//   preflightContinue: true,
+// };
+
+app.use(cors());
 /////////////////////////////////////////////////////////////////////////
 
 app.use(express.json());

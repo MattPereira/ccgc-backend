@@ -77,6 +77,7 @@ class Greenie {
     } else {
       //if no date is passed in
       query += " ORDER BY feet, inches";
+      query += " LIMIT 10";
     }
 
     const greeniesRes = await db.query(query, queryValues);

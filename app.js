@@ -26,24 +26,8 @@ const app = express();
  *  control check: No 'Access-Control-Allow-Origin' header is present
  * on the requested resource.
  */
-// var corsOptions = {
-//   origin: "*",
-//   credentials: true,
-//   preflightContinue: true,
-// };
 
-var corsOptions = {
-  origin: function (origin, callback) {
-    // db.loadOrigins is an example call to load
-    // a list of origins from a backing database
-    db.loadOrigins(function (error, origins) {
-      callback(error, origins);
-    });
-  },
-};
-
-app.use(cors(corsOptions));
-/////////////////////////////////////////////////////////////////////////
+app.use(cors({ credentials: true }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

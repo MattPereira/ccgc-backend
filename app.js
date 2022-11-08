@@ -27,7 +27,7 @@ const app = express();
  * on the requested resource.
  */
 
-app.use(cors({ credentials: true }));
+app.use(cors({ origin: "https://ccgc.surge.sh" }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

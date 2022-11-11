@@ -21,12 +21,12 @@ const morgan = require("morgan");
 const app = express();
 
 /** Combinations of cors configurations I've tried
- * {preflightContinue: true, origin: *, credentials: true}
- * {origin: *, credentials: true}
- * {origin: *, credentials: true, preflightContinue: true}
+ * { origin: '*', credentials: true, preflightContinue: true, }
+ * {origin: '*', credentials: true}
+ * {credentials: true, preflightContinue: true}
  */
 
-app.use(cors({ origin: "https://ccgc.surge.sh", credentials: true }));
+app.use(cors({ origin: "*", credentials: true, preflightContinue: true }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

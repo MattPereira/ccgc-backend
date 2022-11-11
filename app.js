@@ -20,14 +20,13 @@ const morgan = require("morgan");
 
 const app = express();
 
-/** Access to XMLHttpRequest at 'https://ccgc.up.railway.app/greenies'
- *  from origin 'https://ccgc.surge.sh' has been blocked by
- * CORS policy: Response to preflight request doesn't pass access
- *  control check: No 'Access-Control-Allow-Origin' header is present
- * on the requested resource.
+/** Combinations of cors configurations I've tried
+ * {preflightContinue: true, origin: *, credentials: true}
+ * {origin: *, credentials: true}
+ * {origin: *, credentials: true, preflightContinue: true}
  */
 
-app.use(cors({ origin: "https://ccgc.surge.sh" }));
+app.use(cors({ origin: "https://ccgc.surge.sh", credentials: true }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

@@ -127,7 +127,7 @@ class Point {
       if (strokesArr[i] === parsArr[i]) pars++;
       else if (strokesArr[i] === parsArr[i] - 1) birdies++;
       else if (strokesArr[i] === 1) aces++;
-      else if (strokesArr[i] <= parsArr[i] - 2) eagles++;
+      else if (strokesArr[i] <= parsArr[i] - 2 && strokesArr[i] > 1) eagles++;
     }
 
     // input points for hole scores with corresponding bonus multipliers

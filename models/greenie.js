@@ -51,6 +51,7 @@ class Greenie {
    *
    * */
 
+  // TEMPORARY CHANGE TO SHOW ONLY 2022-23 GREENIES
   static async findAll(date) {
     let query = `SELECT greenies.id, 
                   round_id AS "roundId", 

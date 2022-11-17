@@ -280,6 +280,8 @@ class Point {
     //   [tourYears]
     // );
 
+    // rank window function partitioning by golfer id? or username? rank over the year and order by total points per round order by total descending
+
     // const standingsRes = await db.query(
     //   `SELECT *
     //   FROM (

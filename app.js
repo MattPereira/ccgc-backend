@@ -4,10 +4,11 @@
 
 const express = require("express");
 const cors = require("cors");
+const morgan = require("morgan");
 
 const { NotFoundError } = require("./expressError");
-
 const { authenticateJWT } = require("./middleware/auth");
+
 const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
 const coursesRoutes = require("./routes/courses");
@@ -16,17 +17,9 @@ const tournamentsRoutes = require("./routes/tournaments");
 const greeniesRoutes = require("./routes/greenies");
 const pointsRoutes = require("./routes/points");
 
-const morgan = require("morgan");
-
 const app = express();
 
-/** Combinations of cors configurations I've tried
- * { origin: '*', credentials: true, preflightContinue: true, }
- * {origin: '*', credentials: true}
- * {credentials: true, preflightContinue: true}
- */
-
-app.use(cors({ origin: "*", credentials: true, preflightContinue: true }));
+app.use(cors({ origin: "*" }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

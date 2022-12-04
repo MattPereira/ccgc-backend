@@ -93,6 +93,7 @@ router.get("/:date", async function (req, res, next) {
   try {
     const { date } = req.params;
 
+    console.log("DATE", date);
     // if front end is requesting "/tournaments/upcoming", send back the upcoming tournament
     if (date === "upcoming") {
       const tournament = await Tournament.getUpcoming();

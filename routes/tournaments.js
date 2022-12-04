@@ -67,6 +67,23 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+/** GET the upcoming tournament
+ *
+ *
+ *
+ *
+ */
+
+router.get("/upcoming", async function (req, res, next) {
+  try {
+    const tournament = await Tournament.getUpcoming();
+
+    return res.json({ tournament });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /** GET /[date]  =>  { tournament }
  *
  *  Returns all leaderboard data about a specific tournament by date.

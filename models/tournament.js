@@ -93,6 +93,22 @@ class Tournament {
     return tournament;
   }
 
+  /**Get the upcoming tournament
+   *
+   * i.e. the most recent tournament in database
+   */
+  static async getUpcoming() {
+    const tournamentRes = await db.query(
+      `SELECT date, course_handle AS "courseHandle", name AS "courseName", img_url AS "courseImg", tour_years AS "tourYears"
+                 FROM tournaments JOIN courses ON tournaments.course_handle = courses.handle
+                 ORDER BY date DESC LIMIT 1`
+    );
+
+    const tournament = tournamentRes.rows[0];
+
+    return tournament;
+  }
+
   /** Given a tournament date, return all the strokes data about that tournament
    *  ordered by netStrokes ascending so that lowest score displays first.
    *

@@ -118,9 +118,9 @@ class Tournament {
    * Throws NotFoundError if not found.
    **/
 
-  static async getStrokesLeaderboard(date) {
+  static async getScores(date) {
     const roundsRes = await db.query(
-      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_strokes AS "totalStrokes", net_strokes AS "netStrokes", course_handicap AS "courseHandicap"
+      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_strokes AS "totalStrokes", net_strokes AS "netStrokes", total_putts AS "totalPutts", course_handicap AS "courseHandicap"
           FROM rounds 
           JOIN users ON rounds.username = users.username
           WHERE tournament_date = $1
@@ -166,70 +166,6 @@ class Tournament {
           if (p.roundId === r.id) {
             delete p.roundId;
             r.points = p.strokes;
-          }
-        });
-      });
-    }
-
-    return rounds;
-  }
-
-  /** Given a tournament date, return all the putts data about that tournament.
-   *
-   * Returns { date, courseHandle, tourYears, rounds }
-   *  where rounds is [{ username, putts, total_putts }, ...]
-   *  where putts is {hole1, hole2, ...}
-   *
-   * Throws NotFoundError if not found.
-   **/
-
-  static async getPuttsLeaderboard(date) {
-    const roundsRes = await db.query(
-      `SELECT id, users.username, first_name AS "firstName", last_name AS "lastName", total_putts AS "totalPutts"
-            FROM rounds
-            JOIN users ON rounds.username = users.username
-            WHERE tournament_date = $1
-            ORDER BY total_putts ASC`,
-      [date]
-    );
-
-    const rounds = roundsRes.rows;
-
-    //if (!tournament) throw new NotFoundError(`No tournament on date: ${date}`);
-
-    if (rounds.length > 0) {
-      const roundsIds = rounds.map((r) => r.id);
-
-      const puttsRes = await db.query(
-        `SELECT round_id AS "roundId",
-                  hole1, hole2, hole3, hole4, hole5, hole6, hole7, hole8, hole9,
-                  hole10, hole11, hole12, hole13, hole14, hole15, hole16, hole17, hole18
-                  FROM putts
-                  WHERE round_id IN (${roundsIds.join(",")})`
-      );
-      const putts = puttsRes.rows;
-
-      //add putt points to each round object
-      const pointsRes = await db.query(
-        `SELECT round_id as "roundId",
-              putts
-              FROM points
-              WHERE round_id IN (${roundsIds.join(",")})`
-      );
-      const points = pointsRes.rows;
-
-      // associate putts and points with each round based on roundId
-      rounds.map((r) => {
-        putts.map((p) => {
-          if (p.roundId === r.id) {
-            delete p.roundId;
-            r.putts = p;
-          }
-        });
-        points.map((p) => {
-          if (p.roundId === r.id) {
-            delete p.roundId;
-            r.points = p.putts;
           }
         });
       });

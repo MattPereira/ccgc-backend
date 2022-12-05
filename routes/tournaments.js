@@ -93,25 +93,23 @@ router.get("/:date", async function (req, res, next) {
   try {
     const { date } = req.params;
 
-    console.log("DATE", date);
-    // if front end is requesting "/tournaments/upcoming", send back the upcoming tournament
+    /** if front end is requesting "/tournaments/upcoming"
+     *  send back the upcoming tournament
+     */
     if (date === "upcoming") {
       const tournament = await Tournament.getUpcoming();
       return res.json({ tournament });
     }
 
-    ////// Promise.all() to speed up ////////
     const tournament = await Tournament.get(date);
-    const strokesLeaderboard = await Tournament.getStrokesLeaderboard(date);
-    const puttsLeaderboard = await Tournament.getPuttsLeaderboard(date);
+    const scoresLeaderboard = await Tournament.getScores(date);
     const pointsLeaderboard = await Point.getTournamentStandings(date);
     const greenies = await Greenie.findAll(date);
     return res.json({
       tournament: {
         ...tournament,
         pointsLeaderboard,
-        strokesLeaderboard,
-        puttsLeaderboard,
+        scoresLeaderboard,
         greenies,
       },
     });

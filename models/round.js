@@ -359,7 +359,8 @@ class Round {
                   username, 
                   total_strokes AS "totalStrokes",
                   total_putts AS "totalPutts", 
-                  courses.name AS "courseName"
+                  courses.name AS "courseName",
+                  courses.img_url AS "courseImg"
             FROM rounds 
             JOIN tournaments ON tournaments.date=rounds.tournament_date
             JOIN courses ON tournaments.course_handle=courses.handle

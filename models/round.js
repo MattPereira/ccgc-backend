@@ -360,7 +360,9 @@ class Round {
                   total_strokes AS "totalStrokes",
                   total_putts AS "totalPutts", 
                   courses.name AS "courseName",
-                  courses.img_url AS "courseImg"
+                  courses.img_url AS "courseImg",
+                  courses.rating AS "courseRating",
+                  courses.slope AS "courseSlope"
             FROM rounds 
             JOIN tournaments ON tournaments.date=rounds.tournament_date
             JOIN courses ON tournaments.course_handle=courses.handle
@@ -417,10 +419,23 @@ class Round {
       [id]
     );
 
+    /*******  Grab the last 4 score differentials for the user who's round this is to be displayed on handicaps tab of a round details page  ************/
+    // make sure the rounds are the previous 4 starting from the round we are looking at in this round.get method
+    const scoreDiffRes = await db.query(
+      `SELECT tournament_date AS "tournamentDate",
+                  score_differential AS "scoreDifferential",
+                  total_strokes AS "totalStrokes"
+                  FROM rounds 
+                  WHERE username=$1 AND score_differential IS NOT NULL AND tournament_date < $2
+                  ORDER BY tournament_date DESC LIMIT 4`,
+      [round.username, round.tournamentDate]
+    );
+
     round.strokes = strokesRes.rows[0];
     round.putts = puttsRes.rows[0];
     round.pars = parsRes.rows[0];
     round.greenies = greeniesRes.rows;
+    round.recentScoreDiffs = scoreDiffRes.rows;
 
     return round;
   }

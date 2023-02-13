@@ -222,9 +222,7 @@ class Point {
     return pointsRes.rows[0];
   }
 
-  /** Find all the points by tour years
-   *
-   *
+  /** Get all the points for a particular tour year
    *
    * sum the column values and group by username
    *

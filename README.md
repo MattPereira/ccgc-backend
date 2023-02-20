@@ -18,7 +18,7 @@ A full-stack web application that manages all of the [tournaments](https://ccgc.
   * Admin users can additionally manage golf course, tournament, and member data
 
 **Custom Internal API**
-  * deployed on Railway at [https://ccgc.up.railway.app/](https://contra-costa-golf-club.herokuapp.com/)
+  * deployed on Railway at [https://ccgc.up.railway.app/](https://ccgc.up.railway.app/)
   * JSON Schema validation
   
 **User authentication and authorization**

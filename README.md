@@ -1,32 +1,24 @@
 
-# **Contra Costa Golf Club**
+# [Contra Costa Golf Club](https://ccgc.vercel.app/)
 
-<!-- 
-![ExpressJs badge](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-![React badge](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![PostgreSQL badge](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Javascript badge](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-
-[Front-End](https://github.com/MattPereira/ccgc-frontend) | 
-[Back-End](https://github.com/MattPereira/ccgc-backend) -->
-
-<img src="https://raw.githubusercontent.com/MattPereira/ccgc-frontend/main/src/assets/ccgc_logo.png" width="200" height="200"/>
+|     Logo        |     Live Site        |   Repositories    |
+| ----------- | ----------- | --------        |
+| [<img src="https://i.ibb.co/72nKCSf/ccgc-Logo11.png" width="200" height="250"/>](https://ccgc.vercel.app/)  | <p> [https://ccgc.vercel.app/](https://ccgc.vercel.app/)</p>    |       <p>[Frontend](https://github.com/MattPereira/ccgc-frontend)</p><p>[Backend](https://github.com/MattPereira/ccgc-backend)</p>         |
 
 
 
----
-### **Description**
 
-A full stack web application for the Contra Costa Golf Club. The website displays all of the [tournaments](https://ccgc.surge.sh/tournaments), [greenies](https://ccgc.surge.sh/greenies), [members](https://ccgc.surge.sh/members), [courses](https://ccgc.surge.sh/courses), and [standings](https://ccgc.surge.sh/standings) data for the 2021-22 season. Tournament data tables are sorted in ascending order to display the winners of each round. Additionally, all users are able to input their strokes, putts, and greenies for each round. Upon submission of any new, edited, or deleted data, tour points are automatically recalculated. 
+## Description
+A full-stack web application that manages all of the [tournaments](https://ccgc.vercel.app/tournaments), [greenies](https://ccgc.vercel.app/greenies), [members](https://ccgc.vercel.app/members), [courses](https://ccgc.vercel.app/courses), and [standings](https://ccgc.vercel.app/standings) data for the contra costa golf club. Tournament data tables are sorted in ascending order to display the winners of each round. Additionally, all users are able to input their strokes, putts, and greenies for each round. Upon submission of any new, edited, or deleted data, tour points are automatically recalculated. 
 
----
-### **Features**
-**Full CRUD for all registered users**
-  * Regular Users can create,update, and delete their round scores (strokes and putts and greenies) 
-  * Admin users can additionally add new golf course data and create new tournaments
 
-**Internal API**
-  * deployed on heroku at [contra-costa-golf-club.herokuapp.com](https://contra-costa-golf-club.herokuapp.com/)
+## Features
+**Full CRUD**
+  * Regular users can create, update, and delete their round data (strokes, putts and greenies) 
+  * Admin users can additionally manage golf course, tournament, and member data
+
+**Custom Internal API**
+  * deployed on Railway at [https://ccgc.up.railway.app/](https://contra-costa-golf-club.herokuapp.com/)
   * JSON Schema validation
   
 **User authentication and authorization**
@@ -51,22 +43,23 @@ A full stack web application for the Contra Costa Golf Club. The website display
   * Course Handicap: (Handicap Index * Slope) / 113
   * Net Strokes: Total Strokes - Course Handicap
 
----
-### **User Flow**
-Coming soon...
+## Database Schema
 
----
-### **Tech Stack**
+![image](https://user-images.githubusercontent.com/73561520/220162284-03d9c105-65e5-45f8-9487-929dcce4b8f1.png)
+
+
+
+## Tech Stack
 * React
+* React Router
 * Express
 * PostgreSQL
-* React-Bootstrap
+* Material UI
 * JavaScript
 * HTML
 * CSS
 
----
-### **Testing**
-* 104 front-end tests with React Testing Library
-* 180 back-end tests with SuperTest
+
+## Testing
+* 180 Backend tests covering all the API endpoints
 * Run using "npm test"

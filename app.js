@@ -37,17 +37,18 @@ app.use("/points", pointsRoutes);
  * display info on all the available routes
  */
 
-app.get("/", (req, res) => {
-  res.json({
-    message: "Welcome to the Contra Costa Golf Club API!",
-    github: "https://github.com/MattPereira/ccgc-backend",
-    linkedIn: "https://www.linkedin.com/in/-matt-pereira-/",
-    Endpoints: ["/courses", "/rounds", "/tournaments", "/greenies", "/members"],
-  });
-});
+// app.get("/", (req, res) => {
+//   res.json({
+//     message: "Welcome to the Contra Costa Golf Club API!",
+//     github: "https://github.com/MattPereira/ccgc-backend",
+//     linkedIn: "https://www.linkedin.com/in/-matt-pereira-/",
+//     Endpoints: ["/courses", "/rounds", "/tournaments", "/greenies", "/members"],
+//   });
+// });
 
-/** Handle 404 errors -- this matches everything */
+/** Handle 404 errors -- if an endpoint that doesnt exist gets requested */
 app.use(function (req, res, next) {
+  console.log("THIS ENDPOINT DOES NOT EXIST");
   return next(new NotFoundError());
 });
 

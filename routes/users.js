@@ -8,7 +8,6 @@ const express = require("express");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { BadRequestError } = require("../expressError");
 const User = require("../models/user");
-const { createToken } = require("../helpers/tokens");
 const userNewSchema = require("../schemas/userNew.json");
 const userUpdateSchema = require("../schemas/userUpdate.json");
 
@@ -28,15 +27,16 @@ const router = express.Router();
 
 router.post("/", ensureAdmin, async function (req, res, next) {
   try {
-    const validator = jsonschema.validate(req.body, userNewSchema);
-    if (!validator.valid) {
-      const errs = validator.errors.map((e) => e.stack);
-      throw new BadRequestError(errs);
-    }
+    // const validator = jsonschema.validate(req.body, userNewSchema);
+    // if (!validator.valid) {
+    //   const errs = validator.errors.map((e) => e.stack);
+    //   throw new BadRequestError(errs);
+    // }
+
+    console.log("REQ BODY", req.body);
 
     const user = await User.register(req.body);
-    const token = createToken(user);
-    return res.status(201).json({ user, token });
+    return res.status(201).json({ user });
   } catch (err) {
     return next(err);
   }

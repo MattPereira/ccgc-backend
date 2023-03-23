@@ -34,17 +34,19 @@ app.use("/greenies", greeniesRoutes);
 app.use("/points", pointsRoutes);
 
 /** GET / =>
- * display info on all the available routes
+ * display some welcome info
+ *
+ * NOTE: RENDER REQUIRES A ROOT ENDPOINT OR BUILD WILL FAIL
  */
 
-// app.get("/", (req, res) => {
-//   res.json({
-//     message: "Welcome to the Contra Costa Golf Club API!",
-//     github: "https://github.com/MattPereira/ccgc-backend",
-//     linkedIn: "https://www.linkedin.com/in/-matt-pereira-/",
-//     Endpoints: ["/courses", "/rounds", "/tournaments", "/greenies", "/members"],
-//   });
-// });
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to the Contra Costa Golf Club API!",
+    github: "https://github.com/MattPereira/ccgc-backend",
+    linkedIn: "https://www.linkedin.com/in/-matt-pereira-/",
+    Endpoints: ["/courses", "/rounds", "/tournaments", "/greenies", "/members"],
+  });
+});
 
 /** Handle 404 errors -- if an endpoint that doesnt exist gets requested */
 app.use(function (req, res, next) {

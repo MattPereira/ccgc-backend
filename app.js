@@ -19,6 +19,13 @@ const app = express();
 
 app.use(cors());
 
+// app.use(
+//   cors({ origin: ["http://localhost:3000", "https://ccgc.vercel.app/"] })
+// );
+
+// Enable pre-flight across-the-board
+app.options("*", cors());
+
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);

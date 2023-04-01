@@ -17,14 +17,11 @@ const pointsRoutes = require("./routes/points");
 
 const app = express();
 
-app.use(cors());
-
-// app.use(
-//   cors({ origin: ["http://localhost:3000", "https://ccgc.vercel.app/"] })
-// );
-
 // Enable pre-flight across-the-board
 app.options("*", cors());
+
+// Allow requests only from the frontend deployment on vercel
+app.use(cors({ origin: ["https://ccgc.vercel.app/"] }));
 
 app.use(express.json());
 app.use(morgan("tiny"));

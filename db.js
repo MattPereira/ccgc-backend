@@ -4,18 +4,26 @@ const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
 let db;
-
-if (process.env.NODE_ENV === "production") {
-  db = new Client({
-    connectionString: getDatabaseUri(),
-    ssl: {
-      rejectUnauthorized: false,
-    },
-  });
-} else {
-  db = new Client({
-    connectionString: getDatabaseUri(),
-  });
+try {
+  if (process.env.NODE_ENV === "production") {
+    db = new Client({
+      connectionString: getDatabaseUri(),
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+  } else {
+    db = new Client({
+      connectionString: getDatabaseUri(),
+      //trying to fix ssl error. remove if it doesn't work
+      ssl: {
+        rejectUnauthorized: false,
+      },
+      // end fix attempt
+    });
+  }
+} catch (err) {
+  console.log("THIS IS CRASHING SERVER ERROR: ", err);
 }
 
 db.connect();

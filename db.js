@@ -23,9 +23,15 @@ try {
     });
   }
 } catch (err) {
-  console.log("THIS IS CRASHING SERVER ERROR: ", err);
+  console.log("THIS IS CREATING NEW DB CLIENT INSTANCE: ", err);
 }
 
-db.connect();
+console.log("HELLO WORLD");
+
+try {
+  db.connect();
+} catch (e) {
+  console.log("THIS IS CRASHING SERVER ERROR: ", err);
+}
 
 module.exports = db;

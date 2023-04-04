@@ -17,6 +17,8 @@ const pointsRoutes = require("./routes/points");
 
 const app = express();
 
+// TODO LEARN MORE ABOUT PROCESS.ENV
+
 // Enable pre-flight across-the-board
 app.options("*", cors());
 

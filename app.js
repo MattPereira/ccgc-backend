@@ -27,6 +27,7 @@ app.use(
       "https://ccgc.vercel.app",
       "https://ccgc.app",
       "http://localhost:3000",
+      "https://www.ccgc.app",
     ],
   })
 );

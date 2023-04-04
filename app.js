@@ -21,7 +21,15 @@ const app = express();
 app.options("*", cors());
 
 // Allow requests only from the frontend deployment on vercel
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://ccgc.vercel.app",
+      "https://ccgc.app",
+      "http://localhost:3000",
+    ],
+  })
+);
 
 app.use(express.json());
 app.use(morgan("tiny"));

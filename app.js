@@ -22,7 +22,7 @@ const app = express();
 // Enable pre-flight across-the-board
 app.options("*", cors());
 
-// Allow requests only from the frontend deployment on vercel
+// URLs that are allowed to make requests to the API
 app.use(
   cors({
     origin: [

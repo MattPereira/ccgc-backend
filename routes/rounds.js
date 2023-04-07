@@ -103,7 +103,6 @@ router.get("/", async function (req, res, next) {
 
 router.get("/:id", async function (req, res, next) {
   try {
-    console.log(typeof Number(req.params.id));
     const round = await Round.get(req.params.id);
     return res.json({ round });
   } catch (err) {

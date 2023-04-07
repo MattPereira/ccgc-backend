@@ -21,7 +21,8 @@ if (process.env.NODE_ENV === "production") {
 /** npm pg package node-postgres docs for handling error on connection */
 db.connect((err) => {
   if (err) {
-    console.error("connection error 🫠", err.stack);
+    console.log("db connection error 🫠", err.stack);
+    console.error("STACK", err.stack);
   } else {
     console.log("db connected 🚀");
   }

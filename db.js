@@ -29,8 +29,8 @@ db.connect((err) => {
 });
 
 /** Chat GPT suggestion for handling pg connect error*/
-// db.on("error", (err) => {
-//   console.error("Unexpected error on idle client", err);
-// });
+db.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
+});
 
 module.exports = db;

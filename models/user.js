@@ -19,6 +19,8 @@ class User {
    * Returns { username, email, first_name, last_name, is_admin }
    *
    * Throws UnauthorizedError is user not found or wrong password.
+   *
+   ** Eventually try to impliment magic email link for login?
    **/
 
   static async authenticate(email, password) {
@@ -38,16 +40,20 @@ class User {
     const user = result.rows[0];
 
     if (user) {
-      // compare hashed password to a new hash from password
-      const isValid = await bcrypt.compare(password, user.password);
-      if (isValid === true) {
-        //remove user's password before sending back user
-        delete user.password;
-        return user;
-      }
+      //** TURNING OFF PASSWORD AUTH FOR NOW SINCE USERS CANT REMEMBER PASSWORDS */
+      // // compare hashed password to a new hash from password
+      // const isValid = await bcrypt.compare(password, user.password);
+      // if (isValid === true) {
+      //   //remove user's password before sending back user
+      //   delete user.password;
+      //   return user;
+      // }
+      delete user.password;
+
+      return user;
     }
 
-    throw new UnauthorizedError("Invalid email/password");
+    throw new UnauthorizedError("Invalid credentials!");
   }
 
   /** Register user with data.
@@ -120,6 +126,7 @@ class User {
                   first_name AS "firstName",
                   last_name AS "lastName",
                   is_admin AS "isAdmin",
+                  email,
                   ROUND(AVG(total_strokes), 2) AS "avgStrokes",
                   ROUND(AVG(total_putts), 2) AS "avgPutts",
                   COUNT(rounds.id) AS "totalRounds"

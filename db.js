@@ -40,11 +40,6 @@ db.on("error", (err) => {
       console.log("error during disconnection", err.stack);
     }
   });
-
-  setTimeout(() => {
-    console.log("Reconnecting to db...🔗 ");
-    db.connect();
-  }, 7000);
 });
 
 module.exports = db;

@@ -32,6 +32,19 @@ db.connect((err) => {
 db.on("error", (err) => {
   console.error("Unexpected error on idle client 🫠", err.stack);
   console.log("MESSAGE", err?.message);
+
+  //Disconnect client
+  db.end((err) => {
+    console.log("client has disconnected successfully");
+    if (err) {
+      console.log("error during disconnection", err.stack);
+    }
+  });
+
+  setTimeout(() => {
+    console.log("Reconnecting to db...🔗 ");
+    db.connect();
+  }, 7000);
 });
 
 module.exports = db;

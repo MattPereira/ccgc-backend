@@ -18,7 +18,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-/** npm pg package node-postgres docs for handling error on connection */
+// Handle connection error
 db.connect((err) => {
   if (err) {
     console.log("db connection error 💔", err.stack);
@@ -28,7 +28,7 @@ db.connect((err) => {
   }
 });
 
-/** Chat GPT suggestion for handling pg connect error*/
+// Catching errors with listener attatched to Client. https://node-postgres.com/apis/client#events
 db.on("error", (err) => {
   console.error("Unexpected error on idle client 🫠", err.stack);
   console.log("MESSAGE", err?.message);

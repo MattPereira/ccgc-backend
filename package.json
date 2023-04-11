@@ -34,7 +34,6 @@
     "libpq": "^1.8.12",
     "morgan": "^1.10.0",
     "pg": "^8.10.0",
-    "pg-native": "^3.0.1",
     "postgres-date": "^2.1.0",
     "supertest": "^6.2.3"
   }

@@ -1,6 +1,6 @@
 "use strict";
 /** Database setup for ccgc. */
-const { Client } = require("pg").native;
+const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
 let db;

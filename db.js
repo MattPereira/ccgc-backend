@@ -1,6 +1,6 @@
 "use strict";
 /** Database setup for ccgc. */
-const { Client } = require("pg");
+const { Client } = require("pg").native;
 const { getDatabaseUri } = require("./config");
 
 let db;
@@ -32,14 +32,6 @@ db.connect((err) => {
 db.on("error", (err) => {
   console.error("Unexpected error on idle client 🫠", err.stack);
   console.log("MESSAGE", err?.message);
-
-  //Disconnect client
-  db.end((err) => {
-    console.log("client has disconnected successfully");
-    if (err) {
-      console.log("error during disconnection", err.stack);
-    }
-  });
 });
 
 module.exports = db;

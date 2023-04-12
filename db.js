@@ -1,10 +1,10 @@
 "use strict";
 /** Database setup for ccgc. */
-const { Client } = require("pg");
+const { Pool } = require("pg");
 const { getDatabaseUri } = require("./config");
 
-// Create a pg.Client instance
-const db = new Client({
+// Create a pg.Pool instance
+const db = new Pool({
   connectionString: getDatabaseUri(),
   connectionTimeoutMillis: 10000,
   ssl: {

@@ -1,19 +1,20 @@
 "use strict";
 /** Database setup for ccgc. */
-const { Pool } = require("pg");
+const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
-// Create a pg.Pool instance
-const db = new Pool({
-  connectionString: getDatabaseUri(),
-  connectionTimeoutMillis: 10000,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+let db;
+// Create a pg.Pool instance and connect
 
 const connectClient = async () => {
   try {
+    db = new Client({
+      connectionString: getDatabaseUri(),
+      connectionTimeoutMillis: 10000,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
     await db.connect();
     console.log("Connected to the database 🚀");
   } catch (err) {
@@ -33,17 +34,20 @@ const connectClient = async () => {
 // });
 
 // Catching errors with listener attatched to Client. https://node-postgres.com/apis/client#events
-db.on("error", async (err) => {
-  console.error("Unexpected error on idle client 🫠", err.stack);
 
-  if (db) {
-    console.log("Ending the database connection 🛑");
-    await db.end();
-  }
+if (db) {
+  db.on("error", async (err) => {
+    console.error("Unexpected error on idle client 🫠", err.stack);
 
-  console.log("Reconnecting to the database 🤙");
-  connectClient();
-});
+    if (db) {
+      console.log("Ending the database connection 🛑");
+      await db.end();
+    }
+
+    console.log("Reconnecting to the database 🤙");
+    connectClient();
+  });
+}
 
 connectClient();
 

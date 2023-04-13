@@ -3,27 +3,18 @@
 const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
-let db;
-// Create a pg.Pool instance and connect
+// Create a pg.Client instance
+const db = new Client({
+  connectionString: getDatabaseUri(),
+  connectionTimeoutMillis: 10000,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-const connectClient = async () => {
-  try {
-    db = new Client({
-      connectionString: getDatabaseUri(),
-      connectionTimeoutMillis: 10000,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
-    await db.connect();
-    console.log("Connected to the database 🚀");
-  } catch (err) {
-    console.error("Failed to connect to the database 💔", err);
-    console.error("STACK", err.stack);
-  }
-};
+console.log("DB", db);
 
-// // Handle connection error
+/**** Connect to db and handle errors ****/
 // db.connect((err) => {
 //   if (err) {
 //     console.log("db connection error 💔", err.stack);
@@ -33,21 +24,28 @@ const connectClient = async () => {
 //   }
 // });
 
+const connectClient = async () => {
+  try {
+    await db.connect();
+    console.log("Connected to the database 🚀");
+  } catch (err) {
+    console.error("Failed to connect to the database 💔", err);
+    console.error("STACK", err.stack);
+  }
+};
+
 // Catching errors with listener attatched to Client. https://node-postgres.com/apis/client#events
+db.on("error", async (err) => {
+  console.error("Unexpected error on idle client 🫠", err.stack);
 
-if (db) {
-  db.on("error", async (err) => {
-    console.error("Unexpected error on idle client 🫠", err.stack);
+  if (db) {
+    console.log("Ending the database connection 🛑");
+    await db.end();
+  }
 
-    if (db) {
-      console.log("Ending the database connection 🛑");
-      await db.end();
-    }
-
-    console.log("Reconnecting to the database 🤙");
-    connectClient();
-  });
-}
+  console.log("Reconnecting to the database 🤙");
+  connectClient();
+});
 
 connectClient();
 

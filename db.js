@@ -4,15 +4,7 @@ const { Client } = require("pg");
 const { getDatabaseUri } = require("./config");
 
 // Create a pg.Client instance
-const db = new Client({
-  connectionString: getDatabaseUri(),
-  connectionTimeoutMillis: 10000,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
-
-console.log("DB", db);
+let db;
 
 /**** Connect to db and handle errors ****/
 // db.connect((err) => {
@@ -26,6 +18,14 @@ console.log("DB", db);
 
 const connectClient = async () => {
   try {
+    db = new Client({
+      connectionString: getDatabaseUri(),
+      connectionTimeoutMillis: 10000,
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    });
+
     await db.connect();
     console.log("Connected to the database 🚀");
   } catch (err) {
@@ -35,17 +35,19 @@ const connectClient = async () => {
 };
 
 // Catching errors with listener attatched to Client. https://node-postgres.com/apis/client#events
-db.on("error", async (err) => {
-  console.error("Unexpected error on idle client 🫠", err.stack);
+if (db) {
+  db.on("error", async (err) => {
+    console.error("Unexpected error on idle client 🫠", err.stack);
 
-  if (db) {
     console.log("Ending the database connection 🛑");
     await db.end();
-  }
 
-  console.log("Reconnecting to the database 🤙");
-  connectClient();
-});
+    console.log("DB VAR", db);
+
+    console.log("Reconnecting to the database 🤙");
+    connectClient();
+  });
+}
 
 connectClient();
 

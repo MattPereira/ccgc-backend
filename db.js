@@ -16,7 +16,7 @@ let db;
 //   }
 // });
 
-const connectClient = async () => {
+const connectClient = () => {
   try {
     db = new Client({
       connectionString: getDatabaseUri(),
@@ -26,8 +26,14 @@ const connectClient = async () => {
       },
     });
 
-    await db.connect();
-    console.log("Connected to the database 🚀");
+    db.connect((err) => {
+      if (err) {
+        console.log("db connection error 💔", err.stack);
+        console.error("STACK", err.stack);
+      } else {
+        console.log("db connected 🚀");
+      }
+    });
   } catch (err) {
     console.error("Failed to connect to the database 💔", err);
     console.error("STACK", err.stack);

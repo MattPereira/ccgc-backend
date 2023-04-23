@@ -67,6 +67,8 @@ function ensureCorrectUserOrAdmin(req, res, next) {
   try {
     console.log(req.body);
     const user = res.locals.user;
+    console.log("user.username", user.username === req.body.username);
+
     if (!(user && (user.isAdmin || user.username === req.body.username))) {
       throw new UnauthorizedError();
     }
